@@ -13,9 +13,9 @@ import com.triply.barrierfreetrip.adapter.InfoSquareAdapter
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
 import com.triply.barrierfreetrip.adapter.OnLikeClickListener
 import com.triply.barrierfreetrip.adapter.decoration.StayListItemViewHolderDecoration
-import com.triply.barrierfreetrip.data.InfoSquareDto
-import com.triply.barrierfreetrip.data.Sido
-import com.triply.barrierfreetrip.data.Sigungu
+import com.triply.barrierfreetrip.data.InfoSquareListDto.InfoSquareItemDto
+import com.triply.barrierfreetrip.data.SidoListDto.Sido
+import com.triply.barrierfreetrip.data.SigunguListDto.Sigungu
 import com.triply.barrierfreetrip.databinding.FragmentStaylistBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.MainViewModel
@@ -38,7 +38,7 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
     private var sigunguPosition = 0
 
     // facility data
-    private val fcltList = ArrayList<InfoSquareDto>()
+    private val fcltList = ArrayList<InfoSquareItemDto>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

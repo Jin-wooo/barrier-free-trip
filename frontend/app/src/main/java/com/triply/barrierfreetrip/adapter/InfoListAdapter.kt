@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.triply.barrierfreetrip.data.InfoListDto
+import com.triply.barrierfreetrip.data.InfoListDto.InfoListItemDto
 import com.triply.barrierfreetrip.databinding.ItemInfoListBinding
 
 // 화면에 표시만 하면 되는 경우 사용하는 기본 Adapter
 open class InfoListAdapter : RecyclerView.Adapter<ListViewHolder>() {
-    private val infoList: ArrayList<InfoListDto> = arrayListOf()
-    fun setInfoList(listDto: List<InfoListDto>) {
+    private val infoList: ArrayList<InfoListItemDto> = arrayListOf()
+    fun setInfoList(listDto: List<InfoListItemDto>) {
         infoList.clear()
         infoList.addAll(listDto)
         notifyDataSetChanged()
@@ -56,7 +56,7 @@ open class InfoListAdapter : RecyclerView.Adapter<ListViewHolder>() {
 }
 
 // 충전기처럼 다른 페이지로 넘어가야 하는 경우 사용하는 Adapter
-class InfoListClickAdapter(infoList: ArrayList<InfoListDto>) : InfoListAdapter() {
+class InfoListClickAdapter(infoList: ArrayList<InfoListItemDto>) : InfoListAdapter() {
 
     private lateinit var itemClickListener: InfoListClickAdapter.OnItemClickListener
 
@@ -106,7 +106,7 @@ class ListViewHolder(
         isShowMapVisible = visibility
     }
 
-    fun bind(item: InfoListDto) {
+    fun bind(item: InfoListItemDto) {
         binding.listItem = item
         binding.tbListLike.isChecked = item.like
         binding.btnChargerlistMap.visibility = if (isShowMapVisible) View.VISIBLE else View.GONE

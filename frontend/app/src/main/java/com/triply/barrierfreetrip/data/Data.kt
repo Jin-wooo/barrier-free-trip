@@ -6,7 +6,7 @@ import com.bumptech.glide.Glide
 import com.google.gson.annotations.SerializedName
 
 sealed class RespDocument()
-data class MetaResponse<T : RespDocument>(
+data class MetaResponse<T>(
     val status : String,
     val respDocument : T,
     val message : String?
@@ -96,16 +96,21 @@ data class RentalServicePlace(
     val title: String
 ) : RespDocument()
 
-data class SearchRsltItem(
-    val addr: String,
-    val firstImage: String,
-    val rating: String,
-    val tel: String,
-    val title: String,
-    val type: Int,
-    val id: Int,
-    val like: Boolean
-) : RespDocument()
+data class SearchRsltListDto(
+    val items: SearchRsltItem
+) : RespDocument() {
+    data class SearchRsltItem(
+        val addr: String,
+        val firstImage: String,
+        val rating: String,
+        val tel: String,
+        val title: String,
+        val type: Int,
+        val id: Int,
+        val like: Boolean
+    )
+}
+
 
 data class RestPlace(
     val addr: String,
@@ -117,43 +122,60 @@ data class RestPlace(
 ) : RespDocument()
 
 data class InfoListDto(
-    val id: Int,
-    val addr: String,
-    val like: Boolean,
-    val tel: String,
-    val title: String
-) : RespDocument()
+    val items: List<InfoListItemDto>
+) : RespDocument() {
+    data class InfoListItemDto(
+        val id: Int,
+        val addr: String,
+        val like: Boolean,
+        val tel: String,
+        val title: String
+    )
+}
 
-data class InfoSquareDto(
-    val addr: String,
-    val contentId: String,
-    val contentTypeId: String,
-    val firstimg: String,
-    val like: Boolean,
-    val rating: String,
-    val tel: String,
-    val title: String
-)  : RespDocument() {
-    object SquareBind {
-        @JvmStatic
-        @BindingAdapter("setImage")
-        fun setImgUrl(view: ImageView, img: String) {
-            Glide.with(view.context)
-                .load(img)
-                .into(view)
+data class InfoSquareListDto(
+    val items: List<InfoSquareItemDto>
+) : RespDocument() {
+    data class InfoSquareItemDto(
+        val addr: String,
+        val contentId: String,
+        val contentTypeId: String,
+        val firstimg: String,
+        val like: Boolean,
+        val rating: String,
+        val tel: String,
+        val title: String
+    ) {
+        object SquareBind {
+            @JvmStatic
+            @BindingAdapter("setImage")
+            fun setImgUrl(view: ImageView, img: String) {
+                Glide.with(view.context)
+                    .load(img)
+                    .into(view)
+            }
         }
     }
 }
 
-data class Sido (
-    val code: String,
-    val name: String
-)
+data class SidoListDto(
+    val items: List<Sido>
+) : RespDocument() {
+    data class Sido (
+        val code: String,
+        val name: String
+    )
+}
 
-data class Sigungu (
-    val code: String,
-    val name: String
-)
+data class SigunguListDto(
+    val items: List<Sigungu>
+) : RespDocument() {
+    data class Sigungu (
+        val code: String,
+        val name: String
+    )
+}
+
 
 
 enum class TripType {

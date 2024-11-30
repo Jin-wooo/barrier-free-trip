@@ -9,11 +9,11 @@ import com.triply.barrierfreetrip.api.LocationInstance
 import com.triply.barrierfreetrip.api.RetroInstance
 import com.triply.barrierfreetrip.data.ChargerDetail
 import com.triply.barrierfreetrip.data.InfoListDto
-import com.triply.barrierfreetrip.data.InfoSquareDto
+import com.triply.barrierfreetrip.data.InfoSquareListDto
 import com.triply.barrierfreetrip.data.ReviewListDTO
 import com.triply.barrierfreetrip.data.ReviewRegistrationDTO
-import com.triply.barrierfreetrip.data.Sido
-import com.triply.barrierfreetrip.data.Sigungu
+import com.triply.barrierfreetrip.data.SidoListDto
+import com.triply.barrierfreetrip.data.SigunguListDto
 import com.triply.barrierfreetrip.data.TourFacilityDetail
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_CARE
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_CHARGER
@@ -23,37 +23,39 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainViewModel : ViewModel() {
+class MainViewModel() : ViewModel() {
     private val retrofit = RetroInstance.getInstance().create(BFTApi::class.java)
     private val kakaoRetrofit = LocationInstance.getLocationApi()
 
-    private val _nearbyStayList: MutableLiveData<List<InfoSquareDto>?> by lazy { MutableLiveData(null) }
-    val nearbyStayList: LiveData<List<InfoSquareDto>?>
+    private val _nearbyStayList: MutableLiveData<List<InfoSquareListDto.InfoSquareItemDto>?> by lazy { MutableLiveData(null) }
+    val nearbyStayList: LiveData<List<InfoSquareListDto.InfoSquareItemDto>?>
         get() = _nearbyStayList
 
-    private val _nearbyChargerList: MutableLiveData<List<InfoListDto>?> by lazy { MutableLiveData(null) }
-    val nearbyChargerList: LiveData<List<InfoListDto>?>
+    private val _nearbyChargerList: MutableLiveData<List<InfoListDto.InfoListItemDto>?> by lazy { MutableLiveData(null) }
+    val nearbyChargerList: LiveData<List<InfoListDto.InfoListItemDto>?>
         get() = _nearbyChargerList
 
-    private val _sidoCodes by lazy { MutableLiveData(listOf(Sido(code = "-1", name = "시도 선택"))) }
-    val sidoCodes: LiveData<List<Sido>>
+    private val _sidoCodes by lazy {
+        MutableLiveData(listOf(SidoListDto.Sido(code = "-1", name = "시도 선택")))
+    }
+    val sidoCodes: LiveData<List<SidoListDto.Sido>>
         get() = _sidoCodes
 
     private val _sigunguCodes by lazy {
         MutableLiveData(
             listOf(
-                Sigungu(
+                SigunguListDto.Sigungu(
                     code = "-1",
                     name = "구군 선택"
                 )
             )
         )
     }
-    val sigunguCodes: LiveData<List<Sigungu>>
+    val sigunguCodes: LiveData<List<SigunguListDto.Sigungu>>
         get() = _sigunguCodes
 
-    private val _locationList by lazy { MutableLiveData(listOf<InfoSquareDto>()) }
-    val locationList: LiveData<List<InfoSquareDto>>
+    private val _locationList by lazy { MutableLiveData(listOf<InfoSquareListDto.InfoSquareItemDto>()) }
+    val locationList: LiveData<List<InfoSquareListDto.InfoSquareItemDto>>
         get() = _locationList
 
     private val _locationDetail by lazy { MutableLiveData(TourFacilityDetail()) }
@@ -68,8 +70,8 @@ class MainViewModel : ViewModel() {
     val isDataLoading: LiveData<Event<Boolean>>
         get() = _isDataLoading
 
-    private val _fcltList by lazy { MutableLiveData(listOf<InfoListDto>()) }
-    val fcltList: LiveData<List<InfoListDto>>
+    private val _fcltList by lazy { MutableLiveData(listOf<InfoListDto.InfoListItemDto>()) }
+    val fcltList: LiveData<List<InfoListDto.InfoListItemDto>>
         get() = _fcltList
 
     fun getNearbyStayList(userX: Double, userY: Double) {
@@ -78,7 +80,7 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getStayList(userX = userX, userY = userY)
 
                 if (response.isSuccessful) {
-                    _nearbyStayList.value = response.body() ?: listOf()
+                    _nearbyStayList.value = response.body()?.items ?: listOf()
                 } else {
                     when (response.code()) {
 
@@ -96,7 +98,7 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getNearbyChargerList(userX = userX, userY = userY)
 
                 if (response.isSuccessful) {
-                    _nearbyChargerList.value = response.body() ?: listOf()
+                    _nearbyChargerList.value = response.body()?.items ?: listOf()
                 } else {
                     when (response.code()) {
 
@@ -114,7 +116,12 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getSidoCode()
 
                 if (response.isSuccessful) {
-                    _sidoCodes.value = response.body() ?: listOf(Sido(code = "-1", name = "시도 선택"))
+                    _sidoCodes.value = response.body()?.items ?: listOf(
+                        SidoListDto.Sido(
+                            code = "-1",
+                            name = "시도 선택"
+                        )
+                    )
                 } else {
                     when (response.code()) {
 
@@ -133,7 +140,7 @@ class MainViewModel : ViewModel() {
 
                 if (response.isSuccessful) {
                     _sigunguCodes.value =
-                        response.body() ?: listOf(Sigungu(code = "-1", name = "구군 선택"))
+                        response.body()?.items ?: listOf(SigunguListDto.Sigungu(code = "-1", name = "구군 선택"))
                 } else {
                     when (response.code()) {
 
@@ -155,7 +162,7 @@ class MainViewModel : ViewModel() {
                 )
 
                 if (response.isSuccessful) {
-                    _locationList.value = response.body() ?: listOf()
+                    _locationList.value = response.body()?.items ?: listOf()
                 } else {
                     when (response.code()) {
 
@@ -231,7 +238,7 @@ class MainViewModel : ViewModel() {
                     retrofit.getCareTourList(bigPlaceCode = sidoName, smallPlaceCode = sigunguName)
 
                 if (response.isSuccessful) {
-                    _fcltList.value = response.body() ?: listOf()
+                    _fcltList.value = response.body()?.items ?: listOf()
                 } else {
                     when (response.code()) {
 
@@ -249,7 +256,7 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getChargerList(sido = sidoName, sigungu = sigunguName)
 
                 if (response.isSuccessful) {
-                    _fcltList.value = response.body() ?: listOf()
+                    _fcltList.value = response.body()?.items ?: listOf()
                 } else {
                     when (response.code()) {
 
@@ -270,7 +277,7 @@ class MainViewModel : ViewModel() {
                 )
 
                 if (response.isSuccessful) {
-                    _fcltList.value = response.body() ?: listOf()
+                    _fcltList.value = response.body()?.items ?: listOf()
                 } else {
                     when (response.code()) {
 

@@ -17,10 +17,10 @@ import com.triply.barrierfreetrip.databinding.FragmentStaylistBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.MainViewModel
 
-class WishlistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment_staylist) {
+class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragment_staylist) {
     private val viewModel: MainViewModel by viewModels()
     private var type: String? = null
-    private val infoList = arrayListOf<InfoListDto>()
+    private val infoList = arrayListOf<InfoListDto.InfoListItemDto>()
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
 
     // sido data

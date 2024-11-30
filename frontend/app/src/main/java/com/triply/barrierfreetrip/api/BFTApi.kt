@@ -2,12 +2,12 @@ package com.triply.barrierfreetrip.api
 
 import com.triply.barrierfreetrip.data.ChargerDetail
 import com.triply.barrierfreetrip.data.InfoListDto
-import com.triply.barrierfreetrip.data.InfoSquareDto
+import com.triply.barrierfreetrip.data.InfoSquareListDto
 import com.triply.barrierfreetrip.data.ReviewListDTO
 import com.triply.barrierfreetrip.data.ReviewRegistrationDTO
-import com.triply.barrierfreetrip.data.SearchRsltItem
-import com.triply.barrierfreetrip.data.Sido
-import com.triply.barrierfreetrip.data.Sigungu
+import com.triply.barrierfreetrip.data.SearchRsltListDto
+import com.triply.barrierfreetrip.data.SidoListDto
+import com.triply.barrierfreetrip.data.SigunguListDto
 import com.triply.barrierfreetrip.data.TourFacilityDetail
 import retrofit2.Response
 import retrofit2.http.Body
@@ -27,7 +27,7 @@ interface BFTApi {
         @Path(value = "contentTypeId") typeId : String,
         @Path(value = "areaCode") areaCode : String,
         @Path(value = "sigunguCode") bigPlaceCode : String
-    ) : Response<List<InfoSquareDto>>
+    ) : Response<InfoSquareListDto>
 
 
     @GET("/tourist-facilities/{contentId}")
@@ -40,7 +40,7 @@ interface BFTApi {
     suspend fun getChargerList(
         @Path(value = "sido") sido: String,
         @Path(value = "sigungu") sigungu: String
-    ) : Response<List<InfoListDto>>
+    ) : Response<InfoListDto>
 
     @GET("/chargers/info/{contentId}")
     suspend fun getChargerDetail(
@@ -51,39 +51,39 @@ interface BFTApi {
     suspend fun getCareTourList(
         @Path(value = "sido") bigPlaceCode : String,
         @Path(value = "sigungu") smallPlaceCode : String
-    ) : Response<List<InfoListDto>>
+    ) : Response<InfoListDto>
 
     @GET("/rentals/{sido}/{sigungu}")
     suspend fun getRentalServiceList(
         @Path(value = "sido") bigPlaceCode : String,
         @Path(value = "sigungu") smallPlaceCode : String
-    ) : Response<List<InfoListDto>>
+    ) : Response<InfoListDto>
 
     @GET("/search/{keyword}")
     suspend fun getSearchResult(
         @Path(value = "keyword") keyword : String
-    ) : Response<List<SearchRsltItem>>
+    ) : Response<SearchRsltListDto>
 
     @GET("/near-hotels/{userX}/{userY}")
     suspend fun getStayList(
         @Path(value = "userX") userX : Double,
         @Path(value = "userY") userY : Double
-    ) : Response<List<InfoSquareDto>>
+    ) : Response<InfoSquareListDto>
 
     @GET("/near-chargers/{userX}/{userY}")
     suspend fun getNearbyChargerList(
         @Path(value = "userX") userX : Double,
         @Path(value = "userY") userY : Double
-    ) : Response<List<InfoListDto>>
+    ) : Response<InfoListDto>
 
     @GET("/sido")
     suspend fun getSidoCode(
-    ) : Response<List<Sido>>
+    ) : Response<SidoListDto>
 
     @GET("/sido/{sidoCode}")
     suspend fun getSigunguCode(
         @Path(value = "sidoCode") sidoCode : String,
-    ) : Response<List<Sigungu>>
+    ) : Response<SigunguListDto>
 
     @GET("/reviews/{contentId}")
     suspend fun getReviews(
