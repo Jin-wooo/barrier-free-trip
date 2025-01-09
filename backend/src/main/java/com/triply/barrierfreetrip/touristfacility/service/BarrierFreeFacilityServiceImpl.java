@@ -6,13 +6,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class BarrierFreeFacilityServiceImpl implements BarrierFreeFacilityService{
     private final BarrierFreeFacilityRepository barrierFreeFacilityRepository;
     @Override
-    public BarrierFreeFacility findByContentId(String contentId) {
+    public Optional<BarrierFreeFacility> findByContentId(String contentId) {
         return barrierFreeFacilityRepository.findByContentId(contentId);
     }
 }

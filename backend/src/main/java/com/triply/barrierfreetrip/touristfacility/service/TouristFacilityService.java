@@ -15,7 +15,7 @@ public interface TouristFacilityService {
 
     public List<String> findImgByContentId(String contentId);
 
-    public TouristFacility findByContentId(String contentId);
+    public Optional<TouristFacility> findByContentId(String contentId);
 
     List<TouristFacilityListResponseDto> returnListDto(Member member, String contentTypeId, String areaCode, String sigunguCode);
     public TouristFacilityInfoResponseDto returnInfoDto(Member member, String contentId);

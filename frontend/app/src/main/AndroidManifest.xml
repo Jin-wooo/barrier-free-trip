@@ -30,7 +30,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
                 <data android:host="oauth"
-                    android:scheme=""
+                    android:scheme=""/>
             </intent-filter>
 
         </activity>

@@ -1,5 +1,7 @@
 package com.triply.barrierfreetrip.heart.controller;
 
+import com.triply.barrierfreetrip.ApiResponseBody;
+import com.triply.barrierfreetrip.EmptyDocument;
 import com.triply.barrierfreetrip.caretrip.domain.CareTrip;
 import com.triply.barrierfreetrip.caretrip.domain.CareTripHeart;
 import com.triply.barrierfreetrip.caretrip.dto.CareTripListResponseDto;
@@ -40,86 +42,96 @@ public class HeartController {
     private final ChargerService chargerService;
     private final RentalService rentalService;
     private final OauthMemberService memberService;
+    private final EmptyDocument emptyDocument = new EmptyDocument();
 
     @GetMapping("/heart/{type}/{contentId}/{likes}")
     @Transactional
-    public void heart(@PathVariable("type") int type,
-                      @PathVariable("contentId") String contentId,
-                      @PathVariable("likes") int likes) {
-        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<Member> member2 = memberService.findById(member.getId());
-        if (member2.isPresent()) {
-            if (type == 0) {    // 관광 시설
-                TouristFacilityHeart heart = touristFacilityHeartService.likes(member, contentId, likes);
-                if (heart != null) {
-                    member2.get().getTouristFacilityHearts().add(heart);
-                }
+    public ApiResponseBody<?> heart(@PathVariable("type") int type,
+                                    @PathVariable("contentId") String contentId,
+                                    @PathVariable("likes") int likes) {
+        try {
+            Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Optional<Member> member2 = memberService.findById(member.getId());
+            if (member2.isPresent()) {
+                if (type == 0) {    // 관광 시설
+                    TouristFacilityHeart heart = touristFacilityHeartService.likes(member, contentId, likes);
+                    if (heart != null) {
+                        member2.get().getTouristFacilityHearts().add(heart);
+                    }
 
-            } else if (type == 1) {     // 충전기
-                ChargerHeart heart = chargerService.likes(member, Long.parseLong(contentId), likes);
-                if (heart != null) {
-                    member2.get().getChargerHearts().add(heart);
-                }
+                } else if (type == 1) {     // 충전기
+                    ChargerHeart heart = chargerService.likes(member, Long.parseLong(contentId), likes);
+                    if (heart != null) {
+                        member2.get().getChargerHearts().add(heart);
+                    }
 
-            } else if (type == 2) {    // 돌봄 시설
-                CareTripHeart heart = careTripService.likes(member, Long.parseLong(contentId), likes);
-                if (heart != null) {
-                    member2.get().getCareTripHearts().add(heart);
+                } else if (type == 2) {    // 돌봄 시설
+                    CareTripHeart heart = careTripService.likes(member, Long.parseLong(contentId), likes);
+                    if (heart != null) {
+                        member2.get().getCareTripHearts().add(heart);
+                    }
+                } else {    // 렌탈
+                    RentalHeart heart = rentalService.likes(member, Long.parseLong(contentId), likes);
+                    member2.get().getRentalHearts().add(heart);
                 }
-            } else {    // 렌탈
-                RentalHeart heart = rentalService.likes(member, Long.parseLong(contentId), likes);
-                member2.get().getRentalHearts().add(heart);
             }
+
+            return ApiResponseBody.createSuccess(new ApiResponseBody<>());
+        } catch (Exception e) {
+            return ApiResponseBody.createFail(emptyDocument, e.getMessage());
         }
     }
 
     @GetMapping("/heart/{type}")
-    public ResponseEntity myHeartList(@PathVariable("type") int type) {
-        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Object> result = new ArrayList<>();
-        Optional<Member> member2 = memberService.findById(member.getId());
+    public ApiResponseBody<?> myHeartList(@PathVariable("type") int type) {
+        try {
+            Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            List<Object> result = new ArrayList<>();
+            Optional<Member> member2 = memberService.findById(member.getId());
 
-        if (member2.isPresent()) {
-            if (type == 1) {     // 충전기
-                List<ChargerHeart> hearts = member2.get().getChargerHearts();
-                for(ChargerHeart ch: hearts) {
-                    Charger charger = ch.getCharger();
-                    ChargerListDto chargerListDto = new ChargerListDto(charger.getId(), charger.getTitle(),
-                                                                        charger.getAddr(), charger.getTel(), true);
-                    result.add(chargerListDto);
-                }
-            } else if (type == 2) {    // 돌봄 시설
-                List<CareTripHeart> hearts = member2.get().getCareTripHearts();
-                for(CareTripHeart cth: hearts) {
-                    CareTrip careTrip = cth.getCareTrip();
-                    CareTripListResponseDto careTripListResponseDto = new CareTripListResponseDto(careTrip.getId(),
-                                                careTrip.getTitle(), careTrip.getAddr(), careTrip.getTel(), true);
-                    result.add(careTripListResponseDto);
-                }
+            if (member2.isPresent()) {
+                if (type == 1) {     // 충전기
+                    List<ChargerHeart> hearts = member2.get().getChargerHearts();
+                    for(ChargerHeart ch: hearts) {
+                        Charger charger = ch.getCharger();
+                        ChargerListDto chargerListDto = new ChargerListDto(charger.getId(), charger.getTitle(),
+                                charger.getAddr(), charger.getTel(), true);
+                        result.add(chargerListDto);
+                    }
+                } else if (type == 2) {    // 돌봄 시설
+                    List<CareTripHeart> hearts = member2.get().getCareTripHearts();
+                    for(CareTripHeart cth: hearts) {
+                        CareTrip careTrip = cth.getCareTrip();
+                        CareTripListResponseDto careTripListResponseDto = new CareTripListResponseDto(careTrip.getId(),
+                                careTrip.getTitle(), careTrip.getAddr(), careTrip.getTel(), true);
+                        result.add(careTripListResponseDto);
+                    }
 
-            } else if (type == 3) {    // 렌탈
-                List<RentalHeart> hearts = member2.get().getRentalHearts();
-                for(RentalHeart rh: hearts) {
-                    Rental rental = rh.getRental();
-                    RentalListDto rentalListDto = new RentalListDto(rental.getId(), rental.getTitle(),
-                                                                    rental.getAddr(), rental.getTel(), true);
-                    result.add(rentalListDto);
-                }
-            } else {
-                List<TouristFacilityHeart> hearts = member2.get().getTouristFacilityHearts();
-                for(TouristFacilityHeart h: hearts) {
-                    TouristFacility tf = h.getTouristFacility();
+                } else if (type == 3) {    // 렌탈
+                    List<RentalHeart> hearts = member2.get().getRentalHearts();
+                    for(RentalHeart rh: hearts) {
+                        Rental rental = rh.getRental();
+                        RentalListDto rentalListDto = new RentalListDto(rental.getId(), rental.getTitle(),
+                                rental.getAddr(), rental.getTel(), true);
+                        result.add(rentalListDto);
+                    }
+                } else {
+                    List<TouristFacilityHeart> hearts = member2.get().getTouristFacilityHearts();
+                    for(TouristFacilityHeart h: hearts) {
+                        TouristFacility tf = h.getTouristFacility();
 
-                    if (tf.getContentTypeId().equals(Integer.toString(type))) {
-                        TouristFacilityListResponseDto touristFacilityListResponseDto =
-                                new TouristFacilityListResponseDto(tf.getContentId(), tf.getContentTypeId(),
-                                        tf.getTitle(), tf.getAddr1(), tf.getRating(), tf.getFirstimage(), tf.getTitle(), true);
-                        result.add(touristFacilityListResponseDto);
+                        if (tf.getContentTypeId().equals(Integer.toString(type))) {
+                            TouristFacilityListResponseDto touristFacilityListResponseDto =
+                                    new TouristFacilityListResponseDto(tf.getContentId(), tf.getContentTypeId(),
+                                            tf.getTitle(), tf.getAddr1(), tf.getRating(), tf.getFirstimage(), tf.getTel(), true);
+                            result.add(touristFacilityListResponseDto);
+                        }
                     }
                 }
             }
+            return ApiResponseBody.createSuccess(result);
+        } catch (Exception e) {
+            return ApiResponseBody.createFail(emptyDocument, e.getMessage());
         }
-
-        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
