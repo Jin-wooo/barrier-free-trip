@@ -1,14 +1,8 @@
 package com.triply.barrierfreetrip.api
 
-import com.triply.barrierfreetrip.data.ChargerDetail
-import com.triply.barrierfreetrip.data.InfoListDto
-import com.triply.barrierfreetrip.data.InfoSquareListDto
-import com.triply.barrierfreetrip.data.ReviewListDTO
+import com.triply.barrierfreetrip.data.MetaResponse
+import com.triply.barrierfreetrip.data.RespDocument
 import com.triply.barrierfreetrip.data.ReviewRegistrationDTO
-import com.triply.barrierfreetrip.data.SearchRsltListDto
-import com.triply.barrierfreetrip.data.SidoListDto
-import com.triply.barrierfreetrip.data.SigunguListDto
-import com.triply.barrierfreetrip.data.TourFacilityDetail
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -27,68 +21,68 @@ interface BFTApi {
         @Path(value = "contentTypeId") typeId : String,
         @Path(value = "areaCode") areaCode : String,
         @Path(value = "sigunguCode") bigPlaceCode : String
-    ) : Response<InfoSquareListDto>
+    ) : Response<MetaResponse<RespDocument?>>
 
 
     @GET("/tourist-facilities/{contentId}")
     suspend fun getTourFcltDetail(
         @Path(value = "contentId") contentId : String
-    ) : Response<TourFacilityDetail>
+    ) : Response<MetaResponse<RespDocument?>>
 
     // API for Charger
     @GET("/chargers/{sido}/{sigungu}")
     suspend fun getChargerList(
         @Path(value = "sido") sido: String,
         @Path(value = "sigungu") sigungu: String
-    ) : Response<InfoListDto>
+    ) : Response<MetaResponse<RespDocument?>>
 
     @GET("/chargers/info/{contentId}")
     suspend fun getChargerDetail(
         @Path(value = "contentId") contentId: Long
-    ) : Response<ChargerDetail>
+    ) : Response<MetaResponse<RespDocument?>>
 
     @GET("/care-services/{sido}/{sigungu}")
     suspend fun getCareTourList(
         @Path(value = "sido") bigPlaceCode : String,
         @Path(value = "sigungu") smallPlaceCode : String
-    ) : Response<InfoListDto>
+    ) : Response<MetaResponse<RespDocument?>>
 
     @GET("/rentals/{sido}/{sigungu}")
     suspend fun getRentalServiceList(
         @Path(value = "sido") bigPlaceCode : String,
         @Path(value = "sigungu") smallPlaceCode : String
-    ) : Response<InfoListDto>
+    ) : Response<MetaResponse<RespDocument?>>
 
     @GET("/search/{keyword}")
     suspend fun getSearchResult(
         @Path(value = "keyword") keyword : String
-    ) : Response<SearchRsltListDto>
+    ) : Response<MetaResponse<RespDocument?>>
 
     @GET("/near-hotels/{userX}/{userY}")
     suspend fun getStayList(
         @Path(value = "userX") userX : Double,
         @Path(value = "userY") userY : Double
-    ) : Response<InfoSquareListDto>
+    ) : Response<MetaResponse<RespDocument?>>
 
     @GET("/near-chargers/{userX}/{userY}")
     suspend fun getNearbyChargerList(
         @Path(value = "userX") userX : Double,
         @Path(value = "userY") userY : Double
-    ) : Response<InfoListDto>
+    ) : Response<MetaResponse<RespDocument?>>
 
     @GET("/sido")
     suspend fun getSidoCode(
-    ) : Response<SidoListDto>
+    ) : Response<MetaResponse<RespDocument?>>
 
     @GET("/sido/{sidoCode}")
     suspend fun getSigunguCode(
         @Path(value = "sidoCode") sidoCode : String,
-    ) : Response<SigunguListDto>
+    ) : Response<MetaResponse<RespDocument?>>
 
     @GET("/reviews/{contentId}")
     suspend fun getReviews(
         @Path(value = "contentId") contentId: String
-    ): Response<ReviewListDTO>
+    ): Response<MetaResponse<RespDocument?>>
 
     @POST("/reviews/{contentId}")
     suspend fun postReview(

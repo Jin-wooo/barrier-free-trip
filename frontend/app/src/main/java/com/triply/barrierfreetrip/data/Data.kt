@@ -5,14 +5,14 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.google.gson.annotations.SerializedName
 
-sealed class RespDocument()
-data class MetaResponse<T>(
-    val status : String,
-    val respDocument : T,
-    val message : String?
-) {
+sealed class RespDocument
 
-}
+data class MetaResponse<out T>(
+    val status : String,
+    @SerializedName("data")
+    val respDocument : T?,
+    val message : String?
+)
 
 data class LoginDto2(
     val accessToken: String,
@@ -25,6 +25,11 @@ data class LoginDto(
     val message : String,
     val accessToken: String
 )
+
+data class ErrorDto(
+    @SerializedName("emptyResponse")
+    val errorCode: String
+) : RespDocument()
 
 data class TourFacilityDetail(
     val addr1: String = "",
@@ -50,9 +55,9 @@ data class TourFacilityDetail(
     val sigunguCode: Any = "",
     val tel: String = "",
     val title: String = "",
-) : RespDocument() {
+) : RespDocument()
 
-}
+
 
 data class Charger(
     val addr: String,
@@ -63,23 +68,23 @@ data class Charger(
 ) : RespDocument()
 
 data class ChargerDetail(
-    val addr: String,
-    val air: String,
-    val holidayClose: String,
-    val holidayOpen: String,
-    val like: Int,
-    val phoneCharge: String,
-    val possible: String,
-    val tel: String,
-    val title: String,
-    val weekdayClose: String,
-    val weekdayOpen: String,
-    val weekendClose: String,
-
-    val weekendOpen: String,
-    val latitude: Double,
-    val longitude: Double
-) : RespDocument()
+    val addr: String = "",
+    val air: String = "",
+    val holidayClose: String = "",
+    val holidayOpen: String = "",
+    val like: Int = 0,
+    val phoneCharge: String = "",
+    val possible: String = "",
+    val tel: String = "",
+    val title: String = "",
+    val weekdayClose: String = "",
+    val weekdayOpen: String = "",
+    val weekendClose: String = "",
+    val weekendOpen: String = "",
+) : RespDocument() {
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
+}
 
 
 data class CareTour(
@@ -97,17 +102,17 @@ data class RentalServicePlace(
 ) : RespDocument()
 
 data class SearchRsltListDto(
-    val items: SearchRsltItem
+    val items: List<SearchRsltItem>
 ) : RespDocument() {
     data class SearchRsltItem(
         val addr: String,
-        val firstImage: String,
-        val rating: String,
+        val firstImage: String?,
+        val rating: String?,
         val tel: String,
         val title: String,
         val type: Int,
         val id: Int,
-        val like: Boolean
+        val like: Int
     )
 }
 
@@ -158,26 +163,14 @@ data class InfoSquareListDto(
     }
 }
 
-data class SidoListDto(
-    val items: List<Sido>
+data class RegionListDto(
+    val items: List<Region>
 ) : RespDocument() {
-    data class Sido (
+    data class Region(
         val code: String,
         val name: String
     )
 }
-
-data class SigunguListDto(
-    val items: List<Sigungu>
-) : RespDocument() {
-    data class Sigungu (
-        val code: String,
-        val name: String
-    )
-}
-
-
-
 enum class TripType {
     STAY, FACILITY, RESTAURANT, CARE, CHARGER, RENTAL
 }
@@ -185,7 +178,7 @@ enum class TripType {
 data class ReviewListDTO(
     val totalCnt: Int,
     val reviews: List<ReviewDTO>
-) {
+) : RespDocument() {
     data class ReviewDTO(
         val nickname: String,
         val rating: Double,

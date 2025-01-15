@@ -20,6 +20,10 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_MAP_KEY", properties.getProperty("kakaomap_key"))
+        manifestPlaceholders = [
+                KAKAO_CLIENT_ID: properties.getProperty("kakao_client_id"),
+                KAKAO_NATIVE_APP_KEY: properties.getProperty("kakao_native_app_key")
+        ]
     }
 
     buildFeatures {
@@ -104,8 +108,24 @@ dependencies {
     implementation 'com.kakao.sdk:v2-user:2.10.0'
     
     // 카카오 지도
-    implementation 'com.kakao.maps.open:android:2.9.5'
+    implementation 'com.kakao.maps.open:android:2.12.8'
 
     // GPS
     implementation 'com.google.android.gms:play-services-location:21.3.0'
+
+    // Retrofit Test
+    // Optional -- Mockito framework
+
+    testImplementation "org.mockito:mockito-core:5.14.2"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:5.14.2"
+    androidTestImplementation "org.mockito:mockito-android:5.14.2"
+    testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    testImplementation "com.squareup.okhttp3:mockwebserver:4.12.0"
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.12.0'
+
+    androidTestImplementation "com.squareup.okhttp3:mockwebserver:4.12.0"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.9.10"
+
 }

@@ -42,8 +42,8 @@ class SearchMultiviewAdapter (var searchList : ArrayList<SearchRsltItem>) : Recy
         when(searchList[position].type) {
             1 -> {
                 var item = InfoSquareItemDto(searchList[position].addr, searchList[position].id.toString(),
-                    "1", searchList[position].firstImage, searchList[position].like,
-                    searchList[position].rating, searchList[position].tel, searchList[position].title)
+                    "1", searchList[position].firstImage ?: "", searchList[position].like == 0,
+                    searchList[position].rating ?: "", searchList[position].tel, searchList[position].title)
 
                 (holder as MultiViewHolder1).bind(item)
                 //holder.setIsRecyclable(false)
@@ -52,8 +52,9 @@ class SearchMultiviewAdapter (var searchList : ArrayList<SearchRsltItem>) : Recy
                 }
             }
             2, 3, 4 -> {
-                var item = InfoListItemDto(searchList[position].id, searchList[position].addr,
-                                        searchList[position].like, searchList[position].tel,
+                var item = InfoListItemDto(
+                    searchList[position].id, searchList[position].addr,
+                                        searchList[position].like == 0, searchList[position].tel,
                                         searchList[position].title)
                 (holder as MultiViewHolder2).bind(item)
                 holder.setIsRecyclable(false)

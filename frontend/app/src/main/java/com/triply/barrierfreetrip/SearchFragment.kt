@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.triply.barrierfreetrip.adapter.SearchMultiviewAdapter
 import com.triply.barrierfreetrip.api.BFTApi
 import com.triply.barrierfreetrip.api.RetroInstance
-import com.triply.barrierfreetrip.data.SearchRsltItem
+import com.triply.barrierfreetrip.data.SearchRsltListDto
 import com.triply.barrierfreetrip.databinding.FragmentSearchBinding
 import retrofit2.Response
 
@@ -35,37 +35,37 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         // view binding
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
-        binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                val SearchRsltItemList = ArrayList<SearchRsltItem>()
-                if (query != null) {
-                    // call api
-                    val responseLiveData : LiveData<Response<List<SearchRsltItem>>> = liveData {
-                        val response = retrofit.getSearchResult(query.trim())
-
-                        emit(response)
-                    }
-                    responseLiveData.observe(viewLifecycleOwner, Observer {
-                        val list = it.body()?.listIterator()
-                        if (list != null) {
-                            binding.ivNoneData.isVisible = false
-
-                            if (list.hasNext()) {
-                                while (list.hasNext()) {
-                                    val item = list.next()
-                                    SearchRsltItemList.add(item) }
-                            } else {
-                                binding.ivNoneData.isVisible = true
-                                Log.d(TAG, "no data from search api")
-                            }
-
-                        } else {
-                            Log.d(TAG, "null from search api")
-                        }
-
-                        searchMultiviewAdapter = SearchMultiviewAdapter(SearchRsltItemList)
-                        binding.rvList.adapter = searchMultiviewAdapter
-                        binding.rvList.layoutManager = LinearLayoutManager(context)
+//        binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                val SearchRsltItemList = ArrayList<SearchRsltListDto.SearchRsltItem>()
+//                if (query != null) {
+//                     call api
+//                    val responseLiveData : LiveData<List<SearchRsltListDto.SearchRsltItem>> = liveData {
+//                        val response = retrofit.getSearchResult(query.trim())?.body()?.items
+//
+//                        emit(response)
+//                    }
+//                    responseLiveData.observe(viewLifecycleOwner, Observer {
+//                        val list = it.body()?.listIterator()
+//                        if (list != null) {
+//                            binding.ivNoneData.isVisible = false
+//
+//                            if (list.hasNext()) {
+//                                while (list.hasNext()) {
+//                                    val item = list.next()
+//                                    SearchRsltItemList.add(item) }
+//                            } else {
+//                                binding.ivNoneData.isVisible = true
+//                                Log.d(TAG, "no data from search api")
+//                            }
+//
+//                        } else {
+//                            Log.d(TAG, "null from search api")
+//                        }
+//
+//                        searchMultiviewAdapter = SearchMultiviewAdapter(SearchRsltItemList)
+//                        binding.rvList.adapter = searchMultiviewAdapter
+//                        binding.rvList.layoutManager = LinearLayoutManager(context)
 
 //            searchMultiviewAdapter.setItemClickListener(object : SearchMultiviewAdapter.OnItemClickListener {
 //                override fun onClick(view: View, position: Int) {
@@ -82,15 +82,15 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 //                        .commit()
 //                }
 //            })
-                    })
-                };
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return true
-            }
-        })
+//                    })
+//                };
+//                return true
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                return true
+//            }
+//        })
 
         return binding.root
     }

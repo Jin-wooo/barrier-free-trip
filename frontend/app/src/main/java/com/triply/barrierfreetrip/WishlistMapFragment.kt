@@ -35,7 +35,9 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            contentId = it.getInt(CONTENT_ID).toString()
+            contentId = it
+                .getString(CONTENT_ID)
+                .toString()
         }
     }
 
@@ -61,7 +63,7 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
                 phoneChargerCapability = if (chargerInfo.equals("N")) "불가" else "가능",
                 like = chargerInfo.like == 1,
             )
-            makeWidget(chargerInfo.title, chargerInfo.latitude, chargerInfo.longitude)
+            kakaoMap.mapWidgetManager?.infoWindowLayer?.addInfoWindow(makeWidget(chargerInfo.title, chargerInfo.latitude, chargerInfo.longitude))
             setCameraPosition(chargerInfo.latitude, chargerInfo.longitude)
             binding.dialogMapInfo.setOnClickListener { _ ->
                 setCameraPosition(chargerInfo.latitude, chargerInfo.longitude)
@@ -143,11 +145,13 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
         val options = InfoWindowOptions.from(LatLng.from(latitude, longitude))
         options.setBody(body)
         options.setBodyOffset(0f, -4F)
+        println(options.id)
         return options
     }
 
     private fun setCameraPosition(latitude: Double, longitude: Double) {
         val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
+        if (_kakaoMap == null) return
         kakaoMap.moveCamera(cameraUpdate)
     }
 }
