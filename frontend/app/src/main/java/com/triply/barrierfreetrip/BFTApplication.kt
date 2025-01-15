@@ -6,7 +6,6 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.vectormap.KakaoMapSdk
-import com.triply.barrierfreetrip.api.LoginInstance
 import com.triply.barrierfreetrip.feature.ApikeyStoreModule
 
 class BFTApplication : Application() {

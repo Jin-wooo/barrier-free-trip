@@ -2,7 +2,6 @@ package com.triply.barrierfreetrip.api
 
 import com.google.gson.GsonBuilder
 import com.triply.barrierfreetrip.data.MetaResponse
-import com.triply.barrierfreetrip.data.RespDocument
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

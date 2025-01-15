@@ -38,7 +38,7 @@ class RetrofitDeserializer : JsonDeserializer<MetaResponse<*>> {
                             MetaResponse(status = status, respDocument = null, message = null)
                         } else {
                             // 응답 결과 리스트가 비어있지 않을 경우
-                            val itemData = data?.getAsJsonArray("items")?.get(0)?.asJsonObject
+                            val itemData = data.getAsJsonArray("items")?.get(0)?.asJsonObject
                             when (itemData?.keySet()) {
                                 InfoListDto.InfoListItemDto::class.primaryConstructor?.parameters?.map {it.name}?.toSet() -> {
                                     val parsedData = context?.deserialize<InfoListDto>(data, InfoListDto::class.java)
