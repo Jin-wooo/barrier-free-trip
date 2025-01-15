@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.kakao.sdk.common.KakaoSdk
+import com.kakao.vectormap.KakaoMapSdk
 import com.triply.barrierfreetrip.api.LoginInstance
 import com.triply.barrierfreetrip.feature.ApikeyStoreModule
 
@@ -29,6 +30,7 @@ class BFTApplication : Application() {
             PackageManager.GET_META_DATA
         )
         KakaoSdk.init(this, appInfo.metaData.getString("KAKAO_KEY").toString())
+        KakaoMapSdk.init(this, BuildConfig.kakaomap_key)
     }
 
     fun getKeyStore(): ApikeyStoreModule = keyStore

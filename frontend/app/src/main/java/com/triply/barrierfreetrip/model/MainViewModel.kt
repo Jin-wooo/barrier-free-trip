@@ -350,7 +350,10 @@ class MainViewModel() : ViewModel() {
                         longitude = locationCoordinate?.longitude?.toDouble() ?: 0.0
                         latitude = locationCoordinate?.latitude?.toDouble() ?: 0.0
                     }
-                    _chargerInfo.value = response.body() ?: ChargerDetail(
+                    _chargerInfo.value = (response.body()?.respDocument as? ChargerDetail).apply {
+                        this?.latitude = latitude
+                        this?.longitude = longitude
+                    } ?: ChargerDetail(
                         addr = "",
                         air = "",
                         holidayClose = "",
@@ -363,10 +366,11 @@ class MainViewModel() : ViewModel() {
                         weekdayClose = "",
                         weekdayOpen = "",
                         weekendClose = "",
-                        weekendOpen = "",
-                        latitude = latitude,
-                        longitude = longitude
-                    )
+                        weekendOpen = ""
+                    ).apply {
+                        this.latitude = latitude
+                        this.longitude = longitude
+                    }
                 } else {
                     when (response.code()) {
 
