@@ -1,7 +1,5 @@
 package com.triply.barrierfreetrip.api
 
-import android.content.pm.PackageManager
-import com.triply.barrierfreetrip.BFTApplication
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

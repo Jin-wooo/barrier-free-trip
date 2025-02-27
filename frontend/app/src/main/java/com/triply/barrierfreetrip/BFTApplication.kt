@@ -2,17 +2,16 @@ package com.triply.barrierfreetrip
 
 import android.app.Application
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.kakao.sdk.common.KakaoSdk
-import com.triply.barrierfreetrip.api.LoginInstance
+import com.kakao.vectormap.KakaoMapSdk
 import com.triply.barrierfreetrip.feature.ApikeyStoreModule
 
 class BFTApplication : Application() {
     private lateinit var keyStore: ApikeyStoreModule
 
-    private val appInfo = applicationContext().applicationContext.packageManager.getApplicationInfo(
-        applicationContext().applicationContext.packageName, PackageManager.GET_META_DATA
-    )
+    private lateinit var appInfo: ApplicationInfo
     companion object {
         private lateinit var instance : BFTApplication
         fun getInstance() : BFTApplication = instance
@@ -25,7 +24,12 @@ class BFTApplication : Application() {
         super.onCreate()
         instance = this
         keyStore = ApikeyStoreModule(this)
+        appInfo = applicationContext().applicationContext.packageManager.getApplicationInfo(
+            applicationContext().applicationContext.packageName,
+            PackageManager.GET_META_DATA
+        )
         KakaoSdk.init(this, appInfo.metaData.getString("KAKAO_KEY").toString())
+        KakaoMapSdk.init(this, BuildConfig.kakaomap_key)
     }
 
     fun getKeyStore(): ApikeyStoreModule = keyStore

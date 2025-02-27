@@ -47,11 +47,12 @@ class LoginActivity : AppCompatActivity() {
         binding.btnLoginKakao.setOnClickListener {
             job = lifecycleScope.launch {
                 val response = kakaoApi.getTokenWithHTML(
-                    instance.KAKAO_KEY, instance.KAKAO_REDIRECT_URL, "code")
+                    instance.KAKAO_KEY.trim('"'), instance.KAKAO_REDIRECT_URL, "code")
                 Log.d(TAG, response.toString())
                 if (response.isSuccessful) {
                     try {
-//                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(response.))
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(response.raw().request.url.toString()))
+                        startActivity(browserIntent)
                     } catch (e : Exception) {
                         Log.d(TAG, response.body().toString())
                     }

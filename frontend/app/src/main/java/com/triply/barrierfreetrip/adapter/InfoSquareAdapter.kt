@@ -8,16 +8,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.triply.barrierfreetrip.R
-import com.triply.barrierfreetrip.data.InfoSquareDto
+import com.triply.barrierfreetrip.data.InfoSquareListDto.InfoSquareItemDto
 import com.triply.barrierfreetrip.databinding.ItemInfoSquareBinding
 
 class InfoSquareAdapter : RecyclerView.Adapter<SquareViewHolder>() {
     private lateinit var binding : ItemInfoSquareBinding
-    private val infoList = arrayListOf<InfoSquareDto>()
+    private val infoList = arrayListOf<InfoSquareItemDto>()
     private var onItemClickListener: OnItemClickListener? = null
     private var onLikeClickListener: OnLikeClickListener? = null
 
-    fun setDataList(infoList: List<InfoSquareDto>) {
+    fun setDataList(infoList: List<InfoSquareItemDto>) {
         this.infoList.clear()
         this.infoList.addAll(infoList)
         notifyDataSetChanged()
@@ -81,7 +81,7 @@ class SquareViewHolder(
         isLikeVisible = visibility
     }
 
-    fun bind(item: InfoSquareDto) {
+    fun bind(item: InfoSquareItemDto) {
         binding.squareItem = item
         binding.tbSquareLike.visibility = if (isLikeVisible) View.VISIBLE else View.GONE
         binding.tvSquareAddress.text = item.addr.take(14)

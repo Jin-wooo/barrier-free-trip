@@ -4,16 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.triply.barrierfreetrip.api.BFTApi
 import com.triply.barrierfreetrip.api.LocationInstance
 import com.triply.barrierfreetrip.api.RetroInstance
 import com.triply.barrierfreetrip.data.ChargerDetail
 import com.triply.barrierfreetrip.data.InfoListDto
-import com.triply.barrierfreetrip.data.InfoSquareDto
+import com.triply.barrierfreetrip.data.InfoSquareListDto
+import com.triply.barrierfreetrip.data.RegionListDto
 import com.triply.barrierfreetrip.data.ReviewListDTO
 import com.triply.barrierfreetrip.data.ReviewRegistrationDTO
-import com.triply.barrierfreetrip.data.Sido
-import com.triply.barrierfreetrip.data.Sigungu
 import com.triply.barrierfreetrip.data.TourFacilityDetail
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_CARE
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_CHARGER
@@ -23,37 +21,39 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainViewModel : ViewModel() {
-    private val retrofit = RetroInstance.getInstance().create(BFTApi::class.java)
+class MainViewModel() : ViewModel() {
+    private val retrofit = RetroInstance.createBFTApi("token")
     private val kakaoRetrofit = LocationInstance.getLocationApi()
 
-    private val _nearbyStayList: MutableLiveData<List<InfoSquareDto>?> by lazy { MutableLiveData(null) }
-    val nearbyStayList: LiveData<List<InfoSquareDto>?>
+    private val _nearbyStayList: MutableLiveData<List<InfoSquareListDto.InfoSquareItemDto>?> by lazy { MutableLiveData(emptyList()) }
+    val nearbyStayList: LiveData<List<InfoSquareListDto.InfoSquareItemDto>?>
         get() = _nearbyStayList
 
-    private val _nearbyChargerList: MutableLiveData<List<InfoListDto>?> by lazy { MutableLiveData(null) }
-    val nearbyChargerList: LiveData<List<InfoListDto>?>
+    private val _nearbyChargerList: MutableLiveData<List<InfoListDto.InfoListItemDto>?> by lazy { MutableLiveData(emptyList()) }
+    val nearbyChargerList: LiveData<List<InfoListDto.InfoListItemDto>?>
         get() = _nearbyChargerList
 
-    private val _sidoCodes by lazy { MutableLiveData(listOf(Sido(code = "-1", name = "시도 선택"))) }
-    val sidoCodes: LiveData<List<Sido>>
+    private val _sidoCodes by lazy {
+        MutableLiveData(listOf(RegionListDto.Region(code = "-1", name = "시도 선택")))
+    }
+    val sidoCodes: LiveData<List<RegionListDto.Region>>
         get() = _sidoCodes
 
     private val _sigunguCodes by lazy {
         MutableLiveData(
             listOf(
-                Sigungu(
+                RegionListDto.Region(
                     code = "-1",
                     name = "구군 선택"
                 )
             )
         )
     }
-    val sigunguCodes: LiveData<List<Sigungu>>
+    val sigunguCodes: LiveData<List<RegionListDto.Region>>
         get() = _sigunguCodes
 
-    private val _locationList by lazy { MutableLiveData(listOf<InfoSquareDto>()) }
-    val locationList: LiveData<List<InfoSquareDto>>
+    private val _locationList by lazy { MutableLiveData(listOf<InfoSquareListDto.InfoSquareItemDto>()) }
+    val locationList: LiveData<List<InfoSquareListDto.InfoSquareItemDto>>
         get() = _locationList
 
     private val _locationDetail by lazy { MutableLiveData(TourFacilityDetail()) }
@@ -68,8 +68,8 @@ class MainViewModel : ViewModel() {
     val isDataLoading: LiveData<Event<Boolean>>
         get() = _isDataLoading
 
-    private val _fcltList by lazy { MutableLiveData(listOf<InfoListDto>()) }
-    val fcltList: LiveData<List<InfoListDto>>
+    private val _fcltList by lazy { MutableLiveData(listOf<InfoListDto.InfoListItemDto>()) }
+    val fcltList: LiveData<List<InfoListDto.InfoListItemDto>>
         get() = _fcltList
 
     fun getNearbyStayList(userX: Double, userY: Double) {
@@ -78,7 +78,11 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getStayList(userX = userX, userY = userY)
 
                 if (response.isSuccessful) {
-                    _nearbyStayList.value = response.body() ?: listOf()
+                    _nearbyStayList.value = if (response.body()?.respDocument is InfoSquareListDto) {
+                        (response.body()?.respDocument as? InfoSquareListDto)?.items
+                    } else {
+                        null
+                    }
                 } else {
                     when (response.code()) {
 
@@ -96,7 +100,11 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getNearbyChargerList(userX = userX, userY = userY)
 
                 if (response.isSuccessful) {
-                    _nearbyChargerList.value = response.body() ?: listOf()
+                    _nearbyChargerList.value = if (response.body()?.respDocument is InfoListDto) {
+                        (response.body()?.respDocument as? InfoListDto)?.items
+                    } else {
+                        null
+                    }
                 } else {
                     when (response.code()) {
 
@@ -114,7 +122,21 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getSidoCode()
 
                 if (response.isSuccessful) {
-                    _sidoCodes.value = response.body() ?: listOf(Sido(code = "-1", name = "시도 선택"))
+                    _sidoCodes.value = if (response.body()!!.respDocument is RegionListDto) {
+                        (response.body()?.respDocument as? RegionListDto)?.items ?: listOf(
+                            RegionListDto.Region(
+                                code = "-1",
+                                name = "시도 선택"
+                            )
+                        )
+                    } else {
+                        listOf(
+                            RegionListDto.Region(
+                                code = "-1",
+                                name = "시도 선택"
+                            )
+                        )
+                    }
                 } else {
                     when (response.code()) {
 
@@ -132,8 +154,21 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getSigunguCode(sidoCode)
 
                 if (response.isSuccessful) {
-                    _sigunguCodes.value =
-                        response.body() ?: listOf(Sigungu(code = "-1", name = "구군 선택"))
+                    _sigunguCodes.value = if (response.body()!!.respDocument is RegionListDto) {
+                        (response.body()?.respDocument as? RegionListDto)?.items ?: listOf(
+                                RegionListDto.Region(
+                                    code = "-1",
+                                    name = "구군 선택"
+                                )
+                            )
+                    } else {
+                        listOf(
+                            RegionListDto.Region(
+                                code = "-1",
+                                name = "구군 선택"
+                            )
+                        )
+                    }
                 } else {
                     when (response.code()) {
 
@@ -155,7 +190,9 @@ class MainViewModel : ViewModel() {
                 )
 
                 if (response.isSuccessful) {
-                    _locationList.value = response.body() ?: listOf()
+                    _locationList.value = if (response.body()?.respDocument is InfoSquareListDto) {
+                        (response.body()?.respDocument as? InfoSquareListDto)?.items ?: emptyList()
+                    } else emptyList()
                 } else {
                     when (response.code()) {
 
@@ -173,7 +210,9 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getTourFcltDetail(contentId)
 
                 if (response.isSuccessful) {
-                    _locationDetail.value = response.body() ?: TourFacilityDetail()
+                    _locationDetail.value = if (response.body()?.respDocument is TourFacilityDetail) {
+                        (response.body()?.respDocument as? TourFacilityDetail) ?: TourFacilityDetail()
+                    } else TourFacilityDetail()
                 } else {
                     when (response.code()) {
 
@@ -191,7 +230,9 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getReviews(contentId)
 
                 if (response.isSuccessful) {
-                    _reviews.value = response.body() ?: ReviewListDTO(0, emptyList())
+                    _reviews.value = if (response.body()?.respDocument is ReviewListDTO) {
+                        (response.body()?.respDocument as? ReviewListDTO) ?: ReviewListDTO(0, emptyList())
+                    } else ReviewListDTO(0, emptyList())
                 } else {
                     when (response.code()) {
 
@@ -231,7 +272,9 @@ class MainViewModel : ViewModel() {
                     retrofit.getCareTourList(bigPlaceCode = sidoName, smallPlaceCode = sigunguName)
 
                 if (response.isSuccessful) {
-                    _fcltList.value = response.body() ?: listOf()
+                    _fcltList.value = if (response.body()?.respDocument is InfoListDto) {
+                        (response.body()?.respDocument as? InfoListDto)?.items ?: emptyList()
+                    } else emptyList()
                 } else {
                     when (response.code()) {
 
@@ -249,7 +292,9 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getChargerList(sido = sidoName, sigungu = sigunguName)
 
                 if (response.isSuccessful) {
-                    _fcltList.value = response.body() ?: listOf()
+                    _fcltList.value = if (response.body()?.respDocument is InfoListDto) {
+                        (response.body()?.respDocument as? InfoListDto)?.items ?: emptyList()
+                    } else emptyList()
                 } else {
                     when (response.code()) {
 
@@ -270,7 +315,9 @@ class MainViewModel : ViewModel() {
                 )
 
                 if (response.isSuccessful) {
-                    _fcltList.value = response.body() ?: listOf()
+                    _fcltList.value = if (response.body()?.respDocument is InfoListDto) {
+                        (response.body()?.respDocument as? InfoListDto)?.items ?: emptyList()
+                    } else emptyList()
                 } else {
                     when (response.code()) {
 
@@ -295,15 +342,18 @@ class MainViewModel : ViewModel() {
                 val response = retrofit.getChargerDetail(contentId = contentId)
 
                 if (response.isSuccessful) {
-                    if (!response.body()?.addr.isNullOrEmpty()) {
+                    if (!(response.body()?.respDocument as? ChargerDetail)?.addr.isNullOrEmpty()) {
                         val locationCoordinate = withContext(Dispatchers.IO) {
-                            kakaoRetrofit.getLocationCoordinate(address = response.body()!!.addr)
+                            kakaoRetrofit.getLocationCoordinate(address = (response.body()!!.respDocument as ChargerDetail).addr)
                                 .body()?.documents?.get(0)
                         }
                         longitude = locationCoordinate?.longitude?.toDouble() ?: 0.0
                         latitude = locationCoordinate?.latitude?.toDouble() ?: 0.0
                     }
-                    _chargerInfo.value = response.body() ?: ChargerDetail(
+                    _chargerInfo.value = (response.body()?.respDocument as? ChargerDetail).apply {
+                        this?.latitude = latitude
+                        this?.longitude = longitude
+                    } ?: ChargerDetail(
                         addr = "",
                         air = "",
                         holidayClose = "",
@@ -316,10 +366,11 @@ class MainViewModel : ViewModel() {
                         weekdayClose = "",
                         weekdayOpen = "",
                         weekendClose = "",
-                        weekendOpen = "",
-                        latitude = latitude,
-                        longitude = longitude
-                    )
+                        weekendOpen = ""
+                    ).apply {
+                        this.latitude = latitude
+                        this.longitude = longitude
+                    }
                 } else {
                     when (response.code()) {
 
@@ -348,7 +399,7 @@ class MainViewModel : ViewModel() {
                         retrofit.getChargerDetail(contentId = contentId.toLong())
                     if (chargerInfoResponse.isSuccessful) {
                         _chargerInfo.value = _chargerInfo.value?.copy(
-                            like = chargerInfoResponse.body()?.like ?: 0
+                            like = (chargerInfoResponse.body()?.respDocument as? ChargerDetail)?.like ?: 0
                         )
                     }
                 }
