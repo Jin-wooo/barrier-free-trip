@@ -6,16 +6,19 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 public class BarrierFreeFacilityRepositoryImpl implements BarrierFreeFacilityRepository{
     private final EntityManager em;
     @Override
-    public BarrierFreeFacility findByContentId(String contentId) {
-        return em.createQuery("select bff from BarrierFreeFacility bff " +
+    public Optional<BarrierFreeFacility> findByContentId(String contentId) {
+        List<BarrierFreeFacility> barrierFreeFacilities = em.createQuery("select bff from BarrierFreeFacility bff " +
                         "where bff.contentId=:contentIds", BarrierFreeFacility.class)
                 .setParameter("contentIds", contentId)
-                .getSingleResult();
+                .getResultList();
+
+        return barrierFreeFacilities.stream().findAny();
     }
 }

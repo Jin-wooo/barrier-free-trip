@@ -36,7 +36,7 @@ public class TouristFacilityServiceImpl implements TouristFacilityService {
     }
 
     @Override
-    public TouristFacility findByContentId(String contentId) {
+    public Optional<TouristFacility> findByContentId(String contentId) {
         return touristFacilityRepository.findByContentId(contentId);
 
     }
@@ -60,42 +60,41 @@ public class TouristFacilityServiceImpl implements TouristFacilityService {
     @Override
     public TouristFacilityInfoResponseDto returnInfoDto(Member member, String contentId) {
         List<String> imgs = findImgByContentId(contentId);
-        TouristFacility facility = findByContentId(contentId);
-        BarrierFreeFacility barrierFreeFacility = barrierFreeFacilityService.findByContentId(contentId);
+        Optional<TouristFacility> touristFacility = findByContentId(contentId);
+        Optional<BarrierFreeFacility> barrierFreeFacility = barrierFreeFacilityService.findByContentId(contentId);
 
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         TouristFacilityInfoResponseDto dto = new TouristFacilityInfoResponseDto();
 
-        if (barrierFreeFacility != null) {
-             dto = modelMapper.map(barrierFreeFacility,
+        if (touristFacility.isPresent() && barrierFreeFacility.isPresent()) {
+             dto = modelMapper.map(barrierFreeFacility.get(),
                     TouristFacilityInfoResponseDto.class);
-        }
+            dto.setImgs(imgs);
+            dto.setContentId(touristFacility.get().getContentId());
+            dto.setContentTypeId(touristFacility.get().getContentTypeId());
+            dto.setTitle(touristFacility.get().getTitle());
+            dto.setAddr1(touristFacility.get().getAddr1());
+            dto.setAddr2(touristFacility.get().getAddr2());
+            dto.setOverview(touristFacility.get().getOverview());
+            dto.setHomepage(touristFacility.get().getHomepage());
+            dto.setTel(touristFacility.get().getTel());
+            dto.setCheckInTime(touristFacility.get().getCheckInTime());
+            dto.setCheckOutTime(touristFacility.get().getCheckOutTime());
+            dto.setParking(touristFacility.get().getParking());
+            dto.setRating(touristFacility.get().getRating());
+            dto.setAreaCode(touristFacility.get().getAreaCode());
+            dto.setSignguide(touristFacility.get().getSigunguCode());
+            dto.setMapx(touristFacility.get().getMapx());
+            dto.setMapy(touristFacility.get().getMapy());
 
-        dto.setImgs(imgs);
-        dto.setContentId(facility.getContentId());
-        dto.setContentTypeId(facility.getContentTypeId());
-        dto.setTitle(facility.getTitle());
-        dto.setAddr1(facility.getAddr1());
-        dto.setAddr2(facility.getAddr2());
-        dto.setOverview(facility.getOverview());
-        dto.setHomepage(facility.getHomepage());
-        dto.setTel(facility.getTel());
-        dto.setCheckInTime(facility.getCheckInTime());
-        dto.setCheckOutTime(facility.getCheckOutTime());
-        dto.setParking(facility.getParking());
-        dto.setRating(facility.getRating());
-        dto.setAreaCode(facility.getAreaCode());
-        dto.setSignguide(facility.getSigunguCode());
-        dto.setMapx(facility.getMapx());
-        dto.setMapy(facility.getMapy());
+            Optional<TouristFacilityHeart> heart = touristFacilityHeartRepository.findByIdsIfLikes(member, touristFacility.get());
 
-        Optional<TouristFacilityHeart> heart = touristFacilityHeartRepository.findByIdsIfLikes(member, facility);
-
-        if (heart.isPresent()) {
-            dto.setLike(1);
-        } else {
-            dto.setLike(0);
+            if (heart.isPresent()) {
+                dto.setLike(1);
+            } else {
+                dto.setLike(0);
+            }
         }
         return dto;
     }

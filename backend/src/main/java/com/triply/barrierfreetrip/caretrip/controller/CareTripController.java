@@ -1,12 +1,13 @@
 package com.triply.barrierfreetrip.caretrip.controller;
 
+import com.triply.barrierfreetrip.ApiResponseBody;
+import com.triply.barrierfreetrip.EmptyDocument;
+import com.triply.barrierfreetrip.ResponseBodyWrapper;
 import com.triply.barrierfreetrip.caretrip.dto.CareTripListResponseDto;
 import com.triply.barrierfreetrip.caretrip.service.CareTripService;
 import com.triply.barrierfreetrip.member.domain.Member;
-import com.triply.barrierfreetrip.member.service.OauthMemberService;
+import com.triply.barrierfreetrip.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,18 +19,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CareTripController {
     private final CareTripService careTripService;
-    private final OauthMemberService memberService;
+    private final MemberRepository memberRepository;
+    private final EmptyDocument emptyDocument = new EmptyDocument();
 
     /**
      * 돌봄 시설 리스트 리턴하는 함수
      * @return 돌봄 시설 리스트 리턴
      */
     @GetMapping("/care-services/{sido}/{sigungu}")
-    public ResponseEntity returnCareServiceList(@PathVariable("sido") String sido,
+    public ApiResponseBody<?> returnCareServiceList(@PathVariable("sido") String sido,
                                                 @PathVariable("sigungu") String sigungu){
-        Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<CareTripListResponseDto> result = careTripService.returnListDto(member, sido, sigungu);
+        //Member member = memberRepository.findById(Long.valueOf(41)).get();
+        try {
+            Member member = (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            List<CareTripListResponseDto> careTripListResponseDtos = careTripService.returnListDto(member, sido, sigungu);
 
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+            ResponseBodyWrapper<List<CareTripListResponseDto>> result = new ResponseBodyWrapper<>(careTripListResponseDtos);
+            return ApiResponseBody.createSuccess(result);
+        } catch (Exception e) {
+            return ApiResponseBody.createFail(emptyDocument, e.getMessage());
+        }
     }
 }

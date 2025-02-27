@@ -1,5 +1,6 @@
 package com.triply.barrierfreetrip;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -27,14 +28,21 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         response.setContentType("application/json; charset=UTF-8");
 
         String code = "";
-        if (e.getMessage().equals("유효하지 않은 토큰")) {
+        if (e.getMessage().equals("토큰 기한 만료")) {
             code = "600";
-        } else if (e.getMessage().equals("헤더에 토큰 없음")) {
+        }  else if (e.getMessage().equals("헤더에 토큰 없음")) {
             code = "601";
+        } else if (e.getMessage().equals("유효하지 않은 토큰")) {
+            code = "602";
         } else {
-          code = "602";
+          code = "603";
         }
-        JwtExceptionResponse jwtExceptionResponse = new JwtExceptionResponse(e.getMessage(), HttpStatus.UNAUTHORIZED, code);
-        response.getWriter().write(jwtExceptionResponse.convertToJson(jwtExceptionResponse));
+        // 공통 응답 메시지 포맷 변경으로 인한 주석 처리
+        //JwtExceptionResponse jwtExceptionResponse = new JwtExceptionResponse(e.getMessage(), HttpStatus.UNAUTHORIZED, code);
+        ApiResponseBody<JwtExceptionResponse> jwtExceptionResponse = ApiResponseBody.createFail(new JwtExceptionResponse(code), e.getMessage());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(jwtExceptionResponse);
+        response.getWriter().write(json);
     }
 }
