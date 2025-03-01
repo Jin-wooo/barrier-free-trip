@@ -110,9 +110,7 @@ data class SearchRsltListDto(
         val rating: String?,
         val tel: String,
         val title: String,
-        val type: Int,
-        val id: Int,
-        val like: Int
+        val type: Int
     )
 }
 
