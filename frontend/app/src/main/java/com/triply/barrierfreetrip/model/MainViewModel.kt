@@ -12,6 +12,7 @@ import com.triply.barrierfreetrip.data.InfoSquareListDto
 import com.triply.barrierfreetrip.data.RegionListDto
 import com.triply.barrierfreetrip.data.ReviewListDTO
 import com.triply.barrierfreetrip.data.ReviewRegistrationDTO
+import com.triply.barrierfreetrip.data.SearchRsltListDto
 import com.triply.barrierfreetrip.data.TourFacilityDetail
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_CARE
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_CHARGER
@@ -156,11 +157,11 @@ class MainViewModel() : ViewModel() {
                 if (response.isSuccessful) {
                     _sigunguCodes.value = if (response.body()!!.respDocument is RegionListDto) {
                         (response.body()?.respDocument as? RegionListDto)?.items ?: listOf(
-                                RegionListDto.Region(
-                                    code = "-1",
-                                    name = "구군 선택"
-                                )
+                            RegionListDto.Region(
+                                code = "-1",
+                                name = "구군 선택"
                             )
+                        )
                     } else {
                         listOf(
                             RegionListDto.Region(
@@ -402,6 +403,41 @@ class MainViewModel() : ViewModel() {
                             like = (chargerInfoResponse.body()?.respDocument as? ChargerDetail)?.like ?: 0
                         )
                     }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _isDataLoading.value = Event(false)
+            }
+        }
+    }
+
+    private val _searchResult by lazy { MutableLiveData<List<InfoSquareListDto.InfoSquareItemDto>>() }
+    val searchResult: LiveData<List<InfoSquareListDto.InfoSquareItemDto>>
+        get() = _searchResult
+
+    fun getSearchResult(keyword: String) {
+        viewModelScope.launch {
+            try {
+                _isDataLoading.value = Event(true)
+
+                val response = retrofit.getSearchResult(keyword = keyword)
+                if (response.isSuccessful) {
+                    _searchResult.value = if (response.body()?.respDocument is SearchRsltListDto) {
+                        val respItem = (response.body()?.respDocument as? SearchRsltListDto)?.items ?: emptyList()
+                        respItem.map {
+                            InfoSquareListDto.InfoSquareItemDto(
+                                addr = it.addr,
+                                contentId = "-1",
+                                contentTypeId = "-1",
+                                firstimg = it.firstImage ?: "",
+                                like = false,
+                                rating = it.rating ?: "0.0",
+                                tel = it.tel,
+                                title = it.title
+                            )
+                        }
+                    } else emptyList()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
