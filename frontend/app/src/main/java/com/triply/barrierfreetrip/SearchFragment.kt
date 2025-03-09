@@ -46,7 +46,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
                 })
                 setOnItemClickListener(object: OnItemClickListener {
                     override fun onItemClick(position: Int) {
-
+                        binding.rvSearchList.scrollToPosition(0)
+                        binding.etSearch.setText(infoList.getOrElse(position) { "" })
+                        viewModel.getSearchResult(binding.etSearch.text.toString())
+                        searchViewModel.addSearchKeyword(binding.etSearch.text.toString())
                     }
                 })
             }
@@ -58,10 +61,22 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
         }
 
         viewModel.searchResult.observe(viewLifecycleOwner) { result ->
-            if (result.isNullOrEmpty()) {
-                binding.ivNoneData.isVisible = true
+            if (result == null) {
+                // 어떤 동작도 하지 않았을 때(제일 처음 진입) : 키워드만 보이기
+                binding.rvSearchList.visibility = View.GONE
+                binding.clSearchHistoryContainer.visibility = View.VISIBLE
+                binding.ivNoneData.visibility = View.GONE
+            } else if (result.isEmpty()) {
+                // 검색했으나 검색결과가 없는 경우
+                binding.rvSearchList.visibility = View.GONE
+                binding.clSearchHistoryContainer.visibility = View.GONE
+                binding.ivNoneData.visibility = View.VISIBLE
                 Log.d(TAG, "no data from search api")
             } else {
+                // 검색 결과가 있는 경우
+                binding.rvSearchList.visibility = View.VISIBLE
+                binding.clSearchHistoryContainer.visibility = View.GONE
+                binding.ivNoneData.visibility = View.GONE
                 (binding.rvSearchList.adapter as InfoSquareAdapter).setDataList(result)
             }
             (binding.rvSearchList.adapter as InfoSquareAdapter).setOnItemClickListener(
@@ -84,12 +99,15 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
         }
 
         searchViewModel.searchKeywordList.observe(viewLifecycleOwner) { history ->
-            if (history.isNullOrEmpty()) {
-                binding.rvKeywordList.visibility = View.GONE
+            if (history == null) {
+                // 어떤 동작도 하지 않았을 때(제일 처음 진입) : 키워드만 보이기
+            } else if (history.isEmpty()) {
+                // 검색했으나 검색결과가 없는 경우
+                binding.clSearchHistoryContainer.visibility = View.GONE
                 binding.tvNoneRecentlySearchKeyword.visibility = View.VISIBLE
                 binding.btnDeletionOfAllSearchHistory.visibility = View.GONE
             } else {
-                binding.rvKeywordList.visibility = View.VISIBLE
+                binding.clSearchHistoryContainer.visibility = View.VISIBLE
                 binding.tvNoneRecentlySearchKeyword.visibility = View.GONE
                 binding.btnDeletionOfAllSearchHistory.visibility = View.VISIBLE
                 (binding.rvKeywordList.adapter as SearchHistoryAdapter).setSearchHistory(history = history)
@@ -98,6 +116,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
 
         binding.etSearch.setOnKeyListener { _, keyCode, event ->
             if (keyCode in listOf(KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_SEARCH) && event.action == KeyEvent.ACTION_DOWN) {
+                binding.rvSearchList.scrollToPosition(0)
                 if (binding.etSearch.text.toString().isNotEmpty()) {
                     viewModel.getSearchResult(binding.etSearch.text.toString())
                     searchViewModel.addSearchKeyword(binding.etSearch.text.toString())
@@ -105,17 +124,13 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
             }
             true
         }
-
-        binding.etSearch.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.imgbtnSearchBack.visibility = View.VISIBLE
-            }
-        }
         binding.imgbtnSearchBack.setOnClickListener {
             it.visibility = View.INVISIBLE
+            binding.etSearch.text?.clear()
             val imeService = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imeService.hideSoftInputFromWindow(binding.etSearch.windowToken, 0)
             binding.etSearch.clearFocus()
+            viewModel.clearSearchResult()
         }
 
         binding.etSearch.addTextChangedListener(
@@ -128,9 +143,14 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
                 ) {}
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if (s.isNullOrEmpty()) {
+                    if (s.isNullOrEmpty() || s.trim().isBlank()) {
+                        viewModel.clearSearchResult()
+                        binding.imgbtnSearchBack.visibility = View.INVISIBLE
+                        binding.rvSearchList.visibility = View.GONE
+                        binding.ivNoneData.visibility = View.GONE
                         binding.clSearchHistoryContainer.visibility = View.VISIBLE
                     } else {
+                        binding.imgbtnSearchBack.visibility = View.VISIBLE
                         binding.clSearchHistoryContainer.visibility = View.GONE
                     }
                 }

@@ -446,4 +446,8 @@ class MainViewModel() : ViewModel() {
             }
         }
     }
+
+    fun clearSearchResult() {
+        _searchResult.value = null
+    }
 }

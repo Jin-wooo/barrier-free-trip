@@ -11,13 +11,13 @@ import kotlinx.coroutines.launch
 class SearchViewModel(application: Application) : AndroidViewModel(application) {
     private val searchKeywordDatastore = SearchHistoryStoreModule(application)
 
-    private val _searchKeywordList: MutableLiveData<List<String>> by lazy { MutableLiveData(emptyList()) }
-    val searchKeywordList: LiveData<List<String>>
+    private val _searchKeywordList: MutableLiveData<List<String>?> by lazy { MutableLiveData(null) }
+    val searchKeywordList: LiveData<List<String>?>
         get() = _searchKeywordList
 
     fun addSearchKeyword(keyword: String) {
         viewModelScope.launch {
-            searchKeywordDatastore.updateSearchHistory(keyword)
+            searchKeywordDatastore.updateSearchHistory(keyword.take(100))
         }
     }
 

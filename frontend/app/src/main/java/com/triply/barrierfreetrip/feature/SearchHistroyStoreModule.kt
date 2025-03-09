@@ -44,11 +44,11 @@ class SearchHistoryStoreModule(private val context: Context) {
                 gson.fromJson(preferences[searchKeywordList] ?: "{}", Map::class.java).toMutableMap()
 
             // 검색어-검색시간 맵에 새 키워드에 대한 값 저장
-            existingSearchKeywordMap[searchKeyword] = SimpleDateFormat("yyyy-MM-DD HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis()).toString()
+            existingSearchKeywordMap[searchKeyword] = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis()).toString()
 
             // 만약 검색어가 10개가 넘어가면 가장 먼저 검색했던 것 삭제
             if (existingSearchKeywordMap.keys.size > 10) {
-                val firstSearchKeyword = existingSearchKeywordMap.toList().minBy { it.second.toString() }.toString()
+                val firstSearchKeyword = existingSearchKeywordMap.toList().minBy { it.second.toString() }.first
                 existingSearchKeywordMap.remove(firstSearchKeyword)
             }
 
