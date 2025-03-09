@@ -412,8 +412,8 @@ class MainViewModel() : ViewModel() {
         }
     }
 
-    private val _searchResult by lazy { MutableLiveData<List<InfoSquareListDto.InfoSquareItemDto>>() }
-    val searchResult: LiveData<List<InfoSquareListDto.InfoSquareItemDto>>
+    private val _searchResult by lazy { MutableLiveData<List<InfoSquareListDto.InfoSquareItemDto>?>(null) }
+    val searchResult: LiveData<List<InfoSquareListDto.InfoSquareItemDto>?>
         get() = _searchResult
 
     fun getSearchResult(keyword: String) {

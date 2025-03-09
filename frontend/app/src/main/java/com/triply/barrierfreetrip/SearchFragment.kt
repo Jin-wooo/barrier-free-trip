@@ -22,6 +22,7 @@ import com.triply.barrierfreetrip.model.SearchViewModel
 
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_search) {
+    private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
     private val viewModel: MainViewModel by viewModels()
     private val searchViewModel: SearchViewModel by viewModels()
 
@@ -48,6 +49,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
                     override fun onItemClick(position: Int) {
                         binding.rvSearchList.scrollToPosition(0)
                         binding.etSearch.setText(infoList.getOrElse(position) { "" })
+                        binding.etSearch.setSelection(binding.etSearch.length())
                         viewModel.getSearchResult(binding.etSearch.text.toString())
                         searchViewModel.addSearchKeyword(binding.etSearch.text.toString())
                     }
@@ -58,6 +60,14 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
 
         binding.btnDeletionOfAllSearchHistory.setOnClickListener {
             searchViewModel.deleteAllSearchKeyword()
+        }
+
+        viewModel.isDataLoading.observe(viewLifecycleOwner) {
+            if (it.getContentIfNotHandled() == true) {
+                loadingProgressBar.show()
+            } else {
+                loadingProgressBar.dismiss()
+            }
         }
 
         viewModel.searchResult.observe(viewLifecycleOwner) { result ->
@@ -99,19 +109,14 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
         }
 
         searchViewModel.searchKeywordList.observe(viewLifecycleOwner) { history ->
-            if (history == null) {
-                // 어떤 동작도 하지 않았을 때(제일 처음 진입) : 키워드만 보이기
-            } else if (history.isEmpty()) {
-                // 검색했으나 검색결과가 없는 경우
-                binding.clSearchHistoryContainer.visibility = View.GONE
+            if (history.isNullOrEmpty()) {
                 binding.tvNoneRecentlySearchKeyword.visibility = View.VISIBLE
                 binding.btnDeletionOfAllSearchHistory.visibility = View.GONE
             } else {
-                binding.clSearchHistoryContainer.visibility = View.VISIBLE
                 binding.tvNoneRecentlySearchKeyword.visibility = View.GONE
                 binding.btnDeletionOfAllSearchHistory.visibility = View.VISIBLE
-                (binding.rvKeywordList.adapter as SearchHistoryAdapter).setSearchHistory(history = history)
             }
+            (binding.rvKeywordList.adapter as SearchHistoryAdapter).setSearchHistory(history = history ?: emptyList())
         }
 
         binding.etSearch.setOnKeyListener { _, keyCode, event ->
