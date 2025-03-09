@@ -145,7 +145,6 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
         val options = InfoWindowOptions.from(LatLng.from(latitude, longitude))
         options.setBody(body)
         options.setBodyOffset(0f, -4F)
-        println(options.id)
         return options
     }
 
