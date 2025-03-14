@@ -1,9 +1,8 @@
 package com.triply.barrierfreetrip
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
 import com.triply.barrierfreetrip.StayInfoFragment.Companion.CONTENT_TITLE
@@ -29,6 +28,7 @@ class ReviewFragment : BaseFragment<FragmentReviewBinding>(R.layout.fragment_rev
     }
 
     override fun initInViewCreated() {
+        val navController = findNavController()
         viewModel.getReviews(contentId)
 
         with(binding) {
@@ -36,7 +36,7 @@ class ReviewFragment : BaseFragment<FragmentReviewBinding>(R.layout.fragment_rev
             tvContentTitle.text = title
 
             ivReviewBack.setOnClickListener {
-                if (parentFragmentManager.backStackEntryCount > 0) parentFragmentManager.popBackStack()
+                navController.navigateUp()
             }
 
             // 리뷰 리사이클러뷰 설정
@@ -51,16 +51,12 @@ class ReviewFragment : BaseFragment<FragmentReviewBinding>(R.layout.fragment_rev
             // 리뷰 작성 버튼
             btnWritingReview.setOnClickListener {
                 val bundle = Bundle()
-                val reviewWritingFragment = ReviewWritingFragment()
 
                 bundle.putString(CONTENT_ID, contentId)
-                reviewWritingFragment.arguments = bundle
-
-                parentFragmentManager
-                    .beginTransaction()
-                    .add(android.R.id.content, reviewWritingFragment)
-                    .addToBackStack(null)
-                    .commit()
+                navController.navigate(
+                    resId = R.id.reviewWritingFragment,
+                    args = bundle
+                )
             }
         }
 

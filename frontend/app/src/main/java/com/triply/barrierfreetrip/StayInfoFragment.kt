@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -34,6 +35,7 @@ class StayInfoFragment : BaseFragment<FragmentStayInfoBinding>(R.layout.fragment
     }
 
     override fun initInViewCreated() {
+        val navController = findNavController()
         with(binding.rvConvenienceInfo) {
             adapter = ConvenienceInfoAdapter()
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -41,22 +43,18 @@ class StayInfoFragment : BaseFragment<FragmentStayInfoBinding>(R.layout.fragment
         }
 
         binding.imgbtnBack.setOnClickListener {
-            if (parentFragmentManager.backStackEntryCount > 0) parentFragmentManager.popBackStack()
+            navController.navigateUp()
         }
 
         binding.btnStayinfoReview.setOnClickListener {
             val bundle = Bundle()
-            val reviewFragment = ReviewFragment()
 
             bundle.putString(CONTENT_ID, contentId)
             bundle.putString(CONTENT_TITLE, contentTitle)
-            reviewFragment.arguments = bundle
-
-            requireActivity().supportFragmentManager
-                .beginTransaction()
-                .add(android.R.id.content, reviewFragment)
-                .addToBackStack(null)
-                .commit()
+            navController.navigate(
+                resId = R.id.reviewFragment,
+                args = bundle
+            )
         }
 
         with(binding.vpStayinfo) {

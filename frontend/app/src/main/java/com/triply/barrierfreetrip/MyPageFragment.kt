@@ -2,23 +2,31 @@ package com.triply.barrierfreetrip
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.activity.OnBackPressedCallback
+import androidx.navigation.fragment.findNavController
 import com.triply.barrierfreetrip.StayInfoFragment.Companion.CONTENT_TITLE
 import com.triply.barrierfreetrip.databinding.FragmentMyPageBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
-import com.triply.barrierfreetrip.model.MainViewModel
 
 
 class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_page) {
+
     override fun initInViewCreated() {
+        val navController = findNavController()
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+
+                }
+            }
+        )
+
         binding.btnMypageAppinfo.setOnClickListener {
-            requireActivity().supportFragmentManager
-                .beginTransaction()
-                .add(android.R.id.content, AppInfoFragment())
-                .addToBackStack(null)
-                .commit()
+            navController.navigate(
+                resId = R.id.appInfoFragment
+            )
         }
 
         binding.tvMypageLogout.setOnClickListener {

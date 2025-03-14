@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -29,6 +30,14 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
     private val TAG = "SearchFragment"
 
     override fun initInViewCreated() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+
+                }
+            }
+        )
 
         // 검색결과 리사이클러뷰 세팅
         with(binding) {
@@ -92,17 +101,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
             (binding.rvSearchList.adapter as InfoSquareAdapter).setOnItemClickListener(
                 object : OnItemClickListener {
                     override fun onItemClick(position: Int) {
-//                        val itemId = result.getOrNull(position)?.id ?: 0
-//                        val bundle = Bundle()
-//                        val stayInfoFragment = StayInfoFragment()
-//
-//                        bundle.putString("id", itemId.toString())
-//                        stayInfoFragment.arguments = bundle
-//
-//                        requireActivity().supportFragmentManager
-//                            .beginTransaction()
-//                            .replace(R.id.main_nav_host_fragment, stayInfoFragment)
-//                            .commit()
+
                     }
                 }
             )

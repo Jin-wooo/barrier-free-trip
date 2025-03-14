@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.triply.barrierfreetrip.databinding.FragmentReviewWritingBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.MainViewModel
@@ -21,12 +22,13 @@ class ReviewWritingFragment : BaseFragment<FragmentReviewWritingBinding>(R.layou
     }
 
     override fun initInViewCreated() {
+        val navController = findNavController()
         with(binding) {
             // 제목 설정
 
             // 돌아가기 버튼 설정
             ivReviewWritingBack.setOnClickListener {
-                backToPrevFragment()
+                navController.navigateUp()
             }
 
             // 등록 버튼 설정
@@ -84,14 +86,10 @@ class ReviewWritingFragment : BaseFragment<FragmentReviewWritingBinding>(R.layou
 
         viewModel.isDataLoading.observe(viewLifecycleOwner) {
             if (it.getContentIfNotHandled() == true) {
-                BFTReviewUploadCheckDialog(requireContext()) { backToPrevFragment() }.show()
+                BFTReviewUploadCheckDialog(requireContext()) {
+                    navController.navigateUp()
+                }.show()
             }
-        }
-    }
-
-    private fun backToPrevFragment() {
-        if (parentFragmentManager.backStackEntryCount > 0) {
-            parentFragmentManager.popBackStack()
         }
     }
 }

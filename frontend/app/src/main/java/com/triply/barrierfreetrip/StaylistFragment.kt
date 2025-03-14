@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.triply.barrierfreetrip.HomeFragment.Companion.CONTENT_TYPE
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
@@ -47,11 +48,12 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
     }
 
     override fun initInViewCreated() {
+        val navController = findNavController()
         initTitle()
         initSpinner()
 
         binding.btnBack.setOnClickListener {
-            if (parentFragmentManager.backStackEntryCount > 0) parentFragmentManager.popBackStack()
+            navController.navigateUp()
         }
 
         viewModel.getSidoCode()
@@ -133,17 +135,12 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
                     override fun onItemClick(position: Int) {
                         val item = fcltList[position]
                         val bundle = Bundle()
-                        val stayInfoFragment = StayInfoFragment()
-
                         bundle.putString(CONTENT_ID, item.contentId)
                         bundle.putString(CONTENT_TYPE, CONTENT_TYPE_STAY)
-                        stayInfoFragment.arguments = bundle
-
-                        requireActivity().supportFragmentManager
-                            .beginTransaction()
-                            .replace(android.R.id.content, stayInfoFragment)
-                            .addToBackStack(null)
-                            .commit()
+                        navController.navigate(
+                            resId = R.id.stayInfoFragment,
+                            args = bundle
+                        )
                     }
                 })
                 setOnLikeClickListener(object : OnLikeClickListener {

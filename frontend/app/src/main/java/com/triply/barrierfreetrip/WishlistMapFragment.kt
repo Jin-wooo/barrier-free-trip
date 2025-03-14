@@ -3,6 +3,7 @@ package com.triply.barrierfreetrip
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -42,11 +43,12 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
     }
 
     override fun initInViewCreated() {
+        val navController = findNavController()
         initMap()
         binding.tvTitle.text = "전동휠체어 급속충전기"
 
         binding.btnBack.setOnClickListener {
-            backToPrevFragment()
+            navController.navigateUp()
         }
         viewModel.getChargerInfo(contentId = contentId?.toLong() ?: 0)
 
@@ -97,14 +99,6 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
     override fun onPause() {
         super.onPause()
         binding.mapChargerInfo.pause()
-    }
-
-    private fun backToPrevFragment() {
-        val frgManager = parentFragmentManager
-        frgManager.beginTransaction()
-            .remove(this@WishlistMapFragment)
-            .commit()
-        frgManager.popBackStack()
     }
 
     private fun initMap() {

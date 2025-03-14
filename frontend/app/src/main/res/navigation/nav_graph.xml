@@ -93,7 +93,7 @@
         tools:layout="@layout/fragment_review_writing" />
     <fragment
         android:id="@+id/appInfoFragment"
-        android:name="com.triply.barrierfreetrip.ReviewWritingFragment"
+        android:name="com.triply.barrierfreetrip.AppInfoFragment"
         android:label="fragment_appinfo"
         tools:layout="@layout/fragment_appinfo" />
 
