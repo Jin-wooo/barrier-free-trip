@@ -4,10 +4,13 @@ import com.triply.barrierfreetrip.caretrip.domain.CareTrip;
 import com.triply.barrierfreetrip.caretrip.service.CareTripService;
 import com.triply.barrierfreetrip.charger.domain.Charger;
 import com.triply.barrierfreetrip.charger.service.ChargerService;
+import com.triply.barrierfreetrip.member.domain.Member;
 import com.triply.barrierfreetrip.rental.domain.Rental;
 import com.triply.barrierfreetrip.rental.service.RentalService;
 import com.triply.barrierfreetrip.search.dto.SearchDto;
 import com.triply.barrierfreetrip.touristfacility.domain.TouristFacility;
+import com.triply.barrierfreetrip.touristfacility.domain.TouristFacilityHeart;
+import com.triply.barrierfreetrip.touristfacility.repository.TouristFacilityHeartRepository;
 import com.triply.barrierfreetrip.touristfacility.service.TouristFacilityService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,8 +28,9 @@ public class SearchServiceImpl implements SearchService{
     private final CareTripService careTripService;
     private final ChargerService chargerService;
     private final RentalService rentalService;
+    private final TouristFacilityHeartRepository touristFacilityHeartRepository;
 
-    public List<SearchDto> search(String keyword) {
+    public List<SearchDto> search(String keyword, Member member) {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         List<SearchDto> results = new ArrayList<>();
@@ -44,9 +48,15 @@ public class SearchServiceImpl implements SearchService{
             searchDto.setAddr(tourist.get().getAddr1());
             searchDto.setFirstImage(tourist.get().getFirstimage());
             searchDto.setType(1);
-//            searchDto.setId(Long.parseLong(tourist.get().getContentId()));
-//            searchDto.setLike(tourist.get().getL);
+            searchDto.setId(Long.parseLong(tourist.get().getContentId()));
 
+            Optional<TouristFacilityHeart> heart = touristFacilityHeartRepository.findByIdsIfLikes(member, tourist.get());
+
+            if (heart.isPresent()) {
+                searchDto.setLike(1);
+            } else {
+                searchDto.setLike(0);
+            }
             results.add(searchDto);
         }
 
