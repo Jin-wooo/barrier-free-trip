@@ -1,5 +1,7 @@
 package com.triply.barrierfreetrip.api
 
+import com.google.gson.GsonBuilder
+import com.triply.barrierfreetrip.data.MetaResponse
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -11,7 +13,11 @@ object RetroInstance {
     private val builder = Retrofit
         .Builder()
         .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(
+            GsonBuilder()
+                .registerTypeAdapter(MetaResponse::class.java, RetrofitDeserializer())
+                .create()
+        ))
     private var client = builder.build()
 
     fun getInstance() : Retrofit = client

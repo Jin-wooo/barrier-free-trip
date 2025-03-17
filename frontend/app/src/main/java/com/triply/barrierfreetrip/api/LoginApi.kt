@@ -7,6 +7,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+
 import retrofit2.http.Query
 
 interface LoginApi {
@@ -15,9 +16,9 @@ interface LoginApi {
         @Body loginParameter: loginParameter
     ) : Response<LoginDto>
 
-    @GET("/authorize")
+    @GET("authorize")
     suspend fun getTokenWithHTML(
-        @Query(value = "client_id") cliendId : String,
+        @Query(value = "client_id") clientId : String,
         @Query(value = "redirect_uri") url : String,
         @Query(value = "response_type") type : String
     ) : Response<ResponseBody>

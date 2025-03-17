@@ -13,9 +13,8 @@ import com.triply.barrierfreetrip.adapter.InfoSquareAdapter
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
 import com.triply.barrierfreetrip.adapter.OnLikeClickListener
 import com.triply.barrierfreetrip.adapter.decoration.StayListItemViewHolderDecoration
-import com.triply.barrierfreetrip.data.InfoSquareDto
-import com.triply.barrierfreetrip.data.Sido
-import com.triply.barrierfreetrip.data.Sigungu
+import com.triply.barrierfreetrip.data.InfoSquareListDto.InfoSquareItemDto
+import com.triply.barrierfreetrip.data.RegionListDto.Region
 import com.triply.barrierfreetrip.databinding.FragmentStaylistBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.MainViewModel
@@ -28,17 +27,17 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
 
     // sido data
-    private val sidoCodes = arrayListOf(Sido(code = "-1", name = "시도 선택"))
+    private val sidoCodes = arrayListOf(Region(code = "-1", name = "시도 선택"))
     private val sidoNames = arrayListOf("시도 선택")
     private var sidoPosition = 0
 
     // sigungu data
-    private val sigunguCodes = arrayListOf(Sigungu(code = "-1", name = "구군 선택"))
+    private val sigunguCodes = arrayListOf(Region(code = "-1", name = "구군 선택"))
     private val sigunguNames = arrayListOf("구군 선택")
     private var sigunguPosition = 0
 
     // facility data
-    private val fcltList = ArrayList<InfoSquareDto>()
+    private val fcltList = ArrayList<InfoSquareItemDto>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +58,7 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
         viewModel.sidoCodes.observe(viewLifecycleOwner) { sidoList ->
             with(sidoCodes) {
                 clear()
-                add(Sido(code = "-1", "시도 선택"))
+                add(Region(code = "-1", "시도 선택"))
                 addAll(sidoList)
             }
             with(sidoNames) {
@@ -72,7 +71,7 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
         viewModel.sigunguCodes.observe(viewLifecycleOwner) { sigunguList ->
             with(sigunguCodes) {
                 clear()
-                add(Sigungu(code = "-1", name = "구군 선택"))
+                add(Region(code = "-1", name = "구군 선택"))
                 addAll(sigunguList)
             }
             with(sigunguNames) {
@@ -143,6 +142,7 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
                         requireActivity().supportFragmentManager
                             .beginTransaction()
                             .replace(android.R.id.content, stayInfoFragment)
+                            .addToBackStack(null)
                             .commit()
                     }
                 })

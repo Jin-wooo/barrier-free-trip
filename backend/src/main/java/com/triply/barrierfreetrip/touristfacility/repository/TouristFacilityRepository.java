@@ -12,7 +12,7 @@ public interface TouristFacilityRepository {
                                             String sigunguCode);
     public List<String> findImgByContentId(String contentId);
 
-    public TouristFacility findByContentId(String contentId);
+    public Optional<TouristFacility> findByContentId(String contentId);
     public Optional<TouristFacility> findByTitle(String keyword);
 
     public List<TouristFacility> findNearHotelsByPos(Double userX, Double userY, double dis);

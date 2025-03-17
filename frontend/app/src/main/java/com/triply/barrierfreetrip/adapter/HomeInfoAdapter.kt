@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.triply.barrierfreetrip.data.InfoListDto
-import com.triply.barrierfreetrip.data.InfoSquareDto
+import com.triply.barrierfreetrip.data.InfoListDto.InfoListItemDto
+import com.triply.barrierfreetrip.data.InfoSquareListDto.InfoSquareItemDto
 import com.triply.barrierfreetrip.databinding.ItemHomefragmentMainMenuBinding
 import com.triply.barrierfreetrip.databinding.ItemHomefragmentTitleBinding
 import com.triply.barrierfreetrip.databinding.ItemInfoListBinding
@@ -111,8 +111,8 @@ class HomeInfoAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val tel: String,
             val title: String
         ): HomeInfoDTO() {
-            fun convertAdapterDataintoDTO(): InfoSquareDto {
-                return InfoSquareDto(
+            fun convertAdapterDataintoDTO(): InfoSquareItemDto {
+                return InfoSquareItemDto(
                     addr = this.addr,
                     contentId = this.contentId,
                     contentTypeId = this.contentTypeId,
@@ -132,8 +132,8 @@ class HomeInfoAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val tel: String,
             val title: String
         ): HomeInfoDTO() {
-            fun convertAdapterDataintoDTO(): InfoListDto {
-                return InfoListDto(
+            fun convertAdapterDataintoDTO(): InfoListItemDto {
+                return InfoListItemDto(
                     id = this.id,
                     addr = this.addr,
                     like = this.like,

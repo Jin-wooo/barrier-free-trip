@@ -17,10 +17,10 @@ import com.triply.barrierfreetrip.databinding.FragmentStaylistBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.MainViewModel
 
-class WishlistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment_staylist) {
+class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragment_staylist) {
     private val viewModel: MainViewModel by viewModels()
     private var type: String? = null
-    private val infoList = arrayListOf<InfoListDto>()
+    private val infoList = arrayListOf<InfoListDto.InfoListItemDto>()
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
 
     // sido data
@@ -181,7 +181,7 @@ class WishlistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
                 id: Long
             ) {
                 if (position == 0) return
-                
+
                 binding.tvRequireSelection.visibility = View.GONE
                 sigunguPosition = position
                 getFcltListData(
@@ -201,11 +201,11 @@ class WishlistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
                     setOnItemClickListener(object : OnItemClickListener {
                         override fun onItemClick(position: Int) {
                             val item = infoList.getOrNull(position)
-                            item?.addr?.let {
+                            item?.id?.let {
                                 val bundle = Bundle()
                                 val fragment = WishlistMapFragment()
 
-                                bundle.putString(CONTENT_ID, it)
+                                bundle.putString(CONTENT_ID, it.toString())
                                 fragment.arguments = bundle
 
                                 requireActivity().supportFragmentManager

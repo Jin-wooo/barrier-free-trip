@@ -39,11 +39,13 @@ public class TouristFacilityRepositoryImpl implements TouristFacilityRepository 
     }
 
     @Override
-    public TouristFacility findByContentId(String contentId) {
-        return em.createQuery("select tf from TouristFacility tf " +
-                "where tf.contentId=:contentIds", TouristFacility.class)
+    public Optional<TouristFacility> findByContentId(String contentId) {
+        List<TouristFacility> touristFacilities = em.createQuery("select tf from TouristFacility tf " +
+                        "where tf.contentId=:contentIds", TouristFacility.class)
                 .setParameter("contentIds", contentId)
-                .getSingleResult();
+                .getResultList();
+
+        return touristFacilities.stream().findAny();
     }
 
     @Override
