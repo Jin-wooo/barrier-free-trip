@@ -20,7 +20,7 @@ object LoginInstance {
     val NAVER_BASE_URL = "https://nid.naver.com/oauth2.0/"
     val NAVER_REDIRECT_URL = "$URL/oauth/naver"
 
-    val gson = GsonBuilder().setLenient().create();
+    val gson = GsonBuilder().setLenient().create()
 
     fun getKakaoApi() : LoginApi {
         return Retrofit.Builder()

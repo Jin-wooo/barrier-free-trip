@@ -7,7 +7,7 @@
 
         <variable
             name="squareItem"
-            type="com.triply.barrierfreetrip.data.InfoSquareDto" />
+            type="com.triply.barrierfreetrip.data.InfoSquareListDto.InfoSquareItemDto" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
