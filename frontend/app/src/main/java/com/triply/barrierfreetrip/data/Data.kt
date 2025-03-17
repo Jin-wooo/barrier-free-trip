@@ -3,13 +3,34 @@ package com.triply.barrierfreetrip.data
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import retrofit2.http.Field
 
-data class LoginDto(
+
+sealed class RespDocument()
+data class MetaResponse<T : RespDocument>(
+    val status : String,
+    val respDocument : T,
+    val message : String?
+)
+
+data class LoginDto2(
     val accessToken: String,
     val email: String,
     val nickname: String,
     val refreshToken: String
 )
+
+data class LoginDto(
+    val accessToken: String
+)
+
+data class loginParameter(
+    val serviceUserId : String,
+    val email : String,
+    val nickname : String
+)
+
+data class accessToken(val token : String) : RespDocument()
 
 data class TourFacilityDetail(
     val _exit: Any,

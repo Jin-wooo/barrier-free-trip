@@ -19,6 +19,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -92,4 +96,15 @@ dependencies {
     // DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation "androidx.datastore:datastore-preferences-core:1.0.0"
+
+
+    // Kakao Login
+    implementation 'com.kakao.sdk:v2-user:2.12.1'
+
+    // 카카오 지도
+    implementation 'com.kakao.maps.open:android:2.9.5'
+
+    // GPS
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
+
 }

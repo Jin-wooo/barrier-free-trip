@@ -6,6 +6,7 @@ import com.triply.barrierfreetrip.data.Charger
 import com.triply.barrierfreetrip.data.ChargerDetail
 import com.triply.barrierfreetrip.data.InfoListDto
 import com.triply.barrierfreetrip.data.InfoSquareDto
+import com.triply.barrierfreetrip.data.LoginDto
 import com.triply.barrierfreetrip.data.RentalServicePlace
 import com.triply.barrierfreetrip.data.RestPlace
 import com.triply.barrierfreetrip.data.SearchRsltItem
