@@ -4,44 +4,159 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".SearchFragment">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <SearchView
-            android:id="@+id/sv_search"
-            android:layout_width="match_parent"
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/imgbtn_search_back"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_back"
+            android:tint="@color/black"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/ll_search_box"
+            app:layout_constraintEnd_toStartOf="@id/ll_search_box"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ll_search_box" />
+
+        <LinearLayout
+            android:id="@+id/ll_search_box"
+            android:layout_width="0dp"
             android:layout_height="50dp"
+            android:layout_marginStart="0dp"
             android:layout_marginTop="30dp"
-            android:layout_marginLeft="00dp"
-            android:iconifiedByDefault="false"
-            app:queryHint="@string/search_hint"
-            app:queryBackground="@drawable/bg_search"
-            app:searchIcon="@drawable/ic_search"
-            />
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/bg_search"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgbtn_search_back"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <FrameLayout
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_search" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:background="@color/transparent"
+                android:hint="@string/search_hint" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_search_history_container"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            app:layout_constraintTop_toBottomOf="parent">
-
-            <ImageView
-                android:id="@+id/iv_none_data"
-                android:layout_width="200dp"
-                android:layout_height="300dp"
-                android:visibility="invisible"
-                app:srcCompat="@drawable/ic_search_none_data" />
-
-        </FrameLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_list"
-            android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:layout_marginTop="100dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="30dp"
+            android:background="@color/white"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sv_search" />
-    </RelativeLayout>
+            app:layout_constraintTop_toBottomOf="@id/ll_search_box">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_recently_search_word"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="최근 검색"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/btn_deletion_of_all_search_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:text="전체 삭제"
+                android:textColor="@color/btn_nav_gray"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_keyword_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_recently_search_word" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_none_recently_search_keyword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:text="최근 검색한 것이 없습니다."
+                android:textColor="@color/bright_gray"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_recently_search_word" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_search_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="30dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_search_box" />
+
+        <LinearLayout
+            android:id="@+id/iv_none_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
+                app:srcCompat="@drawable/ic_search_result" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="검색 결과가 없어요"
+                android:textColor="#8B97AA"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="다른 키워드로 검색해보세요."
+                android:textColor="#8B97AA"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

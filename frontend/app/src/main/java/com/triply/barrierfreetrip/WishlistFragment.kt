@@ -181,7 +181,7 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
                 id: Long
             ) {
                 if (position == 0) return
-                
+
                 binding.tvRequireSelection.visibility = View.GONE
                 sigunguPosition = position
                 getFcltListData(
@@ -201,11 +201,11 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
                     setOnItemClickListener(object : OnItemClickListener {
                         override fun onItemClick(position: Int) {
                             val item = infoList.getOrNull(position)
-                            item?.addr?.let {
+                            item?.id?.let {
                                 val bundle = Bundle()
                                 val fragment = WishlistMapFragment()
 
-                                bundle.putString(CONTENT_ID, it)
+                                bundle.putString(CONTENT_ID, it.toString())
                                 fragment.arguments = bundle
 
                                 requireActivity().supportFragmentManager

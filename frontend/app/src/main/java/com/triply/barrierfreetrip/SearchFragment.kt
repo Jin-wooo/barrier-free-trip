@@ -1,97 +1,167 @@
 package com.triply.barrierfreetrip
 
-import android.os.Bundle
+import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
+import android.view.KeyEvent
 import android.view.View
-import android.view.ViewGroup
-import android.widget.SearchView
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.liveData
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.triply.barrierfreetrip.adapter.SearchMultiviewAdapter
-import com.triply.barrierfreetrip.api.BFTApi
-import com.triply.barrierfreetrip.api.RetroInstance
-import com.triply.barrierfreetrip.data.SearchRsltListDto
+import com.triply.barrierfreetrip.adapter.InfoSquareAdapter
+import com.triply.barrierfreetrip.adapter.OnItemClickListener
+import com.triply.barrierfreetrip.adapter.SearchHistoryAdapter
+import com.triply.barrierfreetrip.adapter.decoration.StayListItemViewHolderDecoration
 import com.triply.barrierfreetrip.databinding.FragmentSearchBinding
-import retrofit2.Response
+import com.triply.barrierfreetrip.feature.BaseFragment
+import com.triply.barrierfreetrip.model.MainViewModel
+import com.triply.barrierfreetrip.model.SearchViewModel
 
 
-class SearchFragment : Fragment(R.layout.fragment_search) {
-    var retrofit = RetroInstance.getInstance().create(BFTApi::class.java)
-    private var _binding:  FragmentSearchBinding? = null
-    lateinit var searchMultiviewAdapter: SearchMultiviewAdapter
-    private val binding get() = _binding!!
+class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_search) {
+    private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
+    private val viewModel: MainViewModel by viewModels()
+    private val searchViewModel: SearchViewModel by viewModels()
+
     private val TAG = "SearchFragment"
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // view binding
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+    override fun initInViewCreated() {
 
-//        binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                val SearchRsltItemList = ArrayList<SearchRsltListDto.SearchRsltItem>()
-//                if (query != null) {
-//                     call api
-//                    val responseLiveData : LiveData<List<SearchRsltListDto.SearchRsltItem>> = liveData {
-//                        val response = retrofit.getSearchResult(query.trim())?.body()?.items
-//
-//                        emit(response)
-//                    }
-//                    responseLiveData.observe(viewLifecycleOwner, Observer {
-//                        val list = it.body()?.listIterator()
-//                        if (list != null) {
-//                            binding.ivNoneData.isVisible = false
-//
-//                            if (list.hasNext()) {
-//                                while (list.hasNext()) {
-//                                    val item = list.next()
-//                                    SearchRsltItemList.add(item) }
-//                            } else {
-//                                binding.ivNoneData.isVisible = true
-//                                Log.d(TAG, "no data from search api")
-//                            }
-//
-//                        } else {
-//                            Log.d(TAG, "null from search api")
-//                        }
-//
-//                        searchMultiviewAdapter = SearchMultiviewAdapter(SearchRsltItemList)
-//                        binding.rvList.adapter = searchMultiviewAdapter
-//                        binding.rvList.layoutManager = LinearLayoutManager(context)
+        // 검색결과 리사이클러뷰 세팅
+        with(binding) {
+            rvSearchList.adapter = InfoSquareAdapter()
+            rvSearchList.layoutManager = GridLayoutManager(context, 2)
+            if (rvSearchList.itemDecorationCount < 1) rvSearchList.addItemDecoration(StayListItemViewHolderDecoration())
+        }
 
-//            searchMultiviewAdapter.setItemClickListener(object : SearchMultiviewAdapter.OnItemClickListener {
-//                override fun onClick(view: View, position: Int) {
-//                    val item = SearchRsltItemList[position]
-//                    val bundle = Bundle()
-//                    val stayInfoFragment = StayInfoFragment()
-//
-//                    bundle.putString("id", item.id)
-//                    stayInfoFragment.arguments = bundle
-//
-//                    requireActivity().supportFragmentManager
-//                        .beginTransaction()
-//                        .replace(R.id.main_nav_host_fragment, stayInfoFragment)
-//                        .commit()
-//                }
-//            })
-//                    })
-//                };
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                return true
-//            }
-//        })
+        // 검색키워드 리사이클러뷰 세팅
+        with(binding) {
+            rvKeywordList.adapter = SearchHistoryAdapter().apply {
+                setOnDeleteClickListener(object : OnItemClickListener {
+                    override fun onItemClick(position: Int) {
+                        searchViewModel.deleteSearchKeyword(infoList.getOrElse(position) { "" })
+                    }
+                })
+                setOnItemClickListener(object: OnItemClickListener {
+                    override fun onItemClick(position: Int) {
+                        binding.rvSearchList.scrollToPosition(0)
+                        binding.etSearch.setText(infoList.getOrElse(position) { "" })
+                        binding.etSearch.setSelection(binding.etSearch.length())
+                        viewModel.getSearchResult(binding.etSearch.text.toString())
+                        searchViewModel.addSearchKeyword(binding.etSearch.text.toString())
+                    }
+                })
+            }
+            rvKeywordList.layoutManager = LinearLayoutManager(context)
+        }
 
-        return binding.root
+        binding.btnDeletionOfAllSearchHistory.setOnClickListener {
+            searchViewModel.deleteAllSearchKeyword()
+        }
+
+        viewModel.isDataLoading.observe(viewLifecycleOwner) {
+            if (it.getContentIfNotHandled() == true) {
+                loadingProgressBar.show()
+            } else {
+                loadingProgressBar.dismiss()
+            }
+        }
+
+        viewModel.searchResult.observe(viewLifecycleOwner) { result ->
+            if (result == null) {
+                // 어떤 동작도 하지 않았을 때(제일 처음 진입) : 키워드만 보이기
+                binding.rvSearchList.visibility = View.GONE
+                binding.clSearchHistoryContainer.visibility = View.VISIBLE
+                binding.ivNoneData.visibility = View.GONE
+            } else if (result.isEmpty()) {
+                // 검색했으나 검색결과가 없는 경우
+                binding.rvSearchList.visibility = View.GONE
+                binding.clSearchHistoryContainer.visibility = View.GONE
+                binding.ivNoneData.visibility = View.VISIBLE
+                Log.d(TAG, "no data from search api")
+            } else {
+                // 검색 결과가 있는 경우
+                binding.rvSearchList.visibility = View.VISIBLE
+                binding.clSearchHistoryContainer.visibility = View.GONE
+                binding.ivNoneData.visibility = View.GONE
+                (binding.rvSearchList.adapter as InfoSquareAdapter).setDataList(result)
+            }
+            (binding.rvSearchList.adapter as InfoSquareAdapter).setOnItemClickListener(
+                object : OnItemClickListener {
+                    override fun onItemClick(position: Int) {
+//                        val itemId = result.getOrNull(position)?.id ?: 0
+//                        val bundle = Bundle()
+//                        val stayInfoFragment = StayInfoFragment()
+//
+//                        bundle.putString("id", itemId.toString())
+//                        stayInfoFragment.arguments = bundle
+//
+//                        requireActivity().supportFragmentManager
+//                            .beginTransaction()
+//                            .replace(R.id.main_nav_host_fragment, stayInfoFragment)
+//                            .commit()
+                    }
+                }
+            )
+        }
+
+        searchViewModel.searchKeywordList.observe(viewLifecycleOwner) { history ->
+            if (history.isNullOrEmpty()) {
+                binding.tvNoneRecentlySearchKeyword.visibility = View.VISIBLE
+                binding.btnDeletionOfAllSearchHistory.visibility = View.GONE
+            } else {
+                binding.tvNoneRecentlySearchKeyword.visibility = View.GONE
+                binding.btnDeletionOfAllSearchHistory.visibility = View.VISIBLE
+            }
+            (binding.rvKeywordList.adapter as SearchHistoryAdapter).setSearchHistory(history = history ?: emptyList())
+        }
+
+        binding.etSearch.setOnKeyListener { _, keyCode, event ->
+            if (keyCode in listOf(KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_SEARCH) && event.action == KeyEvent.ACTION_DOWN) {
+                binding.rvSearchList.scrollToPosition(0)
+                if (binding.etSearch.text.toString().isNotEmpty()) {
+                    viewModel.getSearchResult(binding.etSearch.text.toString())
+                    searchViewModel.addSearchKeyword(binding.etSearch.text.toString())
+                }
+            }
+            true
+        }
+        binding.imgbtnSearchBack.setOnClickListener {
+            it.visibility = View.INVISIBLE
+            binding.etSearch.text?.clear()
+            val imeService = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imeService.hideSoftInputFromWindow(binding.etSearch.windowToken, 0)
+            binding.etSearch.clearFocus()
+            viewModel.clearSearchResult()
+        }
+
+        binding.etSearch.addTextChangedListener(
+            object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (s.isNullOrEmpty() || s.trim().isBlank()) {
+                        viewModel.clearSearchResult()
+                        binding.imgbtnSearchBack.visibility = View.INVISIBLE
+                        binding.rvSearchList.visibility = View.GONE
+                        binding.ivNoneData.visibility = View.GONE
+                        binding.clSearchHistoryContainer.visibility = View.VISIBLE
+                    } else {
+                        binding.imgbtnSearchBack.visibility = View.VISIBLE
+                        binding.clSearchHistoryContainer.visibility = View.GONE
+                    }
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            }
+        )
     }
 }
