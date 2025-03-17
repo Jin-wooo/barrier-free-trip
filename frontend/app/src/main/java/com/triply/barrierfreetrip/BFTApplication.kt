@@ -9,8 +9,7 @@ import com.triply.barrierfreetrip.feature.ApikeyStoreModule
 
 class BFTApplication : Application() {
     private lateinit var keyStore: ApikeyStoreModule
-
-
+    
     companion object {
         private lateinit var instance : BFTApplication
         fun getInstance() : BFTApplication = instance
@@ -27,6 +26,7 @@ class BFTApplication : Application() {
         val appInfo = applicationContext().applicationContext.packageManager.getApplicationInfo(
             applicationContext().applicationContext.packageName, PackageManager.GET_META_DATA
         )
+
         KakaoSdk.init(this, appInfo.metaData.getString("KAKAO_KEY").toString())
     }
 
