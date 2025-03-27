@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetroInstance {
-    val BASE_URL = "http://IP주소:8080/"
+    val BASE_URL = "http://(PC IP):8080"
 
     private val httpClient = OkHttpClient.Builder()
     private val builder = Retrofit

@@ -1,5 +1,12 @@
 package com.triply.barrierfreetrip.api
 
+import com.triply.barrierfreetrip.data.ChargerDetail
+import com.triply.barrierfreetrip.data.InfoListDto
+import com.triply.barrierfreetrip.data.InfoSquareDto
+import com.triply.barrierfreetrip.data.LoginDto
+import com.triply.barrierfreetrip.data.RentalServicePlace
+import com.triply.barrierfreetrip.data.RestPlace
+import com.triply.barrierfreetrip.data.ReviewListDTO
 import com.triply.barrierfreetrip.data.MetaResponse
 import com.triply.barrierfreetrip.data.RespDocument
 import com.triply.barrierfreetrip.data.ReviewRegistrationDTO
