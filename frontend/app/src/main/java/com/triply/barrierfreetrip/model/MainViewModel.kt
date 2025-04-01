@@ -450,4 +450,27 @@ class MainViewModel() : ViewModel() {
     fun clearSearchResult() {
         _searchResult.value = null
     }
+
+    private val _logoutResult by lazy { MutableLiveData(false) }
+    val logoutResult: LiveData<Boolean>
+        get() = _logoutResult
+
+    fun logout() {
+        viewModelScope.launch {
+            try {
+                _isDataLoading.value = Event(true)
+
+                val response = retrofit.logout()
+                if (response.isSuccessful) {
+                    _logoutResult.value = response.body()?.status == "success"
+                } else {
+                    _logoutResult.value = false
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _isDataLoading.value = Event(false)
+            }
+        }
+    }
 }

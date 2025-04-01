@@ -103,4 +103,7 @@ interface BFTApi {
         @Path(value = "contentId") contentId: String,
         @Path(value = "likes") likes: Int
     ): Response<Unit>
+
+    @POST("/mylogout")
+    suspend fun logout(): Response<MetaResponse<RespDocument>>
 }

@@ -1,16 +1,21 @@
 package com.triply.barrierfreetrip
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.triply.barrierfreetrip.StayInfoFragment.Companion.CONTENT_TITLE
 import com.triply.barrierfreetrip.databinding.FragmentMyPageBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
+import com.triply.barrierfreetrip.model.MainViewModel
 
 
 class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_page) {
+    private val viewModel: MainViewModel by viewModels()
 
     override fun initInViewCreated() {
         val navController = findNavController()
@@ -40,7 +45,8 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
                     }
 
                     override fun onClickAccept() {
-                        // 로그아웃 API
+                        viewModel.logout()
+                        cancel()
                     }
                 })
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -49,5 +55,16 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
         }
 
         binding.tvMypageNickname.text = arguments?.getString(CONTENT_TITLE)
+
+        viewModel.logoutResult.observe(viewLifecycleOwner) {
+            if (it) {
+                val intent = Intent(activity, LoginActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                startActivity(intent)
+            } else {
+                Log.d("로그아웃 결과", "실패하였습니다.")
+            }
+        }
     }
 }
