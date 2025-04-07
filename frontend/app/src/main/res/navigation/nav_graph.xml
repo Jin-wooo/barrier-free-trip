@@ -95,6 +95,15 @@
         android:id="@+id/appInfoFragment"
         android:name="com.triply.barrierfreetrip.AppInfoFragment"
         android:label="fragment_appinfo"
-        tools:layout="@layout/fragment_appinfo" />
+        tools:layout="@layout/fragment_appinfo" >
+        <action
+            android:id="@+id/action_appInfoFragment_to_appApiFragment"
+            app:destination="@id/appApiFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/appApiFragment"
+        android:name="com.triply.barrierfreetrip.APIFragment"
+        android:label="fragment_api"
+        tools:layout="@layout/fragment_api" />
 
 </navigation>

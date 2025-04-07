@@ -117,7 +117,6 @@ data class ChargerDetail(
     var longitude: Double = 0.0
 }
 
-
 data class CareTour(
     val addr: String,
     val like: Int,
@@ -144,7 +143,6 @@ data class SearchRsltListDto(
         val type: Int
     )
 }
-
 
 data class RestPlace(
     val addr: String,

@@ -96,4 +96,18 @@
     <string name="review_writing_upload">등록</string>
     <string name="review_writing_content_hint">방문후를 적어주세요.</string>
     <string name="show_reviews">리뷰 %1$d개 보기</string>
+
+    <!-- api license -->
+    <string name="api_license_retrofit_title">Retrofit</string>
+    <string name="api_license_retrofit_license">Copyright 2013 Square, Inc.\nApache License 2.0</string>
+    <string name="api_license_glide_title">Glide</string>
+    <string name="api_license_glide_license">Copyright 2014 Google, Inc.\nApache License 2.0</string>
+    <string name="api_license_coroutine_title">Coroutine</string>
+    <string name="api_license_coroutine_license">Copyright 2000-2020 JetBrains s.r.o.\nApache License 2.0</string>
+    <string name="api_license_kakaomap_title">KakaoMaps</string>
+    <string name="api_license_kakaomap_license">Copyright Kakao Corp.</string>
+    <string name="api_license_gps_title">Google Play Services (Location / GPS)</string>
+    <string name="api_license_gps_license">Copyright Google Inc.\nApache License 2.0</string>
+    <string name="api_license_andx_title">AndroidX Libraries</string>
+    <string name="api_license_andx_license">Copyright The Android Open Source Project.\nApache License 2.0</string>
 </resources>

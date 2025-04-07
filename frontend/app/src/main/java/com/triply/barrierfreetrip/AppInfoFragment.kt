@@ -11,5 +11,8 @@ class AppInfoFragment : BaseFragment<FragmentAppinfoBinding>(R.layout.fragment_a
         binding.btnBack.setOnClickListener {
             navController.navigateUp()
         }
+        binding.tvAppinfoApi.setOnClickListener {
+            navController.navigate(resId = R.id.appApiFragment)
+        }
     }
 }
