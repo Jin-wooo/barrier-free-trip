@@ -26,6 +26,10 @@ data class LoginDto(
     val accessToken: String
 )
 
+data class LogoutDto(
+    val refreshToken: String
+)
+
 data class loginParameter(
     val serviceUserId : String,
     val email : String,

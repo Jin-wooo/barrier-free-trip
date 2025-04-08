@@ -1,6 +1,9 @@
 package com.triply.barrierfreetrip.api
 
 import com.triply.barrierfreetrip.data.LoginDto
+import com.triply.barrierfreetrip.data.LogoutDto
+import com.triply.barrierfreetrip.data.MetaResponse
+import com.triply.barrierfreetrip.data.RespDocument
 import com.triply.barrierfreetrip.data.loginParameter
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -22,4 +25,7 @@ interface LoginApi {
         @Query(value = "redirect_uri") url : String,
         @Query(value = "response_type") type : String
     ) : Response<ResponseBody>
+
+    @POST("/mylogout")
+    suspend fun logout(@Body refreshToken: LogoutDto): Response<MetaResponse<RespDocument>>
 }
