@@ -60,7 +60,7 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
         }
 
         binding.btnBack.setOnClickListener {
-            if (parentFragmentManager.backStackEntryCount > 0) parentFragmentManager.popBackStack()
+            navController.navigateUp()
         }
 
         initSpinner()

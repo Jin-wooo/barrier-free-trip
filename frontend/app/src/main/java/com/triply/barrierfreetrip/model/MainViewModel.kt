@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.triply.barrierfreetrip.api.LocationInstance
+import com.triply.barrierfreetrip.api.LoginInstance
 import com.triply.barrierfreetrip.api.RetroInstance
 import com.triply.barrierfreetrip.data.ChargerDetail
 import com.triply.barrierfreetrip.data.InfoListDto
 import com.triply.barrierfreetrip.data.InfoSquareListDto
+import com.triply.barrierfreetrip.data.LogoutDto
 import com.triply.barrierfreetrip.data.RegionListDto
 import com.triply.barrierfreetrip.data.ReviewListDTO
 import com.triply.barrierfreetrip.data.ReviewRegistrationDTO
@@ -429,8 +431,8 @@ class MainViewModel() : ViewModel() {
                         respItem.map {
                             InfoSquareListDto.InfoSquareItemDto(
                                 addr = it.addr,
-                                contentId = "-1",
-                                contentTypeId = "-1",
+                                contentId = it.id.toString(),
+                                contentTypeId = it.type.toString(),
                                 firstimg = it.firstImage ?: "",
                                 like = false,
                                 rating = it.rating ?: "0.0",
