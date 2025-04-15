@@ -5,12 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.triply.barrierfreetrip.api.LocationInstance
-import com.triply.barrierfreetrip.api.LoginInstance
 import com.triply.barrierfreetrip.api.RetroInstance
 import com.triply.barrierfreetrip.data.ChargerDetail
 import com.triply.barrierfreetrip.data.InfoListDto
 import com.triply.barrierfreetrip.data.InfoSquareListDto
-import com.triply.barrierfreetrip.data.LogoutDto
 import com.triply.barrierfreetrip.data.RegionListDto
 import com.triply.barrierfreetrip.data.ReviewListDTO
 import com.triply.barrierfreetrip.data.ReviewRegistrationDTO
@@ -26,7 +24,6 @@ import kotlinx.coroutines.withContext
 
 class MainViewModel() : ViewModel() {
     private val bftRetrofit = RetroInstance.createBFTApi("token")
-    private val loginRetrofit = LoginInstance.getLoginApi()
     private val kakaoRetrofit = LocationInstance.getLocationApi()
 
     private val _nearbyStayList: MutableLiveData<List<InfoSquareListDto.InfoSquareItemDto>?> by lazy { MutableLiveData(emptyList()) }
@@ -452,28 +449,5 @@ class MainViewModel() : ViewModel() {
 
     fun clearSearchResult() {
         _searchResult.value = null
-    }
-
-    private val _logoutResult by lazy { MutableLiveData(false) }
-    val logoutResult: LiveData<Boolean>
-        get() = _logoutResult
-
-    fun logout() {
-        viewModelScope.launch {
-            try {
-                _isDataLoading.value = Event(true)
-
-                val response = loginRetrofit.logout(LogoutDto("RefreshToken"))
-                if (response.isSuccessful) {
-                    _logoutResult.value = response.body()?.status == "success"
-                } else {
-                    _logoutResult.value = false
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                _isDataLoading.value = Event(false)
-            }
-        }
     }
 }

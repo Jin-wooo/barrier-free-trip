@@ -11,11 +11,12 @@ import androidx.navigation.fragment.findNavController
 import com.triply.barrierfreetrip.StayInfoFragment.Companion.CONTENT_TITLE
 import com.triply.barrierfreetrip.databinding.FragmentMyPageBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
-import com.triply.barrierfreetrip.model.MainViewModel
+import com.triply.barrierfreetrip.model.LoginViewModel
 
 
 class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_page) {
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: LoginViewModel by viewModels()
+    private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
 
     override fun initInViewCreated() {
         val navController = findNavController()
@@ -55,6 +56,14 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
         }
 
         binding.tvMypageNickname.text = arguments?.getString(CONTENT_TITLE)
+
+        viewModel.isDataLoading.observe(viewLifecycleOwner) {
+            if (it.getContentIfNotHandled() == true) {
+                loadingProgressBar.show()
+            } else {
+                loadingProgressBar.dismiss()
+            }
+        }
 
         viewModel.logoutResult.observe(viewLifecycleOwner) {
             if (it) {
