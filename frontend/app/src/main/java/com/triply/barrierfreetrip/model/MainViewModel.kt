@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel() : ViewModel() {
-    private val retrofit = RetroInstance.createBFTApi("token")
+    private val bftRetrofit = RetroInstance.createBFTApi("token")
     private val loginRetrofit = LoginInstance.getLoginApi()
     private val kakaoRetrofit = LocationInstance.getLocationApi()
 
