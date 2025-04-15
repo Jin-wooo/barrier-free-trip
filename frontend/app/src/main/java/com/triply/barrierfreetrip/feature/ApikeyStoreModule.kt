@@ -57,7 +57,6 @@ class ApikeyStoreModule(private val context: Context) {
         context.keyStore.edit { prefs ->
             prefs[refreshTokenKey] = encryptedToken
             prefs[ivKey] = iv
-            println("ENCRYPTED TOKEN: $encryptedToken")
         }
     }
 
