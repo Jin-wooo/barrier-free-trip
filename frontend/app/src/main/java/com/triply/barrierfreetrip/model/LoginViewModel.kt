@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.kakao.sdk.user.UserApiClient
 import com.triply.barrierfreetrip.BFTApplication
 import com.triply.barrierfreetrip.api.RetroInstance
 import com.triply.barrierfreetrip.data.LogoutDto
@@ -26,20 +27,23 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     private var refreshToken = ""
 
     fun logout() {
-        viewModelScope.launch {
-            try {
+
+        UserApiClient.instance.logout { _ ->
+            viewModelScope.launch {
                 _isDataLoading.value = Event(true)
 
-                val response = bftRetrofit.logout(LogoutDto(refreshToken = refreshToken))
-                if (response.isSuccessful) {
-                    _logoutResult.value = response.body()?.status == "success"
-                } else {
-                    _logoutResult.value = false
+                try {
+                    val response = bftRetrofit.logout(LogoutDto(refreshToken = refreshToken))
+                    if (response.isSuccessful) {
+                        _logoutResult.value = response.body()?.status == "success"
+                    } else {
+                        _logoutResult.value = false
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    _isDataLoading.value = Event(false)
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                _isDataLoading.value = Event(false)
             }
         }
     }
