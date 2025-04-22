@@ -110,4 +110,11 @@
     <string name="api_license_gps_license">Copyright Google Inc.\nApache License 2.0</string>
     <string name="api_license_andx_title">AndroidX Libraries</string>
     <string name="api_license_andx_license">Copyright The Android Open Source Project.\nApache License 2.0</string>
+    <string name="api_license_jjwt_title">JJWT</string>
+    <string name="api_license_jjwt_license">Copyright © 2013–present JJWT Contributors\nApache License 2.0</string>
+    <string name="api_license_modelmapper_title">ModelMapper</string>
+    <string name="api_license_modelmapper_license">Copyright © 2011–present ModelMapper.org\nApache License 2.0</string>
+    <string name="api_license_springboot_title">Spring Boot Components</string>
+    <string name="api_license_springboot_license">Copyright © 2012–present the Spring Team at VMware, Inc.\nApache License 2.0</string>
+    <string name="api_license_apache_title">Apache License 2.0</string>
 </resources>
