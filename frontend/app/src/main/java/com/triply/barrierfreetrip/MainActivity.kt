@@ -3,10 +3,13 @@ package com.triply.barrierfreetrip
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.triply.barrierfreetrip.databinding.ActivityMainBinding
@@ -33,6 +36,37 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
         binding.bnvMain.setupWithNavController(navHostFragment.navController)
+
+        binding.bnvMain.setOnItemSelectedListener { item ->
+            navHostFragment.navController.navigate(item.itemId)
+            true
+        }
+
+        navHostFragment.navController.addOnDestinationChangedListener(object : NavController.OnDestinationChangedListener {
+            override fun onDestinationChanged(
+                controller: NavController,
+                destination: NavDestination,
+                arguments: Bundle?
+            ) {
+                val isBottomNavigationViewVisible = destination.id in listOf(
+                    R.id.homeFragment,
+                    R.id.searchFragment,
+                    R.id.mapFragment,
+                    R.id.wishListFragment,
+                    R.id.myPageFragment,
+                    R.id.staylistFragment,
+                    R.id.pickFragment,
+                    R.id.appInfoFragment
+                )
+                binding.bnvMain.visibility = if (isBottomNavigationViewVisible) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+            }
+
+        })
+
 
         apikeyStoreModule = BFTApplication.getInstance().getKeyStore()
 

@@ -16,9 +16,6 @@
         <action
             android:id="@+id/action_homeFragment_to_wishListFragment"
             app:destination="@id/wishListFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_mapFragment"
-            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -48,7 +45,15 @@
         android:id="@+id/myPageFragment"
         android:name="com.triply.barrierfreetrip.MyPageFragment"
         android:label="fragment_my_page"
-        tools:layout="@layout/fragment_my_page" />
+        tools:layout="@layout/fragment_my_page">
+
+        <action
+            android:id="@+id/action_myPageFragment_to_appInfoFragment"
+            app:destination="@id/appInfoFragment" />
+        <argument
+            android:name="user_name"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/staylistFragment"
         android:name="com.triply.barrierfreetrip.StaylistFragment"
@@ -86,5 +91,19 @@
         android:name="com.triply.barrierfreetrip.ReviewWritingFragment"
         android:label="fragment_review_writing"
         tools:layout="@layout/fragment_review_writing" />
+    <fragment
+        android:id="@+id/appInfoFragment"
+        android:name="com.triply.barrierfreetrip.AppInfoFragment"
+        android:label="fragment_appinfo"
+        tools:layout="@layout/fragment_appinfo" >
+        <action
+            android:id="@+id/action_appInfoFragment_to_appApiFragment"
+            app:destination="@id/appApiFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/appApiFragment"
+        android:name="com.triply.barrierfreetrip.APIFragment"
+        android:label="fragment_api"
+        tools:layout="@layout/fragment_api" />
 
 </navigation>

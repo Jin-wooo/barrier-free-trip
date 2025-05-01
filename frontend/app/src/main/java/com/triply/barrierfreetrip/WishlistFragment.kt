@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.triply.barrierfreetrip.HomeFragment.Companion.CONTENT_TYPE
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
@@ -37,6 +38,7 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
     }
 
     override fun initInViewCreated() {
+        val navController = findNavController()
         when {
             type.equals(TYPE_CARE_TOUR) -> {
                 binding.tvTitle.text = "돌봄여행"
@@ -58,7 +60,7 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
         }
 
         binding.btnBack.setOnClickListener {
-            if (parentFragmentManager.backStackEntryCount > 0) parentFragmentManager.popBackStack()
+            navController.navigateUp()
         }
 
         initSpinner()
@@ -203,16 +205,12 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
                             val item = infoList.getOrNull(position)
                             item?.id?.let {
                                 val bundle = Bundle()
-                                val fragment = WishlistMapFragment()
 
                                 bundle.putString(CONTENT_ID, it.toString())
-                                fragment.arguments = bundle
-
-                                requireActivity().supportFragmentManager
-                                    .beginTransaction()
-                                    .replace(android.R.id.content, fragment)
-                                    .addToBackStack(null)
-                                    .commit()
+                                navController.navigate(
+                                    resId = R.id.wishListMapFragment,
+                                    args = bundle
+                                )
                             }
                         }
                     })

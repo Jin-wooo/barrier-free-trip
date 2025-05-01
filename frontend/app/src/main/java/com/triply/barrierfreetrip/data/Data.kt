@@ -3,7 +3,6 @@ package com.triply.barrierfreetrip.data
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import retrofit2.http.Field
 import com.google.gson.annotations.SerializedName
 
 sealed class RespDocument
@@ -26,6 +25,10 @@ data class LoginDto(
     val accessToken: String
 )
 
+data class LogoutDto(
+    val refreshToken: String
+)
+
 data class loginParameter(
     val serviceUserId : String,
     val email : String,
@@ -35,60 +38,35 @@ data class loginParameter(
 data class accessToken(val token : String) : RespDocument()
 
 data class TourFacilityDetail(
-    val _exit: Any,
-    val addr1: String,
-    val addr2: String,
-    val areaCode: String,
-    val audioguide: Any,
-    val auditorium: Any,
-    val babysparechair: Any,
-    val bigprint: Any,
-    val blindhandicapetc: Any,
-    val braileblock: Any,
-    val brailepromotion: Any,
-    val checkInTime: String,
-    val checkOutTime: String,
-    val contentId: String,
-    val contentTypeId: String,
-    val elevator: Any,
-    val freeParking: Any,
-    val guidehuman: Any,
-    val guidesystem: Any,
-    val handicapetc: Any,
-    val hearinghandicapetc: Any,
-    val hearingroom: Any,
-    val helpdog: Any,
-    val homepage: String,
-    val imgs: List<String>,
-    val infantsfamilyetc: Any,
-    val lactationroom: Any,
-    val like: Int, // 0 -> 찜X | 1 -> 찜O
-    val mapx: String,
-    val mapy: String,
-    val overview: String,
-    val parking: String,
-    val promotion: Any,
-    val publictransport: Any,
-    val rating: String,
-    val restroom: Any,
-    val room: Any,
-    val route: Any,
-    val signguide: String,
-    val sigunguCode: Any,
-    val stroller: Any,
-    val tel: String,
-    val ticketoffice: Any,
-    val title: String,
-    val videoguide: Any,
-    val wheelchair: Any
-)
+    val addr1: String = "",
+    val addr2: String = "",
+    val areaCode: String = "",
+    val braileblock: String? = "",
+    val checkInTime: String = "",
+    val checkOutTime: String = "",
+    val contentId: String = "",
+    val contentTypeId: String = "",
+    val elevator: String? = "",
+    val freeParking: String? = "",
+    val handicapetc: String? = "",
+    val homepage: String = "",
+    val imgs: List<String> = listOf(),
+    val like: Int = 0, // 0 -> 찜X | 1 -> 찜O
+    val mapx: String = "",
+    val mapy: String = "",
+    val overview: String = "",
+    val publictransport: String? = "",
+    val rating: String = "",
+    val restroom: String? = "",
+    val sigunguCode: Any = "",
+    val tel: String = "",
+    val title: String = "",
+) : RespDocument()
 
 data class ErrorDto(
     @SerializedName("emptyResponse")
     val errorCode: String
 ) : RespDocument()
-
-
 
 data class Charger(
     val addr: String,
@@ -117,7 +95,6 @@ data class ChargerDetail(
     var longitude: Double = 0.0
 }
 
-
 data class CareTour(
     val addr: String,
     val like: Int,
@@ -141,10 +118,11 @@ data class SearchRsltListDto(
         val rating: String?,
         val tel: String,
         val title: String,
-        val type: Int
+        val type: Int,
+        val id: Int,
+        val like: Int
     )
 }
-
 
 data class RestPlace(
     val addr: String,

@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel() : ViewModel() {
-    private val retrofit = RetroInstance.createBFTApi("token")
+    private val bftRetrofit = RetroInstance.createBFTApi("token")
     private val kakaoRetrofit = LocationInstance.getLocationApi()
 
     private val _nearbyStayList: MutableLiveData<List<InfoSquareListDto.InfoSquareItemDto>?> by lazy { MutableLiveData(emptyList()) }
@@ -76,7 +76,7 @@ class MainViewModel() : ViewModel() {
     fun getNearbyStayList(userX: Double, userY: Double) {
         viewModelScope.launch {
             try {
-                val response = retrofit.getStayList(userX = userX, userY = userY)
+                val response = bftRetrofit.getStayList(userX = userX, userY = userY)
 
                 if (response.isSuccessful) {
                     _nearbyStayList.value = if (response.body()?.respDocument is InfoSquareListDto) {
@@ -98,7 +98,7 @@ class MainViewModel() : ViewModel() {
     fun getNearbyChargerList(userX: Double, userY: Double) {
         viewModelScope.launch {
             try {
-                val response = retrofit.getNearbyChargerList(userX = userX, userY = userY)
+                val response = bftRetrofit.getNearbyChargerList(userX = userX, userY = userY)
 
                 if (response.isSuccessful) {
                     _nearbyChargerList.value = if (response.body()?.respDocument is InfoListDto) {
@@ -120,7 +120,7 @@ class MainViewModel() : ViewModel() {
     fun getSidoCode() {
         viewModelScope.launch {
             try {
-                val response = retrofit.getSidoCode()
+                val response = bftRetrofit.getSidoCode()
 
                 if (response.isSuccessful) {
                     _sidoCodes.value = if (response.body()!!.respDocument is RegionListDto) {
@@ -152,7 +152,7 @@ class MainViewModel() : ViewModel() {
     fun getSigunguCode(sidoCode: String) {
         viewModelScope.launch {
             try {
-                val response = retrofit.getSigunguCode(sidoCode)
+                val response = bftRetrofit.getSigunguCode(sidoCode)
 
                 if (response.isSuccessful) {
                     _sigunguCodes.value = if (response.body()!!.respDocument is RegionListDto) {
@@ -184,7 +184,7 @@ class MainViewModel() : ViewModel() {
     fun getTourFcltList(type: String, areaCode: String, bigPlaceCode: String) {
         viewModelScope.launch {
             try {
-                val response = retrofit.getTourFcltList(
+                val response = bftRetrofit.getTourFcltList(
                     typeId = type,
                     areaCode = areaCode,
                     bigPlaceCode = bigPlaceCode
@@ -208,7 +208,7 @@ class MainViewModel() : ViewModel() {
     fun getFcltDetail(contentId: String) {
         viewModelScope.launch {
             try {
-                val response = retrofit.getTourFcltDetail(contentId)
+                val response = bftRetrofit.getTourFcltDetail(contentId)
 
                 if (response.isSuccessful) {
                     _locationDetail.value = if (response.body()?.respDocument is TourFacilityDetail) {
@@ -228,7 +228,7 @@ class MainViewModel() : ViewModel() {
     fun getReviews(contentId: String) {
         viewModelScope.launch {
             try {
-                val response = retrofit.getReviews(contentId)
+                val response = bftRetrofit.getReviews(contentId)
 
                 if (response.isSuccessful) {
                     _reviews.value = if (response.body()?.respDocument is ReviewListDTO) {
@@ -250,7 +250,7 @@ class MainViewModel() : ViewModel() {
 
         viewModelScope.launch {
             try {
-                val response = retrofit.postReview(contentId = contentId, body = review)
+                val response = bftRetrofit.postReview(contentId = contentId, body = review)
 
                 if (response.isSuccessful) {
                     //
@@ -270,7 +270,7 @@ class MainViewModel() : ViewModel() {
         viewModelScope.launch {
             try {
                 val response =
-                    retrofit.getCareTourList(bigPlaceCode = sidoName, smallPlaceCode = sigunguName)
+                    bftRetrofit.getCareTourList(bigPlaceCode = sidoName, smallPlaceCode = sigunguName)
 
                 if (response.isSuccessful) {
                     _fcltList.value = if (response.body()?.respDocument is InfoListDto) {
@@ -290,7 +290,7 @@ class MainViewModel() : ViewModel() {
     fun getChargerList(sidoName: String, sigunguName: String) {
         viewModelScope.launch {
             try {
-                val response = retrofit.getChargerList(sido = sidoName, sigungu = sigunguName)
+                val response = bftRetrofit.getChargerList(sido = sidoName, sigungu = sigunguName)
 
                 if (response.isSuccessful) {
                     _fcltList.value = if (response.body()?.respDocument is InfoListDto) {
@@ -310,7 +310,7 @@ class MainViewModel() : ViewModel() {
     fun getRentalServiceList(sidoName: String, sigunguName: String) {
         viewModelScope.launch {
             try {
-                val response = retrofit.getRentalServiceList(
+                val response = bftRetrofit.getRentalServiceList(
                     bigPlaceCode = sidoName,
                     smallPlaceCode = sigunguName
                 )
@@ -340,7 +340,7 @@ class MainViewModel() : ViewModel() {
                 var longitude = 0.0
                 var latitude = 0.0
 
-                val response = retrofit.getChargerDetail(contentId = contentId)
+                val response = bftRetrofit.getChargerDetail(contentId = contentId)
 
                 if (response.isSuccessful) {
                     if (!(response.body()?.respDocument as? ChargerDetail)?.addr.isNullOrEmpty()) {
@@ -394,10 +394,10 @@ class MainViewModel() : ViewModel() {
             try {
                 _isDataLoading.value = Event(true)
 
-                val response = retrofit.postLikes(type = type, contentId = contentId, likes = likes)
+                val response = bftRetrofit.postLikes(type = type, contentId = contentId, likes = likes)
                 if (type == 1 && response.isSuccessful) {
                     val chargerInfoResponse =
-                        retrofit.getChargerDetail(contentId = contentId.toLong())
+                        bftRetrofit.getChargerDetail(contentId = contentId.toLong())
                     if (chargerInfoResponse.isSuccessful) {
                         _chargerInfo.value = _chargerInfo.value?.copy(
                             like = (chargerInfoResponse.body()?.respDocument as? ChargerDetail)?.like ?: 0
@@ -421,15 +421,15 @@ class MainViewModel() : ViewModel() {
             try {
                 _isDataLoading.value = Event(true)
 
-                val response = retrofit.getSearchResult(keyword = keyword)
+                val response = bftRetrofit.getSearchResult(keyword = keyword)
                 if (response.isSuccessful) {
                     _searchResult.value = if (response.body()?.respDocument is SearchRsltListDto) {
                         val respItem = (response.body()?.respDocument as? SearchRsltListDto)?.items ?: emptyList()
                         respItem.map {
                             InfoSquareListDto.InfoSquareItemDto(
                                 addr = it.addr,
-                                contentId = "-1",
-                                contentTypeId = "-1",
+                                contentId = it.id.toString(),
+                                contentTypeId = it.type.toString(),
                                 firstimg = it.firstImage ?: "",
                                 like = false,
                                 rating = it.rating ?: "0.0",

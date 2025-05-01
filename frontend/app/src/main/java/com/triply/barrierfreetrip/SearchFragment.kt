@@ -1,16 +1,19 @@
 package com.triply.barrierfreetrip
 
 import android.content.Context
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.core.view.isVisible
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
 import com.triply.barrierfreetrip.adapter.InfoSquareAdapter
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
 import com.triply.barrierfreetrip.adapter.SearchHistoryAdapter
@@ -29,6 +32,16 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
     private val TAG = "SearchFragment"
 
     override fun initInViewCreated() {
+        val navController = findNavController()
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+
+                }
+            }
+        )
 
         // 검색결과 리사이클러뷰 세팅
         with(binding) {
@@ -92,17 +105,19 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
             (binding.rvSearchList.adapter as InfoSquareAdapter).setOnItemClickListener(
                 object : OnItemClickListener {
                     override fun onItemClick(position: Int) {
-//                        val itemId = result.getOrNull(position)?.id ?: 0
-//                        val bundle = Bundle()
-//                        val stayInfoFragment = StayInfoFragment()
-//
-//                        bundle.putString("id", itemId.toString())
-//                        stayInfoFragment.arguments = bundle
-//
-//                        requireActivity().supportFragmentManager
-//                            .beginTransaction()
-//                            .replace(R.id.main_nav_host_fragment, stayInfoFragment)
-//                            .commit()
+                        val item = viewModel.searchResult.value?.getOrNull(position)
+                        item?.contentId?.let {
+                            val bundle = Bundle()
+
+                            bundle.putString(CONTENT_ID, it)
+
+                            if (item.contentTypeId == "1") {
+                                navController.navigate(
+                                    resId = R.id.stayInfoFragment,
+                                    args = bundle
+                                )
+                            }
+                        }
                     }
                 }
             )

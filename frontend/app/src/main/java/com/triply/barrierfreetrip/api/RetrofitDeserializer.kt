@@ -1,5 +1,4 @@
 package com.triply.barrierfreetrip.api
-
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -27,7 +26,6 @@ class RetrofitDeserializer : JsonDeserializer<MetaResponse<*>> {
         val status = jsonObject?.get("status")?.asString ?: "error"
         return if (status == "success") {
             val data = jsonObject?.getAsJsonObject("data")
-
             when (data?.size()) {
                 0 -> MetaResponse(status = status, respDocument = null, message = null)
                 1 -> {
@@ -58,10 +56,6 @@ class RetrofitDeserializer : JsonDeserializer<MetaResponse<*>> {
                                 }
                                 ReviewListDTO.ReviewDTO::class.primaryConstructor?.parameters?.map {it.name}?.toSet() -> {
                                     val parsedData = context?.deserialize<ReviewListDTO>(data, ReviewListDTO::class.java)
-                                    MetaResponse(status = status, respDocument = parsedData, message = null)
-                                }
-                                SearchRsltListDto.SearchRsltItem::class.primaryConstructor?.parameters?.map {it.name}?.toSet() -> {
-                                    val parsedData = context?.deserialize<SearchRsltListDto>(data, SearchRsltListDto::class.java)
                                     MetaResponse(status = status, respDocument = parsedData, message = null)
                                 }
                                 else -> {

@@ -6,8 +6,10 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -59,9 +61,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     override fun initInViewCreated() {
+        val navController = findNavController()
         val bundle = Bundle()
-        val stayListFragment = StaylistFragment()
-        val wishlistFragment = WishlistFragment()
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+
+                }
+            }
+        )
 
         with(binding.rvHome) {
             adapter = HomeInfoAdapter().apply {
@@ -70,97 +79,72 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
                         override fun onHomeCareTripClick() {
                             bundle.putString(CONTENT_TYPE, CONTENT_TYPE_CARE)
-                            wishlistFragment.arguments = bundle
-
-                            requireActivity().supportFragmentManager
-                                .beginTransaction()
-                                .replace(R.id.main_nav_host_fragment, wishlistFragment)
-                                .addToBackStack(null)
-                                .commit()
+                            navController.navigate(
+                                resId = R.id.wishListFragment,
+                                args = bundle
+                            )
                         }
 
                         override fun onHomeChargeClick() {
                             bundle.putString(CONTENT_TYPE, CONTENT_TYPE_CHARGER)
-                            wishlistFragment.arguments = bundle
-
-                            requireActivity().supportFragmentManager
-                                .beginTransaction()
-                                .replace(R.id.main_nav_host_fragment, wishlistFragment)
-                                .addToBackStack(null)
-                                .commit()
+                            navController.navigate(
+                                resId = R.id.wishListFragment,
+                                args = bundle
+                            )
                         }
 
                         override fun onHomeDestinationClick() {
                             bundle.putString(CONTENT_TYPE, CONTENT_TYPE_TOUR)
-                            stayListFragment.arguments = bundle
-
-                            requireActivity().supportFragmentManager
-                                .beginTransaction()
-                                .replace(R.id.main_nav_host_fragment, stayListFragment)
-                                .addToBackStack(null)
-                                .commit()
+                            navController.navigate(
+                                resId = R.id.staylistFragment,
+                                args = bundle
+                            )
                         }
 
                         override fun onHomeRentalClick() {
                             bundle.putString(CONTENT_TYPE, CONTENT_TYPE_RENTAL)
-                            wishlistFragment.arguments = bundle
-
-                            requireActivity().supportFragmentManager
-                                .beginTransaction()
-                                .replace(R.id.main_nav_host_fragment, wishlistFragment)
-                                .addToBackStack(null)
-                                .commit()
+                            navController.navigate(
+                                resId = R.id.wishListFragment,
+                                args = bundle
+                            )
                         }
 
                         override fun onHomeRestaurantClick() {
                             bundle.putString(CONTENT_TYPE, CONTENT_TYPE_RESTAURANT)
-                            stayListFragment.arguments = bundle
-
-                            requireActivity().supportFragmentManager
-                                .beginTransaction()
-                                .replace(R.id.main_nav_host_fragment, stayListFragment)
-                                .addToBackStack(null)
-                                .commit()
+                            navController.navigate(
+                                resId = R.id.staylistFragment,
+                                args = bundle
+                            )
                         }
 
                         override fun onHomeStayClick() {
                             bundle.putString(CONTENT_TYPE, CONTENT_TYPE_STAY)
-                            stayListFragment.arguments = bundle
-
-                            requireActivity().supportFragmentManager
-                                .beginTransaction()
-                                .replace(R.id.main_nav_host_fragment, stayListFragment)
-                                .addToBackStack(null)
-                                .commit()
+                            navController.navigate(
+                                resId = R.id.staylistFragment,
+                                args = bundle
+                            )
                         }
                     },
                     onInfoSquareClickListener = object : OnItemClickListener {
                         override fun onItemClick(position: Int) {
                             val item = homeInfoList.getOrNull(position) as HomeInfoAdapter.HomeInfoDTO.InfoSquare? ?: return
-                            val stayInfoFragment = StayInfoFragment()
 
                             bundle.putString(CONTENT_ID, item.contentId)
-                            stayInfoFragment.arguments = bundle
-
-                            requireActivity().supportFragmentManager
-                                .beginTransaction()
-                                .add(android.R.id.content, stayInfoFragment)
-                                .addToBackStack(null)
-                                .commit()
+                            navController.navigate(
+                                resId = R.id.stayInfoFragment,
+                                args = bundle
+                            )
                         }
                     },
                     onInfoListClickListener = object : OnItemClickListener {
                         override fun onItemClick(position: Int) {
                             val item = homeInfoList.getOrNull(position) as HomeInfoAdapter.HomeInfoDTO.InfoList? ?: return
-                            val wishlistMapFragment = WishlistMapFragment()
 
                             bundle.putString(CONTENT_ID, item.id.toString())
-                            wishlistMapFragment.arguments = bundle
-
-                            requireActivity().supportFragmentManager
-                                .beginTransaction()
-                                .add(android.R.id.content, wishlistMapFragment)
-                                .commit()
+                            navController.navigate(
+                                resId = R.id.wishListMapFragment,
+                                args = bundle
+                            )
                         }
                     }
                 )
