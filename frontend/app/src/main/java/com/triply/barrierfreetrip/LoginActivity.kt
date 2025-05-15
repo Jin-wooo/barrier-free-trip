@@ -77,6 +77,7 @@ class LoginActivity : AppCompatActivity() {
                     if (result.isSuccessful) {
                         val alex = Intent(applicationContext, MainActivity::class.java)
                         alex.putExtra("token", result.body()!!.accessToken)
+                        apikeyStoreModule.setApiKey()
                         startActivity(alex)
                     }
                 }
@@ -113,6 +114,7 @@ class LoginActivity : AppCompatActivity() {
                                 this, callback = mCallback) // 카카오 이메일 로그인
                         }
                     }
+
                     // 로그인 성공 부분
                     else if (token != null) {
                         Log.d(TAG, "로그인 성공 ${token.accessToken}")
