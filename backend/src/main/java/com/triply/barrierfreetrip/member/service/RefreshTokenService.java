@@ -39,8 +39,9 @@ public class RefreshTokenService {
             String savedRefreshToken = getRefreshToken(refreshToken).get().getRefreshToken();
 
             try {
+                System.out.println("savedRefreshToken: "+ savedRefreshToken);
                 Jws<Claims> claims = Jwts.parser()
-                        .setSigningKey(secretKey)
+                        .setSigningKey(secretKey.getBytes())
                         .parseClaimsJws(savedRefreshToken);
 
                 // recreate access token
@@ -50,7 +51,7 @@ public class RefreshTokenService {
 
             } catch (Exception e) {
                 // if expired refresh token, need to login -> 예외 처리 필요!
-                //System.out.println(e.getMessage());
+                //System.out.println(e.getMessage())
                 return null;
             }
         }

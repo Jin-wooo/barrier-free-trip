@@ -78,7 +78,7 @@ public class MemberController {
 
             // save refresh token
             refreshTokenService.saveRefreshToken(token);
-            MemberResponseDto memberResponseDto = new MemberResponseDto(token.getAccessToken());
+            MemberResponseDto memberResponseDto = new MemberResponseDto(token.getAccessToken(), token.getRefreshToken());
 
             return ApiResponseBody.createSuccess(memberResponseDto);
         } catch (Exception e) {
