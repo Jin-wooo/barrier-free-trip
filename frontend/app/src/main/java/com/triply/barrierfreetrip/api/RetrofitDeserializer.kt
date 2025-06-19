@@ -7,6 +7,7 @@ import com.triply.barrierfreetrip.data.ChargerDetail
 import com.triply.barrierfreetrip.data.ErrorDto
 import com.triply.barrierfreetrip.data.InfoListDto
 import com.triply.barrierfreetrip.data.InfoSquareListDto
+import com.triply.barrierfreetrip.data.LoginDto
 import com.triply.barrierfreetrip.data.MetaResponse
 import com.triply.barrierfreetrip.data.RegionListDto
 import com.triply.barrierfreetrip.data.RespDocument
@@ -64,8 +65,15 @@ class RetrofitDeserializer : JsonDeserializer<MetaResponse<*>> {
                             }
                         }
                     } else {
-                        // 응답 결과가 없을 경우("emptyResponse")
-                        MetaResponse(status = status, respDocument = ErrorDto(errorCode = ""), message = null)
+//                        // 응답 결과가 없을 경우("emptyResponse")
+//                        MetaResponse(status = status, respDocument = ErrorDto(errorCode = ""), message = null)
+
+                        if (data.has("accessToken")) { // 응답 결과가 Login 결과값인 경우
+                            val parsedData = context?.deserialize<LoginDto>(data, LoginDto::class.java)
+                            MetaResponse(status = status, respDocument = parsedData, message = null)
+                        } else { // 응답 결과가 없을 경우("emptyResponse")
+                            MetaResponse(status = status, respDocument = ErrorDto(errorCode = ""), message = null)
+                        }
                     }
                 }
                 else -> {
