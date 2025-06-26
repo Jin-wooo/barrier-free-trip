@@ -22,18 +22,24 @@ data class LoginDto2(
 )
 
 data class LoginDto(
-    val accessToken: String
+    val accessToken: String,
+    val refreshToken: String
 )
 
 data class LogoutDto(
     val refreshToken: String
 )
 
-data class loginParameter(
+data class LoginParameter(
     val serviceUserId : String,
     val email : String,
     val nickname : String
 )
+
+data class RefreshResponse(
+    val accessToken: String,
+    val dMessage: String
+) : RespDocument()
 
 data class accessToken(val token : String) : RespDocument()
 

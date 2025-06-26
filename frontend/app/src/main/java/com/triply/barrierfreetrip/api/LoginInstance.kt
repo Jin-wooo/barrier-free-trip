@@ -3,6 +3,7 @@ package com.triply.barrierfreetrip.api
 import android.content.pm.PackageManager
 import com.google.gson.GsonBuilder
 import com.triply.barrierfreetrip.BFTApplication
+import com.triply.barrierfreetrip.data.MetaResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -18,7 +19,11 @@ object LoginInstance {
     private val retrofit : Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(
+                GsonBuilder()
+                    .registerTypeAdapter(MetaResponse::class.java, RetrofitDeserializer())
+                    .create()
+            ))
             .build()
     }
 

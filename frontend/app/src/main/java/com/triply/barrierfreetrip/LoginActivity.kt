@@ -1,11 +1,9 @@
 package com.triply.barrierfreetrip
 
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -15,13 +13,11 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
-import com.triply.barrierfreetrip.api.LoginApi
 import com.triply.barrierfreetrip.api.LoginInstance
-import com.triply.barrierfreetrip.data.loginParameter
+import com.triply.barrierfreetrip.data.LoginParameter
 import com.triply.barrierfreetrip.databinding.ActivityLoginBinding
 import com.triply.barrierfreetrip.feature.ApikeyStoreModule
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.SocketException
@@ -32,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding : ActivityLoginBinding
 
     private val splashScreen by lazy { installSplashScreen() }
+    private val progressDialog by lazy { ProgressDialogFragment() }
     private val loginApi by lazy { LoginInstance.getLoginApi() }
     private lateinit var apikeyStoreModule: ApikeyStoreModule
 
@@ -67,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 lifecycleScope.launch(exceptionHandler) {
                     val result = loginApi.getToken(
-                        loginParameter(
+                        LoginParameter(
                             user.id.toString(),
                             user.kakaoAccount?.email!!,
                             user.kakaoAccount?.profile?.nickname!!
@@ -75,9 +72,15 @@ class LoginActivity : AppCompatActivity() {
                     )
 
                     if (result.isSuccessful) {
-                        val alex = Intent(applicationContext, MainActivity::class.java)
-                        alex.putExtra("token", result.body()!!.accessToken)
-                        startActivity(alex)
+                        val mainIntent = Intent(applicationContext, MainActivity::class.java)
+                        val realToken = result.body()!!.respDocument?.accessToken
+                        val refreshToken = result.body()!!.respDocument?.refreshToken
+                        if (realToken != null) { apikeyStoreModule.setAccessToken(realToken) }
+                        if (refreshToken != null) { apikeyStoreModule.setRefreshToken(refreshToken) }
+
+                        mainIntent.putExtra("token", realToken)
+                        startActivity(mainIntent)
+                        progressDialog.dismiss()
                     }
                 }
             }
@@ -96,6 +99,7 @@ class LoginActivity : AppCompatActivity() {
 //        splashScreen.setKeepOnScreenCondition {true}
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         binding.btnLoginKakao.setOnClickListener {
+            progressDialog.show(supportFragmentManager)
             // 카카오톡 설치 확인
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
                 // 카카오톡 로그인
@@ -113,6 +117,7 @@ class LoginActivity : AppCompatActivity() {
                                 this, callback = mCallback) // 카카오 이메일 로그인
                         }
                     }
+
                     // 로그인 성공 부분
                     else if (token != null) {
                         Log.d(TAG, "로그인 성공 ${token.accessToken}")
@@ -124,7 +129,7 @@ class LoginActivity : AppCompatActivity() {
                             }
                             lifecycleScope.launch(exceptionHandler) {
                                 val result = loginApi.getToken(
-                                    loginParameter(
+                                    LoginParameter(
                                         user.id.toString(),
                                         user.kakaoAccount?.email!!,
                                         user.kakaoAccount?.profile?.nickname!!
@@ -132,11 +137,15 @@ class LoginActivity : AppCompatActivity() {
                                 )
 
                                 if (result.isSuccessful) {
-                                    val alex = Intent(applicationContext, MainActivity::class.java)
-                                    alex.putExtra("token", result.body()!!.accessToken)
-                                    startActivity(alex)
+                                    val mainIntent = Intent(applicationContext, MainActivity::class.java)
+                                    val realToken = result.body()!!.respDocument?.accessToken
+                                    mainIntent.putExtra("token", realToken)
+                                    if (realToken != null) {
+                                        apikeyStoreModule.setAccessToken(realToken)
+                                    }
+                                    startActivity(mainIntent)
+                                    progressDialog.dismiss()
                                 }
-
                             }
                         }
                     }
