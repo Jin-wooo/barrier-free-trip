@@ -10,6 +10,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 
@@ -18,6 +20,11 @@ import java.util.Optional;
 public class RefreshTokenService {
     private String secretKey = "testSecretKey202301125testSecretKey202301125testSecretKey202301125";
     private final RefreshTokenRepository refreshTokenRepository;
+
+    @PostConstruct
+    protected void init() {
+        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+    }
 
     public void saveRefreshToken(Token token) {
         String loginMemberEmail = token.getKeyEmail();
@@ -39,9 +46,8 @@ public class RefreshTokenService {
             String savedRefreshToken = getRefreshToken(refreshToken).get().getRefreshToken();
 
             try {
-                System.out.println("savedRefreshToken: "+ savedRefreshToken);
                 Jws<Claims> claims = Jwts.parser()
-                        .setSigningKey(secretKey.getBytes())
+                        .setSigningKey(secretKey)
                         .parseClaimsJws(savedRefreshToken);
 
                 // recreate access token
@@ -64,7 +70,7 @@ public class RefreshTokenService {
     }
 
     public String recreationAccessToken(String email, Object roles) {
-        long accessTokenPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
+        long accessTokenPeriod = 1000L * 60L * 60L; // 60분
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("roles", roles);
 
