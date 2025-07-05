@@ -1,7 +1,14 @@
 package com.triply.barrierfreetrip.util
 
 fun String.toUIString(): String {
-    return this.replace("_무장애 편의시설", "").replace("&nbsp;", "\n")
+    return this
+        .replace("_무장애 편의시설", "")
+        .replace("&nbsp;", "\n")
+        .replace("<div>", "")
+        .replace("</div>", "")
+        .replace("<br>", " ")
+        .replace("</br>", " ")
+        .replace("<br/>", " ")
 }
 
 fun convertHomepageToURL(homepage: String): String {

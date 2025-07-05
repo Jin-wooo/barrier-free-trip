@@ -80,12 +80,12 @@ class StayInfoFragment : BaseFragment<FragmentStayInfoBinding>(R.layout.fragment
             (binding.vpStayinfo.adapter as ViewPagerAdapter).setDataList(detail.imgs)
             binding.indicatorVp.initIndicators(detail.imgs.size)
 
-            binding.tvStayinfoPlaceName.text = detail.title
-            binding.tvStayinfoRate.text = detail.rating
-            binding.tvStayinfoLocation.text = detail.addr1
-            binding.tvStayinfoEnterTime.text = detail.checkInTime
-            binding.tvStayinfoLeaveTime.text = detail.checkOutTime
-            binding.tvStayinfoIntroduce.text = detail.overview
+            binding.tvStayinfoPlaceName.text = detail.title.toUIString()
+            binding.tvStayinfoRate.text = detail.rating.toUIString()
+            binding.tvStayinfoLocation.text = detail.addr1.toUIString()
+            binding.tvStayinfoEnterTime.text = detail.checkInTime.toUIString()
+            binding.tvStayinfoLeaveTime.text = detail.checkOutTime.toUIString()
+            binding.tvStayinfoIntroduce.text = detail.overview.toUIString()
 
             val convenienceInfos = mutableListOf(
                 ConvenienceInfoDTO(subject = ContextCompat.getString(requireContext(), R.string.stayinfo_elevator), content = detail.elevator?.toUIString() ?: ""),
