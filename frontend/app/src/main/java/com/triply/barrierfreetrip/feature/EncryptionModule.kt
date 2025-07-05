@@ -34,7 +34,7 @@ object EncryptionModule {
     }
 
     fun encryptText(text: String, keyAlias: String): Pair<String, String> {
-        val secretKey = (keyStore.getEntry(keyAlias, null) as KeyStore.SecretKeyEntry).secretKey
+        val secretKey = (keyStore.getEntry(keyAlias, null) as? KeyStore.SecretKeyEntry)?.secretKey
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
 
         try {
@@ -50,20 +50,19 @@ object EncryptionModule {
         val iv = cipher.iv
         val encryptedBytes = cipher.doFinal(text.toByteArray(Charsets.UTF_8))
 
-        val encryptedBase64 = Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
-        val ivBase64 = Base64.encodeToString(iv, Base64.DEFAULT)
+        val encryptedBase64 = Base64.encodeToString(encryptedBytes, Base64.NO_WRAP)
+        val ivBase64 = Base64.encodeToString(iv, Base64.NO_WRAP)
 
         return Pair(encryptedBase64, ivBase64)
     }
 
     fun decryptText(encryptedText: String, keyAlias: String, ivBase64: String): String {
-        val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
         val secretKey = (keyStore.getEntry(keyAlias, null) as KeyStore.SecretKeyEntry).secretKey
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        val iv = Base64.decode(ivBase64, Base64.DEFAULT)
+        val iv = Base64.decode(ivBase64, Base64.NO_WRAP)
 
         cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
-        val encryptedBytes = Base64.decode(encryptedText, Base64.DEFAULT)
+        val encryptedBytes = Base64.decode(encryptedText, Base64.NO_WRAP)
         val decryptedBytes = cipher.doFinal(encryptedBytes)
 
         return String(decryptedBytes, Charsets.UTF_8)

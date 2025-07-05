@@ -1,8 +1,9 @@
 package com.triply.barrierfreetrip.api
 
 import com.triply.barrierfreetrip.data.LoginDto
-import com.triply.barrierfreetrip.data.MetaResponse
 import com.triply.barrierfreetrip.data.LoginParameter
+import com.triply.barrierfreetrip.data.LogoutDto
+import com.triply.barrierfreetrip.data.MetaResponse
 import com.triply.barrierfreetrip.data.RefreshResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -19,7 +20,7 @@ interface LoginApi {
 
     @POST("/refresh") // 어느 토큰이건 암튼 재발급! 에 가까운듯
     suspend fun refreshToken(
-        @Body refreshToken: String
+        @Body refreshToken: LogoutDto
     ) : Response<MetaResponse<RefreshResponse>>
 
 

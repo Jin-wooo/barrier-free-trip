@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
@@ -18,7 +19,8 @@ class ApikeyStoreModule(private val context: Context) {
     private val apiKey = stringPreferencesKey("apikey")
     private val accessTokenKey = stringPreferencesKey("encrypted_access_token")
     private val refreshTokenKey = stringPreferencesKey("encrypted_refresh_token")
-    private val ivKey = stringPreferencesKey("encrypted_iv")
+    private val accessTokenIVKey = stringPreferencesKey("access_token_encrypted_iv")
+    private val refreshTokenIVKey = stringPreferencesKey("refresh_token_encrypted_iv")
 
     val getApiKey: Flow<String> = context.keyStore.data
         .catch { exception ->
@@ -41,9 +43,9 @@ class ApikeyStoreModule(private val context: Context) {
      */
     fun getAccessToken(): Flow<String> {
         return context.keyStore.data.map { prefs ->
-            val (encryptedToken, iv) = Pair(prefs[accessTokenKey] ?: "", prefs[ivKey] ?: "")
+            val (encryptedToken, iv) = Pair(prefs[accessTokenKey] ?: "", prefs[accessTokenIVKey] ?: "")
             EncryptionModule.decryptText(encryptedText = encryptedToken, keyAlias = ACCESS_TOKEN_KEY, ivBase64 = iv)
-        }
+        }.distinctUntilChanged()
     }
 
     /**
@@ -59,7 +61,7 @@ class ApikeyStoreModule(private val context: Context) {
 
         context.keyStore.edit { prefs ->
             prefs[accessTokenKey] = encryptedToken
-            prefs[ivKey] = iv
+            prefs[accessTokenIVKey] = iv
         }
     }
 
@@ -69,9 +71,9 @@ class ApikeyStoreModule(private val context: Context) {
      */
     fun getRefreshToken(): Flow<String> {
         return context.keyStore.data.map { prefs ->
-            val (encryptedToken, iv) = Pair(prefs[refreshTokenKey] ?: "", prefs[ivKey] ?: "")
+            val (encryptedToken, iv) = Pair(prefs[refreshTokenKey] ?: "", prefs[refreshTokenIVKey] ?: "")
             EncryptionModule.decryptText(encryptedText = encryptedToken, keyAlias = REFRESH_TOKEN_KEY, ivBase64 = iv)
-        }
+        }.distinctUntilChanged()
     }
     
     /**
@@ -87,7 +89,7 @@ class ApikeyStoreModule(private val context: Context) {
 
         context.keyStore.edit { prefs ->
             prefs[refreshTokenKey] = encryptedToken
-            prefs[ivKey] = iv
+            prefs[refreshTokenIVKey] = iv
         }
     }
 

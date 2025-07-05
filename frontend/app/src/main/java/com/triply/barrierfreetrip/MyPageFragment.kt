@@ -1,9 +1,7 @@
 package com.triply.barrierfreetrip
 
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
@@ -62,17 +60,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
                 loadingProgressBar.show()
             } else {
                 loadingProgressBar.dismiss()
-            }
-        }
-
-        viewModel.logoutResult.observe(viewLifecycleOwner) {
-            if (it) {
-                val intent = Intent(activity, LoginActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }
-                startActivity(intent)
-            } else {
-                Log.d("로그아웃 결과", "실패하였습니다.")
             }
         }
     }

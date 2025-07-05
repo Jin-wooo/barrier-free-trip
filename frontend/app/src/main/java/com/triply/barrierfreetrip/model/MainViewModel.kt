@@ -3,10 +3,7 @@ package com.triply.barrierfreetrip.model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.triply.barrierfreetrip.BFTApplication
-import com.triply.barrierfreetrip.api.BFTApi
 import com.triply.barrierfreetrip.api.LocationInstance
 import com.triply.barrierfreetrip.api.RetroInstance
 import com.triply.barrierfreetrip.data.ChargerDetail
@@ -17,21 +14,16 @@ import com.triply.barrierfreetrip.data.ReviewListDTO
 import com.triply.barrierfreetrip.data.ReviewRegistrationDTO
 import com.triply.barrierfreetrip.data.SearchRsltListDto
 import com.triply.barrierfreetrip.data.TourFacilityDetail
-import com.triply.barrierfreetrip.feature.ApikeyStoreModule
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_CARE
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_CHARGER
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_RENTAL
 import com.triply.barrierfreetrip.util.Event
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel() : ViewModel() {
-    private val apikeyStoreModule = BFTApplication.getInstance().getKeyStore()
-
-    private lateinit var bftRetrofit: BFTApi
+    private var bftRetrofit = RetroInstance.bftAPI
     private val kakaoRetrofit = LocationInstance.getLocationApi()
 
     private val _nearbyStayList: MutableLiveData<List<InfoSquareListDto.InfoSquareItemDto>?> by lazy { MutableLiveData(emptyList()) }
@@ -80,12 +72,6 @@ class MainViewModel() : ViewModel() {
     private val _fcltList by lazy { MutableLiveData(listOf<InfoListDto.InfoListItemDto>()) }
     val fcltList: LiveData<List<InfoListDto.InfoListItemDto>>
         get() = _fcltList
-
-    init {
-        viewModelScope.launch {
-            bftRetrofit = RetroInstance.createBFTApi(apikeyStoreModule.getAccessToken().single())
-        }
-    }
 
     fun getNearbyStayList(userX: Double, userY: Double) {
         viewModelScope.launch {

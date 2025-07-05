@@ -27,8 +27,6 @@ object LoginInstance {
             .build()
     }
 
-    fun getLoginApi() : LoginApi {
-        return retrofit.create(LoginApi::class.java)
-    }
+    val loginAPI: LoginApi by lazy { retrofit.create(LoginApi::class.java) }
 }
 

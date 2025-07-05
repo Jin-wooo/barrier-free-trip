@@ -29,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
     private val splashScreen by lazy { installSplashScreen() }
     private val progressDialog by lazy { ProgressDialogFragment() }
-    private val loginApi by lazy { LoginInstance.getLoginApi() }
+    private val loginApi by lazy { LoginInstance.loginAPI }
     private lateinit var apikeyStoreModule: ApikeyStoreModule
 
     private val LifecycleOwner.lifecycleScope : LifecycleCoroutineScope
@@ -130,20 +130,24 @@ class LoginActivity : AppCompatActivity() {
                             lifecycleScope.launch(exceptionHandler) {
                                 val result = loginApi.getToken(
                                     LoginParameter(
-                                        user.id.toString(),
-                                        user.kakaoAccount?.email!!,
-                                        user.kakaoAccount?.profile?.nickname!!
+                                        serviceUserId = user.id?.toString() ?: "",
+                                        email = user.kakaoAccount?.email!!,
+                                        nickname = user.kakaoAccount?.profile?.nickname!!
                                     )
                                 )
 
-                                if (result.isSuccessful) {
+                                if (result.isSuccessful && result.body()?.status == "success") {
                                     val mainIntent = Intent(applicationContext, MainActivity::class.java)
                                     val realToken = result.body()!!.respDocument?.accessToken
+                                    val refreshToken = result.body()!!.respDocument?.refreshToken
                                     mainIntent.putExtra("token", realToken)
                                     if (realToken != null) {
                                         apikeyStoreModule.setAccessToken(realToken)
                                     }
+                                    if (refreshToken != null) { apikeyStoreModule.setRefreshToken(refreshToken) }
+                                    progressDialog.dismiss()
                                     startActivity(mainIntent)
+                                } else {
                                     progressDialog.dismiss()
                                 }
                             }

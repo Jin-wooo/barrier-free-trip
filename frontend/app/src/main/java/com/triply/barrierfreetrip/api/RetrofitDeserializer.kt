@@ -9,6 +9,7 @@ import com.triply.barrierfreetrip.data.InfoListDto
 import com.triply.barrierfreetrip.data.InfoSquareListDto
 import com.triply.barrierfreetrip.data.LoginDto
 import com.triply.barrierfreetrip.data.MetaResponse
+import com.triply.barrierfreetrip.data.RefreshResponse
 import com.triply.barrierfreetrip.data.RegionListDto
 import com.triply.barrierfreetrip.data.RespDocument
 import com.triply.barrierfreetrip.data.ReviewListDTO
@@ -86,6 +87,14 @@ class RetrofitDeserializer : JsonDeserializer<MetaResponse<*>> {
                         }
                         keySet.containsAll(ChargerDetail::class.primaryConstructor?.parameters?.map { it.name }?.toSet() ?: emptySet()) -> {
                             val parsedData = context?.deserialize<ChargerDetail>(data, ChargerDetail::class.java)
+                            MetaResponse(status = status, respDocument = parsedData, message = null)
+                        }
+                        keySet.containsAll(RefreshResponse::class.primaryConstructor?.parameters?.map { it.name }?.toSet() ?: emptySet()) -> {
+                            val parsedData = context?.deserialize<RefreshResponse>(data, RefreshResponse::class.java)
+                            MetaResponse(status = status, respDocument = parsedData, message = null)
+                        }
+                        keySet.containsAll(LoginDto::class.primaryConstructor?.parameters?.map { it.name }?.toSet() ?: emptySet()) -> {
+                            val parsedData = context?.deserialize<LoginDto>(data, LoginDto::class.java)
                             MetaResponse(status = status, respDocument = parsedData, message = null)
                         }
                         else -> {
