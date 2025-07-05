@@ -22,6 +22,8 @@ import com.triply.barrierfreetrip.adapter.HomeInfoAdapter
 import com.triply.barrierfreetrip.adapter.HomeMenuViewHolder
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
 import com.triply.barrierfreetrip.adapter.decoration.HomeListItemViewHolderDecoration
+import com.triply.barrierfreetrip.data.InfoListDto
+import com.triply.barrierfreetrip.data.InfoSquareListDto
 import com.triply.barrierfreetrip.databinding.FragmentHomeBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.MainViewModel
@@ -56,6 +58,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 currentLocation = location
                 // 내 주변 숙박시설 API 호출
                 viewModel.getNearbyStayList(currentLocation?.longitude ?: 126.9778222, currentLocation?.latitude ?: 37.5664056)
+                viewModel.getNearbyChargerList(currentLocation?.longitude ?: 126.9778222, currentLocation?.latitude ?: 37.5664056)
             }
         }
     }
@@ -127,7 +130,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     },
                     onInfoSquareClickListener = object : OnItemClickListener {
                         override fun onItemClick(position: Int) {
-                            val item = homeInfoList.getOrNull(position) as HomeInfoAdapter.HomeInfoDTO.InfoSquare? ?: return
+                            val item = (adapter as HomeInfoAdapter).infoList.getOrNull(position) as HomeInfoAdapter.HomeInfoDTO.InfoSquare? ?: return
 
                             bundle.putString(CONTENT_ID, item.contentId)
                             navController.navigate(
@@ -138,7 +141,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     },
                     onInfoListClickListener = object : OnItemClickListener {
                         override fun onItemClick(position: Int) {
-                            val item = homeInfoList.getOrNull(position) as HomeInfoAdapter.HomeInfoDTO.InfoList? ?: return
+                            val item = (adapter as HomeInfoAdapter).infoList.getOrNull(position) as HomeInfoAdapter.HomeInfoDTO.InfoList? ?: return
 
                             bundle.putString(CONTENT_ID, item.id.toString())
                             navController.navigate(
@@ -163,53 +166,50 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
 
-        viewModel.nearbyStayList.observe(viewLifecycleOwner) {
-            if (it == null) {
-                Log.d(TAG, "null near-hotel data")
-                return@observe
-            }
-
-            // 내 주변 전동휠체어 충전기 API 호출
-            viewModel.getNearbyChargerList(currentLocation?.longitude ?: 126.9778222, currentLocation?.latitude ?: 37.5664056)
-
+        viewModel.nearbyFcltList.observe(viewLifecycleOwner) { fcltList ->
             homeInfoList.clear()
             homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Menu)
             homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Title(title = "내 주변 숙박시설"))
-            homeInfoList.addAll(
-                it.map { info ->
-                    HomeInfoAdapter.HomeInfoDTO.InfoSquare(
-                        addr = info.addr,
-                        contentId = info.contentId,
-                        contentTypeId = info.contentTypeId,
-                        firstimg = info.firstimg,
-                        like = info.like,
-                        rating = info.rating,
-                        tel = info.tel,
-                        title = info.title
-                    )
-                }
-            )
             homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Title(title = "내 주변 전동휠체어 충전기"))
-            (binding.rvHome.adapter as HomeInfoAdapter).setDataList(homeInfoList)
-        }
 
-        viewModel.nearbyChargerList.observe(viewLifecycleOwner) {
-            if (it == null) {
-                Log.d(TAG, "null near-charger data")
+            if (fcltList == null) {
+                (binding.rvHome.adapter as HomeInfoAdapter).setDataList(homeInfoList)
+                Log.d(TAG, "null near-hotel data")
                 return@observe
             }
+            fcltList.map { fclt ->
+                when (fclt) {
+                    is InfoSquareListDto.InfoSquareItemDto -> {
+                        homeInfoList.add(
+                            HomeInfoAdapter.HomeInfoDTO.InfoSquare(
+                                addr = fclt.addr,
+                                contentId = fclt.contentId,
+                                contentTypeId = fclt.contentTypeId,
+                                firstimg = fclt.firstimg,
+                                like = fclt.like,
+                                rating = fclt.rating,
+                                tel = fclt.tel,
+                                title = fclt.title
+                            )
+                        )
+                    }
 
-            homeInfoList.addAll(
-                it.map { info ->
-                    HomeInfoAdapter.HomeInfoDTO.InfoList(
-                        id = info.id,
-                        addr = info.addr,
-                        like = info.like,
-                        tel = info.tel,
-                        title = info.title
-                    )
+                    is InfoListDto.InfoListItemDto -> {
+                        homeInfoList.add(
+                            HomeInfoAdapter.HomeInfoDTO.InfoList(
+                                id = fclt.id,
+                                addr = fclt.addr,
+                                like = fclt.like,
+                                tel = fclt.tel,
+                                title = fclt.title
+                            )
+                        )
+                    }
+
+                    else -> {}
                 }
-            )
+            }
+
             (binding.rvHome.adapter as HomeInfoAdapter).setDataList(homeInfoList)
         }
 

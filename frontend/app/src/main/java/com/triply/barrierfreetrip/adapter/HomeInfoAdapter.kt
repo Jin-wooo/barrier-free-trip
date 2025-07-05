@@ -18,7 +18,12 @@ class HomeInfoAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun setDataList(dataList: List<HomeInfoDTO>) {
         _infoList.clear()
-        _infoList.addAll(dataList)
+        val newDataList = dataList.sortedWith(
+            compareBy(
+                { it.sortOrder() }
+            )
+        )
+        _infoList.addAll(newDataList)
         notifyDataSetChanged()
     }
 
@@ -76,12 +81,12 @@ class HomeInfoAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             holder is SquareViewHolder -> {
                 holder.bind(
-                    item = (_infoList.getOrNull(position) as HomeInfoDTO.InfoSquare).convertAdapterDataintoDTO()
+                    item = (_infoList.getOrNull(position) as HomeInfoDTO.InfoSquare).convertAdapterDataIntoDTO()
                 )
             }
             holder is ListViewHolder -> {
                 holder.bind(
-                    item = (_infoList.getOrNull(position) as HomeInfoDTO.InfoList).convertAdapterDataintoDTO()
+                    item = (_infoList.getOrNull(position) as HomeInfoDTO.InfoList).convertAdapterDataIntoDTO()
                 )
             }
         }
@@ -111,7 +116,7 @@ class HomeInfoAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val tel: String,
             val title: String
         ): HomeInfoDTO() {
-            fun convertAdapterDataintoDTO(): InfoSquareItemDto {
+            fun convertAdapterDataIntoDTO(): InfoSquareItemDto {
                 return InfoSquareItemDto(
                     addr = this.addr,
                     contentId = this.contentId,
@@ -132,7 +137,7 @@ class HomeInfoAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val tel: String,
             val title: String
         ): HomeInfoDTO() {
-            fun convertAdapterDataintoDTO(): InfoListItemDto {
+            fun convertAdapterDataIntoDTO(): InfoListItemDto {
                 return InfoListItemDto(
                     id = this.id,
                     addr = this.addr,

@@ -1,6 +1,7 @@
 package com.triply.barrierfreetrip.model
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,12 +28,27 @@ class MainViewModel() : ViewModel() {
     private val kakaoRetrofit = LocationInstance.getLocationApi()
 
     private val _nearbyStayList: MutableLiveData<List<InfoSquareListDto.InfoSquareItemDto>?> by lazy { MutableLiveData(emptyList()) }
-    val nearbyStayList: LiveData<List<InfoSquareListDto.InfoSquareItemDto>?>
-        get() = _nearbyStayList
-
     private val _nearbyChargerList: MutableLiveData<List<InfoListDto.InfoListItemDto>?> by lazy { MutableLiveData(emptyList()) }
-    val nearbyChargerList: LiveData<List<InfoListDto.InfoListItemDto>?>
-        get() = _nearbyChargerList
+    val nearbyFcltList: MediatorLiveData<List<Any>> = MediatorLiveData()
+
+    init {
+        nearbyFcltList.addSource(_nearbyStayList) {
+            _nearbyStayList.value?.let {
+                nearbyFcltList.value = mutableListOf<Any>().apply {
+                    addAll(nearbyFcltList.value ?: emptyList())
+                    addAll(it)
+                }
+            }
+        }
+        nearbyFcltList.addSource(_nearbyChargerList) {
+            _nearbyChargerList.value?.let {
+                nearbyFcltList.value = mutableListOf<Any>().apply {
+                    addAll(nearbyFcltList.value ?: emptyList())
+                    addAll(it)
+                }
+            }
+        }
+    }
 
     private val _sidoCodes by lazy {
         MutableLiveData(listOf(RegionListDto.Region(code = "-1", name = "시도 선택")))
