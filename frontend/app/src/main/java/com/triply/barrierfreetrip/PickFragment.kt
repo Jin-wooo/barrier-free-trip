@@ -12,12 +12,12 @@ import com.triply.barrierfreetrip.feature.BaseFragment
  * Use the [PickFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class PickFragment :BaseFragment<FragmentPickBinding>(R.layout.fragment_pick) {
-    private val pagerAdapter = PickPageAdapter(requireParentFragment())
+class PickFragment: BaseFragment<FragmentPickBinding>(R.layout.fragment_pick) {
+    private lateinit var pagerAdapter: PickPageAdapter
     private val MAX_TAB = 6
 
     override fun initInViewCreated() {
-
+        pagerAdapter = PickPageAdapter(requireParentFragment())
         for (i in 0 until MAX_TAB) {
             pagerAdapter.addFragment(PickListFragment())
         }

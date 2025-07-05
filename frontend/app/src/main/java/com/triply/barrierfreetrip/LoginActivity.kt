@@ -51,7 +51,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
     private val mCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
             Log.e(TAG, "로그인 실패 $error")
@@ -93,12 +92,21 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    private var lastClickTime = 0L
+    private var clickTime = 0L
+
     // 자꾸 카카오톡 자체를 실행시키는 게 아니라 카카오톡 웹페이지로 넘어감
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        splashScreen.setKeepOnScreenCondition {true}
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         binding.btnLoginKakao.setOnClickListener {
+            clickTime = System.currentTimeMillis()
+            val elapsedTime = clickTime - lastClickTime
+            lastClickTime = clickTime
+            if (elapsedTime < 3000) {
+                return@setOnClickListener
+            }
             progressDialog.show(supportFragmentManager)
             // 카카오톡 설치 확인
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {

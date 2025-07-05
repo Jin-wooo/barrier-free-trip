@@ -1,13 +1,11 @@
 package com.triply.barrierfreetrip.adapter
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.triply.barrierfreetrip.PickListFragment
 
 class PickPageAdapter(fragment : Fragment) : FragmentStateAdapter(fragment) {
-    var fragments : ArrayList<PickListFragment> = ArrayList();
+    private var fragments: ArrayList<PickListFragment> = ArrayList()
 
     override fun getItemCount(): Int {
         return fragments.size
@@ -23,7 +21,7 @@ class PickPageAdapter(fragment : Fragment) : FragmentStateAdapter(fragment) {
     }
 
     fun removeFragment() {
-        fragments.removeLast()
+        fragments.removeAt(fragments.lastIndex)
         notifyItemRemoved(fragments.size)
     }
 }

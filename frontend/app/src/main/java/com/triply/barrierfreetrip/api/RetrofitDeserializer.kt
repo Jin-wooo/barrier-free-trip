@@ -56,10 +56,6 @@ class RetrofitDeserializer : JsonDeserializer<MetaResponse<*>> {
                                     val parsedData = context?.deserialize<RegionListDto>(data, RegionListDto::class.java)
                                     MetaResponse(status = status, respDocument = parsedData, message = null)
                                 }
-                                ReviewListDTO.ReviewDTO::class.primaryConstructor?.parameters?.map {it.name}?.toSet() -> {
-                                    val parsedData = context?.deserialize<ReviewListDTO>(data, ReviewListDTO::class.java)
-                                    MetaResponse(status = status, respDocument = parsedData, message = null)
-                                }
                                 else -> {
                                     throw JsonParseException("Json 파싱 오류")
                                 }

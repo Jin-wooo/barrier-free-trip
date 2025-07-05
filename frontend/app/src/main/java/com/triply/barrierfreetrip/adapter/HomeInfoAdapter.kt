@@ -149,6 +149,14 @@ class HomeInfoAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
+    private fun HomeInfoDTO.sortOrder(): Int = when (this) {
+        is HomeInfoDTO.Menu -> 0
+        is HomeInfoDTO.Title -> {
+            if (this.title == "내 주변 숙박시설") 1 else 3
+        }
+        is HomeInfoDTO.InfoSquare -> 2
+        is HomeInfoDTO.InfoList -> 4
+    }
 }
 
 class HomeMenuViewHolder(val binding: ItemHomefragmentMainMenuBinding): RecyclerView.ViewHolder(binding.root) {
