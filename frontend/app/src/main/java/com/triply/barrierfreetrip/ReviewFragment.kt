@@ -1,7 +1,7 @@
 package com.triply.barrierfreetrip
 
 import android.os.Bundle
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
@@ -15,7 +15,7 @@ import com.triply.barrierfreetrip.model.MainViewModel
 class ReviewFragment : BaseFragment<FragmentReviewBinding>(R.layout.fragment_review) {
     private var contentId = ""
     private var title = ""
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

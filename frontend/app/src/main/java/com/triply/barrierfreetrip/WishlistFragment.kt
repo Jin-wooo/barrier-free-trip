@@ -3,7 +3,7 @@ package com.triply.barrierfreetrip
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.triply.barrierfreetrip.HomeFragment.Companion.CONTENT_TYPE
@@ -19,7 +19,7 @@ import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.MainViewModel
 
 class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragment_staylist) {
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private var type: String? = null
     private val infoList = arrayListOf<InfoListDto.InfoListItemDto>()
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }

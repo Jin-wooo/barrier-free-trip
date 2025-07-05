@@ -9,7 +9,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,8 +26,8 @@ import com.triply.barrierfreetrip.model.SearchViewModel
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_search) {
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
-    private val viewModel: MainViewModel by viewModels()
-    private val searchViewModel: SearchViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
+    private val searchViewModel: SearchViewModel by activityViewModels()
 
     private val TAG = "SearchFragment"
 

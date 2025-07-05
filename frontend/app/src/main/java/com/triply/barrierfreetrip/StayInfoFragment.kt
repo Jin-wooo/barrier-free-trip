@@ -5,7 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
@@ -22,7 +22,7 @@ import com.triply.barrierfreetrip.util.convertHomepageToURL
 import com.triply.barrierfreetrip.util.toUIString
 
 class StayInfoFragment : BaseFragment<FragmentStayInfoBinding>(R.layout.fragment_stay_info) {
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private var contentId = ""
     private var contentTitle = ""
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }

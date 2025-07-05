@@ -6,7 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.triply.barrierfreetrip.StayInfoFragment.Companion.CONTENT_TITLE
 import com.triply.barrierfreetrip.databinding.FragmentMyPageBinding
@@ -15,7 +15,7 @@ import com.triply.barrierfreetrip.model.LoginViewModel
 
 
 class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_page) {
-    private val viewModel: LoginViewModel by viewModels()
+    private val viewModel: LoginViewModel by activityViewModels()
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
 
     override fun initInViewCreated() {

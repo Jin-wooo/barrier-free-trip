@@ -2,7 +2,7 @@ package com.triply.barrierfreetrip
 
 import android.os.Bundle
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -24,7 +24,7 @@ import java.lang.System.currentTimeMillis
 
 
 class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fragment_wishlist_map) {
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private var contentId: String? = null
     private var _kakaoMap: KakaoMap? = null
     private val kakaoMap: KakaoMap

@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.triply.barrierfreetrip.databinding.FragmentReviewWritingBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
@@ -13,7 +13,7 @@ import com.triply.barrierfreetrip.model.MainViewModel
 
 class ReviewWritingFragment : BaseFragment<FragmentReviewWritingBinding>(R.layout.fragment_review_writing) {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private var contentId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

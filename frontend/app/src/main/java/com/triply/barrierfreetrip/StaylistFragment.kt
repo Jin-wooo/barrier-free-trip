@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.triply.barrierfreetrip.HomeFragment.Companion.CONTENT_TYPE
@@ -23,7 +23,7 @@ import com.triply.barrierfreetrip.util.CONTENT_TYPE_STAY
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_TOUR
 
 class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment_staylist) {
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private var type: String? = null
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
 

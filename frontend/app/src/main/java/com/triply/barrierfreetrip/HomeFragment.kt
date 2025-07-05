@@ -8,7 +8,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -33,7 +33,7 @@ import com.triply.barrierfreetrip.util.CONTENT_TYPE_STAY
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_TOUR
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private val homeInfoList = arrayListOf<HomeInfoAdapter.HomeInfoDTO>(HomeInfoAdapter.HomeInfoDTO.Menu)
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
     private var fusedLocationClient: FusedLocationProviderClient? = null
