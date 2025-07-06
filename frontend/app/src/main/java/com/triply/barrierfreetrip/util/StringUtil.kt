@@ -9,6 +9,10 @@ fun String.toUIString(): String {
         .replace("<br>", " ")
         .replace("</br>", " ")
         .replace("<br/>", " ")
+        .replace("<br />", " ")
+        .replace("<strong>", "")
+        .replace("</strong>", "")
+        .replace("</b>", "")
 }
 
 fun convertHomepageToURL(homepage: String): String {

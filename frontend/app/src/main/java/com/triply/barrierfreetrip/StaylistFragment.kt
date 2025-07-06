@@ -81,8 +81,6 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
                 add("구군 선택")
                 addAll(sigunguList.map { sigungu -> sigungu.name})
             }
-
-            binding.spnSmallArea.setSelection(0)
         }
 
         binding.tvRequireSelection.visibility = View.VISIBLE

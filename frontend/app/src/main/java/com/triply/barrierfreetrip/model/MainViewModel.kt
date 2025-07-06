@@ -411,14 +411,24 @@ class MainViewModel() : ViewModel() {
                 _isDataLoading.value = Event(true)
 
                 val response = bftRetrofit.postLikes(type = type, contentId = contentId, likes = likes)
+                if (!response.isSuccessful) {
+                    throw Exception("postLikes failed with response failed(error code: ${response.code()})")
+                }
                 if (type == 1 && response.isSuccessful) {
                     val chargerInfoResponse =
                         bftRetrofit.getChargerDetail(contentId = contentId.toLong())
                     if (chargerInfoResponse.isSuccessful) {
+                        val preLatitude = _chargerInfo.value?.latitude ?: 0.0
+                        val preLongitude = _chargerInfo.value?.longitude ?: 0.0
                         _chargerInfo.value = _chargerInfo.value?.copy(
                             like = (chargerInfoResponse.body()?.respDocument as? ChargerDetail)?.like ?: 0
-                        )
+                        ).apply {
+                            this?.latitude = preLatitude
+                            this?.longitude = preLongitude
+                        }
                     }
+                } else {
+
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -86,6 +86,7 @@ class StayInfoFragment : BaseFragment<FragmentStayInfoBinding>(R.layout.fragment
             binding.tvStayinfoEnterTime.text = detail.checkInTime.toUIString()
             binding.tvStayinfoLeaveTime.text = detail.checkOutTime.toUIString()
             binding.tvStayinfoIntroduce.text = detail.overview.toUIString()
+            binding.tbToggleLike.isChecked = detail.like == 1
 
             val convenienceInfos = mutableListOf(
                 ConvenienceInfoDTO(subject = ContextCompat.getString(requireContext(), R.string.stayinfo_elevator), content = detail.elevator?.toUIString() ?: ""),
