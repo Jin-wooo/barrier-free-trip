@@ -1,6 +1,7 @@
 package com.triply.barrierfreetrip
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
 import android.widget.AdapterView
 import androidx.fragment.app.activityViewModels
@@ -31,6 +32,9 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
     // sigungu data
     private val sigunguNames = arrayListOf("구군 선택")
     private var sigunguPosition = 0
+
+    // scroll position
+    private var scrollState: Parcelable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -165,7 +169,6 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
                     return
                 }
                 binding.spnSmallArea.isEnabled = true
-                binding.spnSmallArea.setSelection(0)
                 sigunguPosition = 0
 
                 infoList.clear()
@@ -240,6 +243,9 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
             infoList.clear()
             infoList.addAll(it)
             (binding.rvList.adapter as InfoListAdapter).setInfoList(infoList)
+            scrollState?.let { state ->
+                binding.rvList.layoutManager?.onRestoreInstanceState(state)
+            }
         }
 
         viewModel.isDataLoading.observe(viewLifecycleOwner) {
@@ -251,6 +257,11 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
         }
 
         binding.tvRequireSelection.visibility = View.VISIBLE
+    }
+
+    override fun onPause() {
+        super.onPause()
+        scrollState = binding.rvList.layoutManager?.onSaveInstanceState()
     }
 
     private fun getFcltListData(sidoNm: String?, sigunguNm: String) {
