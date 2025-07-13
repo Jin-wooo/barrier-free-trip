@@ -31,6 +31,7 @@ class BFTDotIndicator: LinearLayoutCompat {
      * @param size 뷰페이저 아이템 개수
      */
     fun initIndicators(size: Int) {
+        indicators.clear()
         if (size <= 0) return
 
         removeAllViews()

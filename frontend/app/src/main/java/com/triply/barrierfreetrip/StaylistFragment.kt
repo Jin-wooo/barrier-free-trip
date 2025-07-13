@@ -1,10 +1,11 @@
 package com.triply.barrierfreetrip
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.triply.barrierfreetrip.HomeFragment.Companion.CONTENT_TYPE
@@ -23,7 +24,7 @@ import com.triply.barrierfreetrip.util.CONTENT_TYPE_STAY
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_TOUR
 
 class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment_staylist) {
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private var type: String? = null
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
 
@@ -40,6 +41,8 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
     // facility data
     private val fcltList = ArrayList<InfoSquareItemDto>()
 
+    // scroll position
+    private var scrollState: Parcelable? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,7 +71,6 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
                 add("시도 선택")
                 addAll(sidoList.map { sido -> sido.name })
             }
-            binding.spnBigArea.setSelection(0)
         }
         viewModel.sigunguCodes.observe(viewLifecycleOwner) { sigunguList ->
             with(sigunguCodes) {
@@ -81,8 +83,6 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
                 add("구군 선택")
                 addAll(sigunguList.map { sigungu -> sigungu.name})
             }
-
-            binding.spnSmallArea.setSelection(0)
         }
 
         binding.tvRequireSelection.visibility = View.VISIBLE
@@ -165,6 +165,9 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
             fcltList.clear()
             fcltList.addAll(it)
             (binding.rvList.adapter as InfoSquareAdapter).setDataList(fcltList)
+            scrollState?.let { state ->
+                binding.rvList.layoutManager?.onRestoreInstanceState(state)
+            }
         }
 
         viewModel.isDataLoading.observe(viewLifecycleOwner) {
@@ -174,6 +177,17 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
                 loadingProgressBar.dismiss()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        viewModel.getTourFcltList(type ?: "", sidoCodes[sidoPosition].code, sigunguCodes[sigunguPosition].code)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        scrollState = binding.rvList.layoutManager?.onSaveInstanceState()
     }
 
     private fun initTitle() {

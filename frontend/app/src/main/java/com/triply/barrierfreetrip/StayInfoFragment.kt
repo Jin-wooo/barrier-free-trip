@@ -5,7 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
@@ -22,7 +22,7 @@ import com.triply.barrierfreetrip.util.convertHomepageToURL
 import com.triply.barrierfreetrip.util.toUIString
 
 class StayInfoFragment : BaseFragment<FragmentStayInfoBinding>(R.layout.fragment_stay_info) {
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private var contentId = ""
     private var contentTitle = ""
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
@@ -80,12 +80,13 @@ class StayInfoFragment : BaseFragment<FragmentStayInfoBinding>(R.layout.fragment
             (binding.vpStayinfo.adapter as ViewPagerAdapter).setDataList(detail.imgs)
             binding.indicatorVp.initIndicators(detail.imgs.size)
 
-            binding.tvStayinfoPlaceName.text = detail.title
-            binding.tvStayinfoRate.text = detail.rating
-            binding.tvStayinfoLocation.text = detail.addr1
-            binding.tvStayinfoEnterTime.text = detail.checkInTime
-            binding.tvStayinfoLeaveTime.text = detail.checkOutTime
-            binding.tvStayinfoIntroduce.text = detail.overview
+            binding.tvStayinfoPlaceName.text = detail.title.toUIString()
+            binding.tvStayinfoRate.text = detail.rating.toUIString()
+            binding.tvStayinfoLocation.text = detail.addr1.toUIString()
+            binding.tvStayinfoEnterTime.text = detail.checkInTime.toUIString()
+            binding.tvStayinfoLeaveTime.text = detail.checkOutTime.toUIString()
+            binding.tvStayinfoIntroduce.text = detail.overview.toUIString()
+            binding.tbToggleLike.isChecked = detail.like == 1
 
             val convenienceInfos = mutableListOf(
                 ConvenienceInfoDTO(subject = ContextCompat.getString(requireContext(), R.string.stayinfo_elevator), content = detail.elevator?.toUIString() ?: ""),

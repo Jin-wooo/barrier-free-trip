@@ -28,7 +28,6 @@
 
                 <data android:host="oauth"
                     android:scheme="kakao${KAKAO_NATIVE_APP_KEY}" />
-
             </intent-filter>
         </activity>
         <activity
@@ -38,12 +37,12 @@
 
         <meta-data
             android:name="KAKAO_KEY"
-            android:value="${KAKAO_CLIENT_ID}" />
+            android:value="${KAKAO_NATIVE_APP_KEY}"  />
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="${KAKAO_CLIENT_ID}" />
-        <meta-data
-            android:name="NAVER_KEY"
-            android:value="${NAVER_CLIENT_ID}" />
+<!--        <meta-data-->
+<!--            android:name="NAVER_KEY"-->
+<!--            android:value="${NAVER_CLIENT_ID}" />-->
     </application>
 </manifest>

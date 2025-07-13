@@ -1,12 +1,10 @@
 package com.triply.barrierfreetrip.model
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.triply.barrierfreetrip.BFTApplication
-import com.triply.barrierfreetrip.api.BFTApi
 import com.triply.barrierfreetrip.api.LocationInstance
 import com.triply.barrierfreetrip.api.RetroInstance
 import com.triply.barrierfreetrip.data.ChargerDetail
@@ -17,30 +15,40 @@ import com.triply.barrierfreetrip.data.ReviewListDTO
 import com.triply.barrierfreetrip.data.ReviewRegistrationDTO
 import com.triply.barrierfreetrip.data.SearchRsltListDto
 import com.triply.barrierfreetrip.data.TourFacilityDetail
-import com.triply.barrierfreetrip.feature.ApikeyStoreModule
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_CARE
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_CHARGER
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_RENTAL
 import com.triply.barrierfreetrip.util.Event
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel() : ViewModel() {
-    private val apikeyStoreModule = BFTApplication.getInstance().getKeyStore()
-
-    private lateinit var bftRetrofit: BFTApi
+    private var bftRetrofit = RetroInstance.bftAPI
     private val kakaoRetrofit = LocationInstance.getLocationApi()
 
     private val _nearbyStayList: MutableLiveData<List<InfoSquareListDto.InfoSquareItemDto>?> by lazy { MutableLiveData(emptyList()) }
-    val nearbyStayList: LiveData<List<InfoSquareListDto.InfoSquareItemDto>?>
-        get() = _nearbyStayList
-
     private val _nearbyChargerList: MutableLiveData<List<InfoListDto.InfoListItemDto>?> by lazy { MutableLiveData(emptyList()) }
-    val nearbyChargerList: LiveData<List<InfoListDto.InfoListItemDto>?>
-        get() = _nearbyChargerList
+    val nearbyFcltList: MediatorLiveData<List<Any>> = MediatorLiveData()
+
+    init {
+        nearbyFcltList.addSource(_nearbyStayList) {
+            _nearbyStayList.value?.let {
+                nearbyFcltList.value = mutableListOf<Any>().apply {
+                    addAll(nearbyFcltList.value ?: emptyList())
+                    addAll(it)
+                }
+            }
+        }
+        nearbyFcltList.addSource(_nearbyChargerList) {
+            _nearbyChargerList.value?.let {
+                nearbyFcltList.value = mutableListOf<Any>().apply {
+                    addAll(nearbyFcltList.value ?: emptyList())
+                    addAll(it)
+                }
+            }
+        }
+    }
 
     private val _sidoCodes by lazy {
         MutableLiveData(listOf(RegionListDto.Region(code = "-1", name = "시도 선택")))
@@ -80,12 +88,6 @@ class MainViewModel() : ViewModel() {
     private val _fcltList by lazy { MutableLiveData(listOf<InfoListDto.InfoListItemDto>()) }
     val fcltList: LiveData<List<InfoListDto.InfoListItemDto>>
         get() = _fcltList
-
-    init {
-        viewModelScope.launch {
-            bftRetrofit = RetroInstance.createBFTApi(apikeyStoreModule.getAccessToken().single())
-        }
-    }
 
     fun getNearbyStayList(userX: Double, userY: Double) {
         viewModelScope.launch {
@@ -409,14 +411,24 @@ class MainViewModel() : ViewModel() {
                 _isDataLoading.value = Event(true)
 
                 val response = bftRetrofit.postLikes(type = type, contentId = contentId, likes = likes)
+                if (!response.isSuccessful) {
+                    throw Exception("postLikes failed with response failed(error code: ${response.code()})")
+                }
                 if (type == 1 && response.isSuccessful) {
                     val chargerInfoResponse =
                         bftRetrofit.getChargerDetail(contentId = contentId.toLong())
                     if (chargerInfoResponse.isSuccessful) {
+                        val preLatitude = _chargerInfo.value?.latitude ?: 0.0
+                        val preLongitude = _chargerInfo.value?.longitude ?: 0.0
                         _chargerInfo.value = _chargerInfo.value?.copy(
                             like = (chargerInfoResponse.body()?.respDocument as? ChargerDetail)?.like ?: 0
-                        )
+                        ).apply {
+                            this?.latitude = preLatitude
+                            this?.longitude = preLongitude
+                        }
                     }
+                } else {
+
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

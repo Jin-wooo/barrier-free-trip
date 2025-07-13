@@ -29,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
     private val splashScreen by lazy { installSplashScreen() }
     private val progressDialog by lazy { ProgressDialogFragment() }
-    private val loginApi by lazy { LoginInstance.getLoginApi() }
+    private val loginApi by lazy { LoginInstance.loginAPI }
     private lateinit var apikeyStoreModule: ApikeyStoreModule
 
     private val LifecycleOwner.lifecycleScope : LifecycleCoroutineScope
@@ -50,7 +50,6 @@ class LoginActivity : AppCompatActivity() {
             else -> Log.d("logFish", "Exception")
         }
     }
-
 
     private val mCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
@@ -93,12 +92,21 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    private var lastClickTime = 0L
+    private var clickTime = 0L
+
     // 자꾸 카카오톡 자체를 실행시키는 게 아니라 카카오톡 웹페이지로 넘어감
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        splashScreen.setKeepOnScreenCondition {true}
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         binding.btnLoginKakao.setOnClickListener {
+            clickTime = System.currentTimeMillis()
+            val elapsedTime = clickTime - lastClickTime
+            lastClickTime = clickTime
+            if (elapsedTime < 3000) {
+                return@setOnClickListener
+            }
             progressDialog.show(supportFragmentManager)
             // 카카오톡 설치 확인
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
@@ -130,20 +138,24 @@ class LoginActivity : AppCompatActivity() {
                             lifecycleScope.launch(exceptionHandler) {
                                 val result = loginApi.getToken(
                                     LoginParameter(
-                                        user.id.toString(),
-                                        user.kakaoAccount?.email!!,
-                                        user.kakaoAccount?.profile?.nickname!!
+                                        serviceUserId = user.id?.toString() ?: "",
+                                        email = user.kakaoAccount?.email!!,
+                                        nickname = user.kakaoAccount?.profile?.nickname!!
                                     )
                                 )
 
-                                if (result.isSuccessful) {
+                                if (result.isSuccessful && result.body()?.status == "success") {
                                     val mainIntent = Intent(applicationContext, MainActivity::class.java)
                                     val realToken = result.body()!!.respDocument?.accessToken
+                                    val refreshToken = result.body()!!.respDocument?.refreshToken
                                     mainIntent.putExtra("token", realToken)
                                     if (realToken != null) {
                                         apikeyStoreModule.setAccessToken(realToken)
                                     }
+                                    if (refreshToken != null) { apikeyStoreModule.setRefreshToken(refreshToken) }
+                                    progressDialog.dismiss()
                                     startActivity(mainIntent)
+                                } else {
                                     progressDialog.dismiss()
                                 }
                             }

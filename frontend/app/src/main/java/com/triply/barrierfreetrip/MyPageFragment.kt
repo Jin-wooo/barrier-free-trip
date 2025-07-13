@@ -1,12 +1,10 @@
 package com.triply.barrierfreetrip
 
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.triply.barrierfreetrip.StayInfoFragment.Companion.CONTENT_TITLE
 import com.triply.barrierfreetrip.databinding.FragmentMyPageBinding
@@ -15,7 +13,7 @@ import com.triply.barrierfreetrip.model.LoginViewModel
 
 
 class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_page) {
-    private val viewModel: LoginViewModel by viewModels()
+    private val viewModel: LoginViewModel by activityViewModels()
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
 
     override fun initInViewCreated() {
@@ -62,17 +60,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
                 loadingProgressBar.show()
             } else {
                 loadingProgressBar.dismiss()
-            }
-        }
-
-        viewModel.logoutResult.observe(viewLifecycleOwner) {
-            if (it) {
-                val intent = Intent(activity, LoginActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }
-                startActivity(intent)
-            } else {
-                Log.d("로그아웃 결과", "실패하였습니다.")
             }
         }
     }

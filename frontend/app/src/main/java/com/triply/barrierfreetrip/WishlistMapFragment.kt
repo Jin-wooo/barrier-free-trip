@@ -2,7 +2,7 @@ package com.triply.barrierfreetrip
 
 import android.os.Bundle
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -15,6 +15,7 @@ import com.kakao.vectormap.mapwidget.component.GuiLayout
 import com.kakao.vectormap.mapwidget.component.GuiText
 import com.kakao.vectormap.mapwidget.component.Orientation
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
+import com.triply.barrierfreetrip.data.ChargerDetail
 import com.triply.barrierfreetrip.databinding.FragmentWishlistMapBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.MainViewModel
@@ -24,11 +25,10 @@ import java.lang.System.currentTimeMillis
 
 
 class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fragment_wishlist_map) {
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private var contentId: String? = null
-    private var _kakaoMap: KakaoMap? = null
-    private val kakaoMap: KakaoMap
-        get() = _kakaoMap!!
+    private var kakaoMap: KakaoMap? = null
+    private var pendingChargerInfo: ChargerDetail? = null
     private var timeOnClickLike = currentTimeMillis()
     private val debouncingInterval = 300L
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
@@ -65,7 +65,11 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
                 phoneChargerCapability = if (chargerInfo.equals("N")) "불가" else "가능",
                 like = chargerInfo.like == 1,
             )
-            kakaoMap.mapWidgetManager?.infoWindowLayer?.addInfoWindow(makeWidget(chargerInfo.title, chargerInfo.latitude, chargerInfo.longitude))
+            if (kakaoMap == null) {
+                pendingChargerInfo = chargerInfo
+                return@observe
+            }
+            kakaoMap?.mapWidgetManager?.infoWindowLayer?.addInfoWindow(makeWidget(chargerInfo.title, chargerInfo.latitude, chargerInfo.longitude))
             setCameraPosition(chargerInfo.latitude, chargerInfo.longitude)
             binding.dialogMapInfo.setOnClickListener { _ ->
                 setCameraPosition(chargerInfo.latitude, chargerInfo.longitude)
@@ -113,7 +117,15 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
         }
         val kakaoMapReadyCycleCallback = object: KakaoMapReadyCallback() {
             override fun onMapReady(kakaoMap: KakaoMap) {
-                _kakaoMap = kakaoMap
+                this@WishlistMapFragment.kakaoMap = kakaoMap
+                pendingChargerInfo?.let {
+                    this@WishlistMapFragment.kakaoMap
+                        ?.mapWidgetManager
+                        ?.infoWindowLayer
+                        ?.addInfoWindow(
+                            makeWidget(it.title, it.latitude, it.longitude)
+                        )
+                }
                 contentId?.let {
                     viewModel.getChargerInfo(contentId = it.toLong())
                 }
@@ -144,7 +156,7 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
 
     private fun setCameraPosition(latitude: Double, longitude: Double) {
         val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
-        if (_kakaoMap == null) return
-        kakaoMap.moveCamera(cameraUpdate)
+        if (kakaoMap == null) return
+        kakaoMap?.moveCamera(cameraUpdate)
     }
 }
