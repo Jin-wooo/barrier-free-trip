@@ -1,7 +1,14 @@
+import com.github.jk1.license.render.*
+import com.github.jk1.license.filter.LicenseBundleNormalizer
+import com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.11'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+
+	// open source license report
+	id 'com.github.jk1.dependency-license-report' version '2.0'
 }
 
 group = 'triply'
@@ -36,4 +43,15 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// open source license report
+licenseReport {
+	outputDir = "$projectDir/build/licenses"
+
+	// markdown
+	renderers = [new InventoryMarkdownReportRenderer()]
+
+	// 보고서에 첫 번째 수준 종속성만 표기
+	filters = [new LicenseBundleNormalizer(), new ExcludeTransitiveDependenciesFilter()]
 }

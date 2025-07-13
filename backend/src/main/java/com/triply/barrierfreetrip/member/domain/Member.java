@@ -33,15 +33,19 @@ public class Member implements UserDetails {
     private List<String> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private List<TouristFacilityHeart> touristFacilityHearts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder. Default
     private List<CareTripHeart> careTripHearts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder. Default
     private List<ChargerHeart> chargerHearts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder. Default
     private List<RentalHeart> rentalHearts = new ArrayList<>();
 
     public Member(String id, String email, String nickname, List<String> roles) {

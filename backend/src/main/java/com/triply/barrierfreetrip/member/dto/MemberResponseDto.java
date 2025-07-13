@@ -9,5 +9,5 @@ public class MemberResponseDto {
 //    private String email;
 //    private String nickname;
     private String accessToken;
-//    private String refreshToken;
+    private String refreshToken;
 }
