@@ -3,6 +3,7 @@ package com.triply.barrierfreetrip.member.service;
 import com.triply.barrierfreetrip.member.domain.Token;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,7 +20,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TokenService {
-    private String secretKey = "testSecretKey202301125testSecretKey202301125testSecretKey202301125";
+    @Value("${jwt.secret-key}")
+    private String secretKey;
     private final OauthMemberService memberService;
 
     @PostConstruct
