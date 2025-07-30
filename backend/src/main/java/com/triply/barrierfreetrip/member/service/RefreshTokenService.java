@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -18,7 +19,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
-    private String secretKey = "testSecretKey202301125testSecretKey202301125testSecretKey202301125";
+    @Value("${jwt.secret-key}")
+    private String secretKey;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @PostConstruct
