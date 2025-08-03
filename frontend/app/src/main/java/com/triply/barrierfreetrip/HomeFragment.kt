@@ -41,26 +41,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var currentLocation: Location? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
+        startLocationUpdates()
+    }
 
-        val hasPermissionForCoarseLocation = ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        val hasPermissionForFineLocation = ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-
-        if (hasPermissionForCoarseLocation && hasPermissionForFineLocation) {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000L).build()
-            fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-
-            fusedLocationClient?.lastLocation?.addOnSuccessListener { location: Location? ->
-                if (location == null) return@addOnSuccessListener
-
-                currentLocation = location
-                // 내 주변 숙박시설 API 호출
-                viewModel.getNearbyStayList(currentLocation?.longitude ?: 126.9778222, currentLocation?.latitude ?: 37.5664056)
-                viewModel.getNearbyChargerList(currentLocation?.longitude ?: 126.9778222, currentLocation?.latitude ?: 37.5664056)
-            }
-        }
+    override fun onStop() {
+        super.onStop()
+        stopLocationUpdates()
     }
 
     override fun initInViewCreated() {
@@ -225,9 +213,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val locationCallback : LocationCallback = object : LocationCallback() {
         override fun onLocationResult(p0: LocationResult) {
             super.onLocationResult(p0)
+            val previousLocation = currentLocation
             currentLocation = p0.lastLocation
-            fusedLocationClient?.removeLocationUpdates(this)
+
+            if (previousLocation != null) {
+                val difference = currentLocation?.distanceTo(previousLocation) ?: 0f
+
+                if (difference < 0.0001F) return
+            }
+            // 내 주변시설 API 호출
+            viewModel.resetFacilityList()
+            viewModel.getNearbyStayList(currentLocation?.longitude ?: 126.9778222, currentLocation?.latitude ?: 37.5664056)
+            viewModel.getNearbyChargerList(currentLocation?.longitude ?: 126.9778222, currentLocation?.latitude ?: 37.5664056)
         }
+    }
+
+    fun startLocationUpdates() {
+        val hasPermissionForCoarseLocation = ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val hasPermissionForFineLocation = ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermissionForCoarseLocation && hasPermissionForFineLocation) {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000L).build()
+            fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+        }
+    }
+
+    fun stopLocationUpdates() {
+        fusedLocationClient?.removeLocationUpdates(locationCallback)
     }
 
     companion object {

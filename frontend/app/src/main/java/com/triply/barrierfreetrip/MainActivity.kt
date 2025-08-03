@@ -109,6 +109,15 @@ class MainActivity : AppCompatActivity() {
 
                 requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_FINE_LOCATION)
             }
+            REQUEST_FINE_LOCATION -> {
+                if (hasPermissionForFineLocation) {
+                    val navHostFragment = (supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment)
+                    val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                    if (currentFragment is HomeFragment) {
+                        currentFragment.startLocationUpdates()
+                    }
+                }
+            }
             else -> {}
         }
     }
