@@ -111,7 +111,7 @@ class ListViewHolder(
         binding.tbListLike.isChecked = item.like
         binding.btnChargerlistMap.visibility = if (isShowMapVisible) View.VISIBLE else View.GONE
         binding.tbListLike.visibility = if (isLikeVisible) View.VISIBLE else View.GONE
-        binding.tvListLocation.text = item.addr.substring(0, 14)
+        binding.tvListLocation.text = item.addr.substring(0, item.addr.length.coerceAtMost(14))
     }
 
     init {
