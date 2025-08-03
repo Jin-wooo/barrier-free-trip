@@ -39,6 +39,7 @@ class BFTApplication : Application() {
 
         CoroutineScope(Dispatchers.IO).launch {
             keyStore.getAccessToken().collect {
+                if (it.isEmpty()) return@collect
                 RetroInstance.createBFTApi(it)
             }
         }
