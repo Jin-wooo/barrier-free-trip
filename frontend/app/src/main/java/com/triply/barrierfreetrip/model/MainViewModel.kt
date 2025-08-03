@@ -89,6 +89,10 @@ class MainViewModel() : ViewModel() {
     val fcltList: LiveData<List<InfoListDto.InfoListItemDto>>
         get() = _fcltList
 
+    fun resetFacilityList() {
+        nearbyFcltList.value = emptyList()
+    }
+
     fun getNearbyStayList(userX: Double, userY: Double) {
         viewModelScope.launch {
             try {
