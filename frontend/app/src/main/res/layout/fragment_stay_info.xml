@@ -141,7 +141,7 @@
                     android:layout_marginTop="12dp"
                     app:layout_constraintStart_toStartOf="@+id/iv_stayinfo_star"
                     app:layout_constraintTop_toBottomOf="@+id/iv_stayinfo_star"
-                    app:srcCompat="@drawable/ic_nav_location" />
+                    app:srcCompat="@drawable/ic_nav_location_unselected" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_stayinfo_location"

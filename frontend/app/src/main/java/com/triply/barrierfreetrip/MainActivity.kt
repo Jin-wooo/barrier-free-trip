@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var apikeyStoreModule: ApikeyStoreModule
     private val hasPermissionForCoarseLocation by lazy { ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED }
     private val hasPermissionForFineLocation by lazy { ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED }
-    lateinit var accessToken : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,11 +34,13 @@ class MainActivity : AppCompatActivity() {
         // FragmentContainerView를 사용하여 Nav
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
-        binding.bnvMain.setupWithNavController(navHostFragment.navController)
-
-        binding.bnvMain.setOnItemSelectedListener { item ->
-            navHostFragment.navController.navigate(item.itemId)
-            true
+        binding.bnvMain.apply {
+            setupWithNavController(navHostFragment.navController)
+            itemIconTintList = null
+            setOnItemSelectedListener { item ->
+                navHostFragment.navController.navigate(item.itemId)
+                true
+            }
         }
 
         navHostFragment.navController.addOnDestinationChangedListener(object : NavController.OnDestinationChangedListener {
@@ -51,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                 val isBottomNavigationViewVisible = destination.id in listOf(
                     R.id.homeFragment,
                     R.id.searchFragment,
-                    R.id.mapFragment,
+//                    R.id.mapFragment,
                     R.id.wishListFragment,
                     R.id.myPageFragment,
                     R.id.staylistFragment,

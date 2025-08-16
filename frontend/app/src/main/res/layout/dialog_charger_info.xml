@@ -67,7 +67,7 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_marginStart="20dp"
-                android:src="@drawable/ic_nav_location"
+                android:src="@drawable/ic_nav_location_unselected"
                 android:tint="@color/bright_gray"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_chargerinfo_profile"
