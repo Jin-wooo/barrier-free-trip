@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.triply.barrierfreetrip.StayInfoFragment.Companion.CONTENT_TITLE
+import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TITLE
 import com.triply.barrierfreetrip.databinding.FragmentMyPageBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.LoginViewModel
