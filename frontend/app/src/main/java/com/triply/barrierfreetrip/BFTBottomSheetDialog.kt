@@ -21,6 +21,16 @@ class BFTBottomSheetDialog : ConstraintLayout {
         addView(binding.root)
     }
 
+    /**
+     * @param title 타이틀
+     * @param officeHour 시설 운영 시간. 형식: "Open 00:00 | Close 23:59"
+     * @param location 주소
+     * @param callNumber 시설 전화번호
+     * @param multiCharger (시설이 충전소인 경우) 동시충전개수. 충전소가 아니면 빈값으로 채워야 함
+     * @param airChargerCapability (시설이 충전소인 경우) 공기주입가능여부. 충전소가 아니면 빈값으로 채워야 함
+     * @param phoneChargerCapability (시설이 충전소인 경우) 휴대전화 충전가능여부. 충전소가 아니면 빈값으로 채워야 함
+     * @param like 찜 현황
+     */
     fun setDialogInfo(
         title: String = "",
         officeHour: String = "",
@@ -36,9 +46,9 @@ class BFTBottomSheetDialog : ConstraintLayout {
             tvChargerinfoOfficeHours.text = officeHour
             tvChargerinfoLocation.text = location
             tvChargerinfoCall.text = callNumber
-            tvChargerinfoMulticharger.text = multiCharger
-            tvChargerinfoAircharger.text = airChargerCapability
-            tvChargerinfoPhonecharger.text = phoneChargerCapability
+            if (multiCharger.isEmpty()) llChargerinfoMultichargerContainer.visibility = GONE else tvChargerinfoMulticharger.text = multiCharger
+            if (airChargerCapability.isEmpty()) llChargerinfoAirchargerContainer.visibility = GONE else tvChargerinfoAircharger.text = airChargerCapability
+            if (phoneChargerCapability.isEmpty()) llChargerinfoPhonechargerContainer.visibility = GONE else tvChargerinfoPhonecharger.text = phoneChargerCapability
             tbSquareLike.isPressed = like
         }
     }

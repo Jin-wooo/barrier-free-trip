@@ -15,77 +15,156 @@ import com.kakao.vectormap.mapwidget.component.GuiLayout
 import com.kakao.vectormap.mapwidget.component.GuiText
 import com.kakao.vectormap.mapwidget.component.Orientation
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
-import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TITLE
+import com.triply.barrierfreetrip.MainActivity.Companion.PAGE_TITLE
 import com.triply.barrierfreetrip.data.ChargerDetail
 import com.triply.barrierfreetrip.databinding.FragmentWishlistMapBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.MainViewModel
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_CHARGER
+import com.triply.barrierfreetrip.util.CONTENT_TYPE_RESTAURANT
+import com.triply.barrierfreetrip.util.CONTENT_TYPE_STAY
+import com.triply.barrierfreetrip.util.CONTENT_TYPE_TOUR
 import com.triply.barrierfreetrip.util.convertDrawableToBitmapIcon
 import java.lang.System.currentTimeMillis
 
 
 class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fragment_wishlist_map) {
     private val viewModel: MainViewModel by activityViewModels()
-    private var contentId: String? = null
     private var kakaoMap: KakaoMap? = null
-    private var pendingChargerInfo: ChargerDetail? = null
+    private var pendingFacilityInfo: ChargerDetail? = null
     private var timeOnClickLike = currentTimeMillis()
     private val debouncingInterval = 300L
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
-    private var contentTitle: String? = null
+    private var pageTitle: String? = null
+
+    /**
+     * @param itemId 시설 ID
+     * @param itemTitle 시설명
+     * @param itemOfficeOpenHour 시설 운영 시작 시간. 형식: "00:00"
+     * @param itemOfficeCloseHour 시설 운영 마감 시간. 형식: "23:59"
+     * @param itemAddr 시설 주소
+     * @param itemTel 시설 전화번호
+     * @param itemLike 찜 현황
+     */
+    private var itemId: String? = null
+    private var itemTitle = ""
+    private var itemOfficeOpenHour = ""
+    private var itemOfficeCloseHour = ""
+    private var itemAddr = ""
+    private var itemTel = ""
+    private var itemLike = 0
+    private var itemLatitude = 0.0
+    private var itemLongitude = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            contentId = it
+            itemId = it
                 .getString(CONTENT_ID)
                 .toString()
-            contentTitle = it
-                .getString(CONTENT_TITLE)
+            pageTitle = it
+                .getString(PAGE_TITLE)
                 .toString()
+            itemTitle = it
+                .getString(ITEM_TITLE)
+                .toString()
+            itemOfficeOpenHour = it
+                .getString(ITEM_OFFICE_OPEN_HOUR)
+                .toString()
+            itemOfficeCloseHour = it
+                .getString(ITEM_OFFICE_CLOSE_HOUR)
+                .toString()
+            itemAddr = it
+                .getString(ITEM_ADDR)
+                .toString()
+            itemTel = it
+                .getString(ITEM_TEL)
+                .toString()
+            itemLike = it
+                .getInt(ITEM_LIKE)
+            itemLatitude = it
+                .getDouble(ITEM_LATITUDE)
+            itemLongitude = it
+                .getDouble(ITEM_LONGITUDE)
         }
     }
 
     override fun initInViewCreated() {
         val navController = findNavController()
         initMap()
-        binding.tvTitle.text = contentTitle
+        binding.tvTitle.text = pageTitle
 
         binding.btnBack.setOnClickListener {
             navController.navigateUp()
         }
 
-        viewModel.chargerInfo.observe(viewLifecycleOwner) { chargerInfo ->
-            if (chargerInfo == null) return@observe
+        when {
+            pageTitle == resources.getString(R.string.title_charge) -> {
+                viewModel.chargerInfo.observe(viewLifecycleOwner) { chargerInfo ->
+                    if (chargerInfo == null) return@observe
 
-            binding.dialogMapInfo.setDialogInfo(
-                title = chargerInfo.title,
-                officeHour = "Open" + chargerInfo.weekdayOpen + "| Close" + chargerInfo.weekdayClose,
-                location = chargerInfo.addr.replace("  ", " "),
-                callNumber = chargerInfo.tel,
-                multiCharger = chargerInfo.possible,
-                airChargerCapability = if (chargerInfo.equals("N")) "불가" else "가능",
-                phoneChargerCapability = if (chargerInfo.equals("N")) "불가" else "가능",
-                like = chargerInfo.like == 1,
-            )
-            if (kakaoMap == null) {
-                pendingChargerInfo = chargerInfo
-                return@observe
-            }
-            kakaoMap?.mapWidgetManager?.infoWindowLayer?.addInfoWindow(makeWidget(chargerInfo.title, chargerInfo.latitude, chargerInfo.longitude))
-            setCameraPosition(chargerInfo.latitude, chargerInfo.longitude)
-            binding.dialogMapInfo.setOnClickListener { _ ->
-                setCameraPosition(chargerInfo.latitude, chargerInfo.longitude)
-            }
-            binding.dialogMapInfo.setOnLikeClick {
-                if (currentTimeMillis() - timeOnClickLike < debouncingInterval) {
-                    return@setOnLikeClick
+                    binding.dialogMapInfo.setDialogInfo(
+                        title = chargerInfo.title,
+                        officeHour = "Open ${chargerInfo.weekdayOpen} | Close ${chargerInfo.weekdayClose}",
+                        location = chargerInfo.addr.replace("  ", " "),
+                        callNumber = chargerInfo.tel,
+                        multiCharger = chargerInfo.possible,
+                        airChargerCapability = if (chargerInfo.equals("N")) "불가" else "가능",
+                        phoneChargerCapability = if (chargerInfo.equals("N")) "불가" else "가능",
+                        like = chargerInfo.like == 1,
+                    )
+                    if (kakaoMap == null) {
+                        pendingFacilityInfo = chargerInfo
+                        return@observe
+                    }
+                    kakaoMap?.mapWidgetManager?.infoWindowLayer?.addInfoWindow(makeWidget(chargerInfo.title, chargerInfo.latitude, chargerInfo.longitude))
+                    setCameraPosition(chargerInfo.latitude, chargerInfo.longitude)
+                    binding.dialogMapInfo.setOnClickListener { _ ->
+                        setCameraPosition(chargerInfo.latitude, chargerInfo.longitude)
+                    }
+                    binding.dialogMapInfo.setOnLikeClick {
+                        if (currentTimeMillis() - timeOnClickLike < debouncingInterval) {
+                            return@setOnLikeClick
+                        }
+                        timeOnClickLike = currentTimeMillis()
+                        itemId?.let {
+                            viewModel.postLikes(contentType = CONTENT_TYPE_CHARGER, contentId = it, likes = chargerInfo.like xor 1)
+                            binding.dialogMapInfo.updateLike(like = chargerInfo.like xor 1 == 1)
+                        }
+                    }
                 }
-                timeOnClickLike = currentTimeMillis()
-                contentId?.let {
-                    viewModel.postLikes(contentType = CONTENT_TYPE_CHARGER, contentId = it, likes = chargerInfo.like xor 1)
-                    binding.dialogMapInfo.updateLike(like = chargerInfo.like xor 1 == 1)
+            }
+            else -> {
+                binding.dialogMapInfo.setDialogInfo(
+                    title = itemTitle,
+                    officeHour = "Open $itemOfficeOpenHour | Close $itemOfficeCloseHour",
+                    location = itemAddr,
+                    callNumber = itemTel,
+                    multiCharger = "",
+                    airChargerCapability = "",
+                    phoneChargerCapability = "",
+                    like = itemLike == 1,
+                )
+                binding.dialogMapInfo.setOnClickListener { _ ->
+                    setCameraPosition(itemLatitude, itemLongitude)
+                }
+                binding.dialogMapInfo.setOnLikeClick {
+                    if (currentTimeMillis() - timeOnClickLike < debouncingInterval) {
+                        return@setOnLikeClick
+                    }
+                    timeOnClickLike = currentTimeMillis()
+                    itemId?.let {
+                        viewModel.postLikes(
+                            contentType = when (pageTitle) {
+                                resources.getString(R.string.all_stay) -> CONTENT_TYPE_STAY
+                                resources.getString(R.string.home_destination) -> CONTENT_TYPE_TOUR
+                                else -> CONTENT_TYPE_RESTAURANT
+                                                              },
+                            contentId = it,
+                            likes = itemLike xor 1
+                        )
+                        binding.dialogMapInfo.updateLike(like = itemLike xor 1 == 1)
+                    }
                 }
             }
         }
@@ -101,12 +180,12 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
 
     override fun onResume() {
         super.onResume()
-        binding.mapChargerInfo.resume()
+        binding.mapFacilityInfo.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        binding.mapChargerInfo.pause()
+        binding.mapFacilityInfo.pause()
     }
 
     private fun initMap() {
@@ -122,21 +201,31 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
         val kakaoMapReadyCycleCallback = object: KakaoMapReadyCallback() {
             override fun onMapReady(kakaoMap: KakaoMap) {
                 this@WishlistMapFragment.kakaoMap = kakaoMap
-                pendingChargerInfo?.let {
-                    this@WishlistMapFragment.kakaoMap
-                        ?.mapWidgetManager
+
+                if (pageTitle == resources.getString(R.string.title_charge)) {
+                    pendingFacilityInfo?.let {
+                        this@WishlistMapFragment.kakaoMap
+                            ?.mapWidgetManager
+                            ?.infoWindowLayer
+                            ?.addInfoWindow(
+                                makeWidget(it.title, it.latitude, it.longitude)
+                            )
+                    }
+                    itemId?.let {
+                        viewModel.getChargerInfo(contentId = it.toLong())
+                    }
+                } else {
+                    kakaoMap.mapWidgetManager
                         ?.infoWindowLayer
                         ?.addInfoWindow(
-                            makeWidget(it.title, it.latitude, it.longitude)
+                            makeWidget(itemTitle, itemLatitude, itemLongitude)
                         )
-                }
-                contentId?.let {
-                    viewModel.getChargerInfo(contentId = it.toLong())
+                    setCameraPosition(latitude = itemLatitude, longitude = itemLongitude)
                 }
 
             }
         }
-        binding.mapChargerInfo.start(mapLifeCycleCallback, kakaoMapReadyCycleCallback)
+        binding.mapFacilityInfo.start(mapLifeCycleCallback, kakaoMapReadyCycleCallback)
     }
 
     private fun makeWidget(title: String, latitude: Double, longitude: Double): InfoWindowOptions {
@@ -160,7 +249,21 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
 
     private fun setCameraPosition(latitude: Double, longitude: Double) {
         val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
-        if (kakaoMap == null) return
+        if (kakaoMap == null) {
+            return
+        }
         kakaoMap?.moveCamera(cameraUpdate)
+    }
+
+    companion object {
+        const val ITEM_TITLE = "item_title"
+        const val ITEM_OFFICE_OPEN_HOUR = "item_office_open_hour"
+        const val ITEM_OFFICE_CLOSE_HOUR = "item_office_close_hour"
+        const val ITEM_ADDR = "item_addr"
+        const val ITEM_TEL = "item_tel"
+        const val ITEM_LIKE = "item_like"
+        const val ITEM_LATITUDE = "item_latitude"
+        const val ITEM_LONGITUDE = "item_longitude"
+
     }
 }

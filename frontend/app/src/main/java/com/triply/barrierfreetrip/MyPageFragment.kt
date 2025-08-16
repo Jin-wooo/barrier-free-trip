@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TITLE
+import com.triply.barrierfreetrip.MainActivity.Companion.USER_NAME
 import com.triply.barrierfreetrip.databinding.FragmentMyPageBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.LoginViewModel
@@ -53,7 +53,7 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
             }.show()
         }
 
-        binding.tvMypageNickname.text = arguments?.getString(CONTENT_TITLE)
+        binding.tvMypageNickname.text = arguments?.getString(USER_NAME)
 
         viewModel.isDataLoading.observe(viewLifecycleOwner) {
             if (it.getContentIfNotHandled() == true) {

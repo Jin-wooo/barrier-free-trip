@@ -21,6 +21,16 @@ import com.triply.barrierfreetrip.feature.BaseFragment
 import com.triply.barrierfreetrip.model.MainViewModel
 import com.triply.barrierfreetrip.util.convertHomepageToURL
 import com.triply.barrierfreetrip.util.toUIString
+import androidx.core.net.toUri
+import com.triply.barrierfreetrip.MainActivity.Companion.PAGE_TITLE
+import com.triply.barrierfreetrip.WishlistMapFragment.Companion.ITEM_ADDR
+import com.triply.barrierfreetrip.WishlistMapFragment.Companion.ITEM_LATITUDE
+import com.triply.barrierfreetrip.WishlistMapFragment.Companion.ITEM_LIKE
+import com.triply.barrierfreetrip.WishlistMapFragment.Companion.ITEM_LONGITUDE
+import com.triply.barrierfreetrip.WishlistMapFragment.Companion.ITEM_OFFICE_CLOSE_HOUR
+import com.triply.barrierfreetrip.WishlistMapFragment.Companion.ITEM_OFFICE_OPEN_HOUR
+import com.triply.barrierfreetrip.WishlistMapFragment.Companion.ITEM_TEL
+import com.triply.barrierfreetrip.WishlistMapFragment.Companion.ITEM_TITLE
 
 class StayInfoFragment : BaseFragment<FragmentStayInfoBinding>(R.layout.fragment_stay_info) {
     private val viewModel: MainViewModel by activityViewModels()
@@ -112,18 +122,37 @@ class StayInfoFragment : BaseFragment<FragmentStayInfoBinding>(R.layout.fragment
 
             binding.btnStayinfoCall.setOnClickListener {
                 val phoneNumber = if (detail.tel.contains(',')) detail.tel.split(',').getOrElse(0) { "" } else detail.tel
-                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel: $phoneNumber"))
+                val intent = Intent(Intent.ACTION_DIAL, "tel: $phoneNumber".toUri())
                 startActivity(intent)
             }
             binding.btnStayinfoMap.setOnClickListener {
+                val bundle = Bundle()
 
+                bundle.putString(CONTENT_ID, it.toString())
+                bundle.putString(PAGE_TITLE, when (detail.contentTypeId) {
+                    "39" -> resources.getString(R.string.home_restaurant)
+                    "12" -> resources.getString(R.string.home_destination)
+                    else -> resources.getString(R.string.all_stay)
+                })
+                bundle.putString(ITEM_TITLE, detail.title)
+                bundle.putString(ITEM_OFFICE_OPEN_HOUR, detail.checkInTime)
+                bundle.putString(ITEM_OFFICE_CLOSE_HOUR, detail.checkOutTime)
+                bundle.putString(ITEM_ADDR, detail.addr1)
+                bundle.putString(ITEM_TEL, detail.tel)
+                bundle.putInt(ITEM_LIKE, detail.like)
+                bundle.putDouble(ITEM_LATITUDE, detail.latitude)
+                bundle.putDouble(ITEM_LONGITUDE, detail.longitude)
+                navController.navigate(
+                    resId = R.id.wishListMapFragment,
+                    args = bundle
+                )
             }
             binding.btnStayinfoPage.setOnClickListener {
                 try {
                     val homepageUrl = if (detail.homepage.first() == '<') convertHomepageToURL(detail.homepage) else detail.homepage
                     val intent = Intent(
                         Intent.ACTION_VIEW,
-                        Uri.parse(homepageUrl)
+                        homepageUrl.toUri()
                     )
                     startActivity(intent)
                 } catch (e: Exception) {

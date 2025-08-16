@@ -8,8 +8,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
-import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TITLE
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TYPE
+import com.triply.barrierfreetrip.MainActivity.Companion.PAGE_TITLE
 import com.triply.barrierfreetrip.adapter.BFTSpinnerAdapter
 import com.triply.barrierfreetrip.adapter.InfoListAdapter
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
@@ -211,7 +211,7 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
                                 val bundle = Bundle()
 
                                 bundle.putString(CONTENT_ID, it.toString())
-                                bundle.putString(CONTENT_TITLE, resources.getString(R.string.title_charge))
+                                bundle.putString(PAGE_TITLE, resources.getString(R.string.title_charge))
                                 navController.navigate(
                                     resId = R.id.wishListMapFragment,
                                     args = bundle

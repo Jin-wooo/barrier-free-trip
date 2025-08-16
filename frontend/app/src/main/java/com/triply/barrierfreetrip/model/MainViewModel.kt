@@ -228,11 +228,27 @@ class MainViewModel() : ViewModel() {
     fun getFcltDetail(contentId: String) {
         viewModelScope.launch {
             try {
+                var latitude: Double = 0.0
+                var longitude: Double = 0.0
+
                 val response = bftRetrofit.getTourFcltDetail(contentId)
 
                 if (response.isSuccessful) {
+
+                    if (!(response.body()?.respDocument as? TourFacilityDetail)?.addr1.isNullOrEmpty()) {
+                        val locationCoordinate = withContext(Dispatchers.IO) {
+                            kakaoRetrofit.getLocationCoordinate(address = (response.body()!!.respDocument as TourFacilityDetail).addr1)
+                                .body()?.documents?.get(0)
+                        }
+                        longitude = locationCoordinate?.longitude?.toDouble() ?: 0.0
+                        latitude = locationCoordinate?.latitude?.toDouble() ?: 0.0
+                    }
+
                     _locationDetail.value = if (response.body()?.respDocument is TourFacilityDetail) {
-                        (response.body()?.respDocument as? TourFacilityDetail) ?: TourFacilityDetail()
+                        (response.body()?.respDocument as? TourFacilityDetail).apply {
+                            this?.latitude = latitude
+                            this?.longitude = longitude
+                        } ?: TourFacilityDetail()
                     } else TourFacilityDetail()
                 } else {
                     when (response.code()) {
