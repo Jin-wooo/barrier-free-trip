@@ -55,7 +55,6 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
         binding.btnBack.setOnClickListener {
             navController.navigateUp()
         }
-        viewModel.getChargerInfo(contentId = contentId?.toLong() ?: 0)
 
         viewModel.chargerInfo.observe(viewLifecycleOwner) { chargerInfo ->
             if (chargerInfo == null) return@observe
