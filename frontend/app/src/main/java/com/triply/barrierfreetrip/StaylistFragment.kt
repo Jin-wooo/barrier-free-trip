@@ -8,8 +8,8 @@ import android.widget.AdapterView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.triply.barrierfreetrip.HomeFragment.Companion.CONTENT_TYPE
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
+import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TYPE
 import com.triply.barrierfreetrip.adapter.BFTSpinnerAdapter
 import com.triply.barrierfreetrip.adapter.InfoSquareAdapter
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
@@ -191,11 +191,13 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
     }
 
     private fun initTitle() {
-        binding.tvTitle.text = when {
-            type.equals(CONTENT_TYPE_STAY) -> "숙박"
-            type.equals(CONTENT_TYPE_TOUR) -> "관광지"
-            else -> "음식점"
-        }
+        binding.tvTitle.text = resources.getString(
+            when {
+                type.equals(CONTENT_TYPE_STAY) -> R.string.all_stay
+                type.equals(CONTENT_TYPE_TOUR) -> R.string.home_destination
+                else -> R.string.home_restaurant
+            }
+        )
     }
 
     private fun initSpinner() {

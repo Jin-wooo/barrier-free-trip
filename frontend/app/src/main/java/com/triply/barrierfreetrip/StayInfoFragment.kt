@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
+import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TITLE
 import com.triply.barrierfreetrip.adapter.ConvenienceInfoAdapter
 import com.triply.barrierfreetrip.adapter.ViewPagerAdapter
 import com.triply.barrierfreetrip.adapter.decoration.ConvenienceInfoViewHolderDecoration
@@ -146,6 +147,5 @@ class StayInfoFragment : BaseFragment<FragmentStayInfoBinding>(R.layout.fragment
 
     companion object {
         private const val TAG = "StayInfoFragment"
-        const val CONTENT_TITLE = "content_title"
     }
 }

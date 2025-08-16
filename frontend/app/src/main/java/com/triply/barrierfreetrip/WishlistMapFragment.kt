@@ -15,6 +15,7 @@ import com.kakao.vectormap.mapwidget.component.GuiLayout
 import com.kakao.vectormap.mapwidget.component.GuiText
 import com.kakao.vectormap.mapwidget.component.Orientation
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
+import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TITLE
 import com.triply.barrierfreetrip.data.ChargerDetail
 import com.triply.barrierfreetrip.databinding.FragmentWishlistMapBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
@@ -32,6 +33,7 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
     private var timeOnClickLike = currentTimeMillis()
     private val debouncingInterval = 300L
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
+    private var contentTitle: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,13 +41,16 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
             contentId = it
                 .getString(CONTENT_ID)
                 .toString()
+            contentTitle = it
+                .getString(CONTENT_TITLE)
+                .toString()
         }
     }
 
     override fun initInViewCreated() {
         val navController = findNavController()
         initMap()
-        binding.tvTitle.text = "전동휠체어 급속충전기"
+        binding.tvTitle.text = contentTitle
 
         binding.btnBack.setOnClickListener {
             navController.navigateUp()

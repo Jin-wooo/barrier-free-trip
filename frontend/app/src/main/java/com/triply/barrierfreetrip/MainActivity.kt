@@ -124,7 +124,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val CONTENT_ID = "contentId"
+        const val CONTENT_ID = "content_id"
+        const val CONTENT_TITLE = "content_title"
+        const val CONTENT_TYPE = "type"
         private const val REQUEST_FINE_LOCATION = 0
         private const val REQUEST_COARSE_LOCATION = 1
     }

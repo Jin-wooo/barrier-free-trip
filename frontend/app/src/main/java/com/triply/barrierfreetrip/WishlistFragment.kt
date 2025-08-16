@@ -7,8 +7,9 @@ import android.widget.AdapterView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.triply.barrierfreetrip.HomeFragment.Companion.CONTENT_TYPE
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
+import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TITLE
+import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TYPE
 import com.triply.barrierfreetrip.adapter.BFTSpinnerAdapter
 import com.triply.barrierfreetrip.adapter.InfoListAdapter
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
@@ -45,19 +46,19 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
         val navController = findNavController()
         when {
             type.equals(TYPE_CARE_TOUR) -> {
-                binding.tvTitle.text = "돌봄여행"
+                binding.tvTitle.text = resources.getString(R.string.all_caretrip)
                 sidoNames.clear()
                 sidoNames.addAll(resources.getStringArray(R.array.care_sido_nms))
             }
 
             type.equals(TYPE_CHARGER) -> {
-                binding.tvTitle.text = "전동휠체어 급속충전기"
+                binding.tvTitle.text = resources.getString(R.string.title_charge)
                 sidoNames.clear()
                 sidoNames.addAll(resources.getStringArray(R.array.charger_sido_nms))
             }
 
             else -> {
-                binding.tvTitle.text = "렌탈"
+                binding.tvTitle.text = resources.getString(R.string.home_rental)
                 sidoNames.clear()
                 sidoNames.addAll(resources.getStringArray(R.array.rental_sido_nms))
             }
@@ -210,6 +211,7 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
                                 val bundle = Bundle()
 
                                 bundle.putString(CONTENT_ID, it.toString())
+                                bundle.putString(CONTENT_TITLE, resources.getString(R.string.title_charge))
                                 navController.navigate(
                                     resId = R.id.wishListMapFragment,
                                     args = bundle

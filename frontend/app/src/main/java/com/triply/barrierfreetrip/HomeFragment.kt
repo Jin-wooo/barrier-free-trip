@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
+import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TYPE
 import com.triply.barrierfreetrip.adapter.HomeInfoAdapter
 import com.triply.barrierfreetrip.adapter.HomeMenuViewHolder
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
@@ -157,8 +158,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         viewModel.nearbyFcltList.observe(viewLifecycleOwner) { fcltList ->
             homeInfoList.clear()
             homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Menu)
-            homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Title(title = "내 주변 숙박시설"))
-            homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Title(title = "내 주변 전동휠체어 충전기"))
+            homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Title(title = resources.getString(R.string.all_stay_nearby)))
+            homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Title(title = resources.getString(R.string.all_charge_nearby)))
 
             if (fcltList == null) {
                 (binding.rvHome.adapter as HomeInfoAdapter).setDataList(homeInfoList)
@@ -245,6 +246,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     companion object {
         private const val TAG = "HomeFragment"
-        const val CONTENT_TYPE = "type"
     }
 }
