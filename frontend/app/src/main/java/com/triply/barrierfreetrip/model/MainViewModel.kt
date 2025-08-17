@@ -238,7 +238,7 @@ class MainViewModel() : ViewModel() {
                     if (!(response.body()?.respDocument as? TourFacilityDetail)?.addr1.isNullOrEmpty()) {
                         val locationCoordinate = withContext(Dispatchers.IO) {
                             kakaoRetrofit.getLocationCoordinate(address = (response.body()!!.respDocument as TourFacilityDetail).addr1)
-                                .body()?.documents?.get(0)
+                                .body()?.documents?.getOrElse(0) { null }
                         }
                         longitude = locationCoordinate?.longitude?.toDouble() ?: 0.0
                         latitude = locationCoordinate?.latitude?.toDouble() ?: 0.0
@@ -382,7 +382,7 @@ class MainViewModel() : ViewModel() {
                     if (!(response.body()?.respDocument as? ChargerDetail)?.addr.isNullOrEmpty()) {
                         val locationCoordinate = withContext(Dispatchers.IO) {
                             kakaoRetrofit.getLocationCoordinate(address = (response.body()!!.respDocument as ChargerDetail).addr)
-                                .body()?.documents?.get(0)
+                                .body()?.documents?.getOrElse(0) { null }
                         }
                         longitude = locationCoordinate?.longitude?.toDouble() ?: 0.0
                         latitude = locationCoordinate?.latitude?.toDouble() ?: 0.0

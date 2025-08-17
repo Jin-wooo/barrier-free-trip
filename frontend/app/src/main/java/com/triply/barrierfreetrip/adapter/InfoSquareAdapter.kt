@@ -10,17 +10,27 @@ import com.bumptech.glide.Glide
 import com.triply.barrierfreetrip.R
 import com.triply.barrierfreetrip.data.InfoSquareListDto.InfoSquareItemDto
 import com.triply.barrierfreetrip.databinding.ItemInfoSquareBinding
+import com.triply.barrierfreetrip.util.CONTENT_TYPE_RESTAURANT
+import com.triply.barrierfreetrip.util.CONTENT_TYPE_TOUR
 
 class InfoSquareAdapter : RecyclerView.Adapter<SquareViewHolder>() {
     private lateinit var binding : ItemInfoSquareBinding
     private val infoList = arrayListOf<InfoSquareItemDto>()
     private var onItemClickListener: OnItemClickListener? = null
     private var onLikeClickListener: OnLikeClickListener? = null
+    private var contentTypeId = ""
 
     fun setDataList(infoList: List<InfoSquareItemDto>) {
         this.infoList.clear()
         this.infoList.addAll(infoList)
         notifyDataSetChanged()
+    }
+
+    /**
+     * contentTypeId 콘텐츠 타입 ID. 관광지: "12", 음식점: "39", 숙박: "32".
+     */
+    fun setContentType(contentTypeId: String) {
+        this.contentTypeId = contentTypeId
     }
 
     override fun onCreateViewHolder(
@@ -39,7 +49,14 @@ class InfoSquareAdapter : RecyclerView.Adapter<SquareViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: SquareViewHolder, position: Int) {
-        holder.bind(infoList[position])
+        holder.bind(
+            item = infoList[position],
+            emptyImgRes = when (contentTypeId) {
+                CONTENT_TYPE_TOUR -> R.drawable.ic_tourlist_thumbnail_placeholder
+                CONTENT_TYPE_RESTAURANT -> R.drawable.ic_restaurantlist_thumbnail_placeholder
+                else -> R.drawable.ic_tourlist_thumbnail_placeholder
+            }
+        )
     }
     override fun getItemCount() = infoList.size
 
@@ -81,12 +98,14 @@ class SquareViewHolder(
         isLikeVisible = visibility
     }
 
-    fun bind(item: InfoSquareItemDto) {
+    fun bind(item: InfoSquareItemDto, emptyImgRes: Int = R.drawable.ic_restaurantlist_thumbnail_placeholder) {
         binding.squareItem = item
         binding.tbSquareLike.visibility = if (isLikeVisible) View.VISIBLE else View.GONE
         binding.tvSquareAddress.text = item.addr.take(14)
+
+        val thumbnail = item.firstimg.ifBlank { emptyImgRes }
         Glide.with(binding.root.context)
-            .load(item.firstimg)
+            .load(thumbnail)
             .centerCrop()
             .into(binding.ivPlaceImage)
     }

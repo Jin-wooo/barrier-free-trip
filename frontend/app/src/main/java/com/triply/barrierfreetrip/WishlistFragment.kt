@@ -39,7 +39,6 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
     private var scrollState: Parcelable? = null
 
     private var isBigAreaSpinnerTouched = false
-    private var isSmallAreaSpinnerTouched = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -225,7 +224,7 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
             binding.rvList.adapter = infoListAdapter.apply {
                 when (type) {
                     TYPE_CHARGER -> {
-                        setThumbnailIcon(R.drawable.ic_home_charge)
+                        setThumbnailIcon(R.drawable.ic_chargerlist_thumbnail)
                         setOnItemClickListener(object : OnItemClickListener {
                             override fun onItemClick(position: Int) {
                                 val item = infoList.getOrNull(position)

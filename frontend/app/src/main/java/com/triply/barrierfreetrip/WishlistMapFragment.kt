@@ -157,7 +157,7 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
                         viewModel.postLikes(
                             contentType = when (pageTitle) {
                                 resources.getString(R.string.all_stay) -> CONTENT_TYPE_STAY
-                                resources.getString(R.string.home_destination) -> CONTENT_TYPE_TOUR
+                                resources.getString(R.string.home_tour) -> CONTENT_TYPE_TOUR
                                 else -> CONTENT_TYPE_RESTAURANT
                                                               },
                             contentId = it,

@@ -47,7 +47,7 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
     private var scrollState: Parcelable? = null
 
     private var isBigAreaSpinnerTouched = false
-    private var isSmallAreaSpinnerTouched = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,7 +55,6 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
     }
 
     override fun initInViewCreated() {
-        var a = 0
         val navController = findNavController()
         initTitle()
         initSpinner()
@@ -116,7 +115,6 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
                 sidoPosition = position
                 if (isBigAreaSpinnerTouched) {
                     (binding.rvList.adapter as InfoSquareAdapter).setDataList(emptyList())
-                    println("빈 리스트 주입")
                 }
 
                 if (prevSidoPosition != sidoPosition) {
@@ -153,12 +151,13 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
 
         with(binding.rvList) {
             adapter = InfoSquareAdapter().apply {
+                setContentType(contentTypeId = type ?: CONTENT_TYPE_TOUR)
                 setOnItemClickListener(object : OnItemClickListener {
                     override fun onItemClick(position: Int) {
                         val item = fcltList[position]
                         val bundle = Bundle()
                         bundle.putString(CONTENT_ID, item.contentId)
-                        bundle.putString(CONTENT_TYPE, CONTENT_TYPE_STAY)
+                        bundle.putString(CONTENT_TYPE, type)
                         navController.navigate(
                             resId = R.id.stayInfoFragment,
                             args = bundle
@@ -211,7 +210,7 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
         binding.tvTitle.text = resources.getString(
             when {
                 type.equals(CONTENT_TYPE_STAY) -> R.string.all_stay
-                type.equals(CONTENT_TYPE_TOUR) -> R.string.home_destination
+                type.equals(CONTENT_TYPE_TOUR) -> R.string.home_tour
                 else -> R.string.home_restaurant
             }
         )
