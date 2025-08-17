@@ -3,6 +3,7 @@ package com.triply.barrierfreetrip.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.triply.barrierfreetrip.data.InfoListDto.InfoListItemDto
 import com.triply.barrierfreetrip.databinding.ItemInfoListBinding
@@ -10,10 +11,15 @@ import com.triply.barrierfreetrip.databinding.ItemInfoListBinding
 // 화면에 표시만 하면 되는 경우 사용하는 기본 Adapter
 open class InfoListAdapter : RecyclerView.Adapter<ListViewHolder>() {
     private val infoList: ArrayList<InfoListItemDto> = arrayListOf()
+    @DrawableRes private var icon: Int = 0
     fun setInfoList(listDto: List<InfoListItemDto>) {
         infoList.clear()
         infoList.addAll(listDto)
         notifyDataSetChanged()
+    }
+
+    fun setThumbnailIcon(iconRes: Int) {
+        icon = iconRes
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
@@ -23,10 +29,10 @@ open class InfoListAdapter : RecyclerView.Adapter<ListViewHolder>() {
             setOnLikeClickListener {
                 onLikeClickListener?.onLikeClick(adapterPosition)
             }
-            setOnShowMapClickListener {
-                onShowMapClickListener?.onShowMapClick(adapterPosition)
-            }
-            setShowMapVisibility(isShowMapVisible)
+//            setOnShowMapClickListener {
+//                onShowMapClickListener?.onShowMapClick(adapterPosition)
+//            }
+//            setShowMapVisibility(isShowMapVisible)
         }
         return viewHolder
     }
@@ -35,6 +41,7 @@ open class InfoListAdapter : RecyclerView.Adapter<ListViewHolder>() {
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         holder.bind(infoList[position])
+        holder.setThumbnailIcon(icon)
     }
 
     private var onItemClickListener: OnItemClickListener? = null
@@ -45,14 +52,14 @@ open class InfoListAdapter : RecyclerView.Adapter<ListViewHolder>() {
     fun setOnLikeClickListener(listener: OnLikeClickListener) {
         this.onLikeClickListener = listener
     }
-    private var onShowMapClickListener: OnShowMapClickListener? = null
-    fun setOnShowMapClickListener(listener: OnShowMapClickListener) {
-        this.onShowMapClickListener = listener
-    }
-    private var isShowMapVisible = false
-    fun setShowMapVisibility(visibility: Boolean) {
-        isShowMapVisible = visibility
-    }
+//    private var onShowMapClickListener: OnShowMapClickListener? = null
+//    fun setOnShowMapClickListener(listener: OnShowMapClickListener) {
+//        this.onShowMapClickListener = listener
+//    }
+//    private var isShowMapVisible = false
+//    fun setShowMapVisibility(visibility: Boolean) {
+//        isShowMapVisible = visibility
+//    }
 }
 
 // 충전기처럼 다른 페이지로 넘어가야 하는 경우 사용하는 Adapter
@@ -82,9 +89,13 @@ class ListViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     private var itemClickListener: OnItemClickListener? = null
     private var likeClickListener: View.OnClickListener? = null
-    private var showMapClickListener: View.OnClickListener? = null
-    private var isShowMapVisible = false
+//    private var showMapClickListener: View.OnClickListener? = null
+//    private var isShowMapVisible = false
     private var isLikeVisible = true
+
+    fun setThumbnailIcon(iconRes: Int) {
+        binding.ivListPlaceImg.setImageResource(iconRes)
+    }
 
     fun setOnItemClickListener(listener: OnItemClickListener?) {
         this.itemClickListener = listener
@@ -94,22 +105,22 @@ class ListViewHolder(
         likeClickListener = listener
     }
 
-    fun setOnShowMapClickListener(listener: View.OnClickListener?) {
-        showMapClickListener = listener
-    }
+//    fun setOnShowMapClickListener(listener: View.OnClickListener?) {
+//        showMapClickListener = listener
+//    }
 
     fun setLikeVisibility(visibility: Boolean) {
         isLikeVisible = visibility
     }
 
-    fun setShowMapVisibility(visibility: Boolean) {
-        isShowMapVisible = visibility
-    }
+//    fun setShowMapVisibility(visibility: Boolean) {
+//        isShowMapVisible = visibility
+//    }
 
     fun bind(item: InfoListItemDto) {
         binding.listItem = item
         binding.tbListLike.isChecked = item.like
-        binding.btnChargerlistMap.visibility = if (isShowMapVisible) View.VISIBLE else View.GONE
+//        binding.btnChargerlistMap.visibility = if (isShowMapVisible) View.VISIBLE else View.GONE
         binding.tbListLike.visibility = if (isLikeVisible) View.VISIBLE else View.GONE
         binding.tvListLocation.text = item.addr.substring(0, item.addr.length.coerceAtMost(14))
     }
@@ -121,9 +132,9 @@ class ListViewHolder(
         binding.tbListLike.setOnClickListener {
             likeClickListener?.onClick(it)
         }
-        binding.btnChargerlistMap.setOnClickListener {
-            showMapClickListener?.onClick(it)
-        }
+//        binding.btnChargerlistMap.setOnClickListener {
+//            showMapClickListener?.onClick(it)
+//        }
     }
 }
 

@@ -55,7 +55,7 @@ class HomeInfoAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             else -> ListViewHolder(ItemInfoListBinding.inflate(layoutInflater, parent, false)).apply {
                 setOnItemClickListener(onInfoListClickListener)
                 setLikeVisibility(false)
-                setShowMapVisibility(false)
+//                setShowMapVisibility(false)
             }
         }
     }
