@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.triply.barrierfreetrip.R
 import com.triply.barrierfreetrip.data.InfoListDto.InfoListItemDto
 import com.triply.barrierfreetrip.data.InfoSquareListDto.InfoSquareItemDto
 import com.triply.barrierfreetrip.databinding.ItemHomefragmentMainMenuBinding
@@ -85,6 +86,7 @@ class HomeInfoAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 )
             }
             holder is ListViewHolder -> {
+                holder.setThumbnailIcon(R.drawable.ic_chargerlist_thumbnail)
                 holder.bind(
                     item = (_infoList.getOrNull(position) as HomeInfoDTO.InfoList).convertAdapterDataIntoDTO()
                 )

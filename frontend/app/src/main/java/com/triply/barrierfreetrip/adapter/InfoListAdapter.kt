@@ -4,9 +4,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
+import com.triply.barrierfreetrip.R
 import com.triply.barrierfreetrip.data.InfoListDto.InfoListItemDto
 import com.triply.barrierfreetrip.databinding.ItemInfoListBinding
+import com.triply.barrierfreetrip.util.toDp
 
 // 화면에 표시만 하면 되는 경우 사용하는 기본 Adapter
 open class InfoListAdapter : RecyclerView.Adapter<ListViewHolder>() {
@@ -95,6 +98,7 @@ class ListViewHolder(
 
     fun setThumbnailIcon(iconRes: Int) {
         binding.ivListPlaceImg.setImageResource(iconRes)
+        if (iconRes == R.drawable.ic_chargerlist_thumbnail) binding.ivListPlaceImg.setPadding(18F.toDp(binding.root.context).toInt())
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener?) {

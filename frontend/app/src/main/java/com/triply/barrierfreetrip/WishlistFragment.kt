@@ -14,6 +14,7 @@ import com.triply.barrierfreetrip.adapter.BFTSpinnerAdapter
 import com.triply.barrierfreetrip.adapter.InfoListAdapter
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
 import com.triply.barrierfreetrip.adapter.OnLikeClickListener
+import com.triply.barrierfreetrip.adapter.decoration.WishlistViewHolderDecoration
 import com.triply.barrierfreetrip.data.InfoListDto
 import com.triply.barrierfreetrip.databinding.FragmentStaylistBinding
 import com.triply.barrierfreetrip.feature.BaseFragment
@@ -267,6 +268,7 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
             binding.rvList.layoutManager = LinearLayoutManager(context).apply {
                 orientation = LinearLayoutManager.VERTICAL
             }
+            if (itemDecorationCount < 1) addItemDecoration(WishlistViewHolderDecoration())
         }
 
         viewModel.fcltList.observe(viewLifecycleOwner) {

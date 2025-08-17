@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TYPE
+import com.triply.barrierfreetrip.MainActivity.Companion.PAGE_TITLE
 import com.triply.barrierfreetrip.adapter.HomeInfoAdapter
 import com.triply.barrierfreetrip.adapter.HomeMenuViewHolder
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
@@ -131,8 +132,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     onInfoListClickListener = object : OnItemClickListener {
                         override fun onItemClick(position: Int) {
                             val item = (adapter as HomeInfoAdapter).infoList.getOrNull(position) as HomeInfoAdapter.HomeInfoDTO.InfoList? ?: return
-
+                            println("item: $item")
                             bundle.putString(CONTENT_ID, item.id.toString())
+                            bundle.putString(PAGE_TITLE, resources.getString(R.string.title_charge))
                             navController.navigate(
                                 resId = R.id.wishListMapFragment,
                                 args = bundle
