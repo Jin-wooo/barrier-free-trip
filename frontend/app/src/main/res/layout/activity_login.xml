@@ -49,13 +49,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="40dp"
             android:orientation="horizontal"
             android:background="@drawable/bg_login_btn"
             android:backgroundTint="@color/kakao_yellow"
             android:gravity="center"
             android:padding="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/btn_login_naver"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -76,38 +76,38 @@
                 android:textStyle="bold" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/btn_login_naver"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="40dp"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_login_btn"
-            android:backgroundTint="@color/naver_green"
-            android:gravity="center"
-            android:padding="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+<!--        <androidx.appcompat.widget.LinearLayoutCompat-->
+<!--            android:id="@+id/btn_login_naver"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="32dp"-->
+<!--            android:layout_marginEnd="32dp"-->
+<!--            android:layout_marginBottom="40dp"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:background="@drawable/bg_login_btn"-->
+<!--            android:backgroundTint="@color/naver_green"-->
+<!--            android:gravity="center"-->
+<!--            android:padding="16dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent">-->
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:src="@drawable/ic_naver" />
+<!--            <androidx.appcompat.widget.AppCompatImageView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="12dp"-->
+<!--                android:src="@drawable/ic_naver" />-->
 
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/TextViewStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:text="@string/naver_login"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+<!--            <androidx.appcompat.widget.AppCompatTextView-->
+<!--                style="@style/TextViewStyle"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:text="@string/naver_login"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textStyle="bold" />-->
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+<!--        </androidx.appcompat.widget.LinearLayoutCompat>-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
