@@ -3,7 +3,7 @@ package com.triply.barrierfreetrip
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.ViewPropertyAnimator
+import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.triply.barrierfreetrip.databinding.DialogChargerInfoBinding
 
@@ -23,6 +23,7 @@ class BFTBottomSheetDialog : ConstraintLayout {
 
     /**
      * @param title 타이틀
+     * @param iconRes 시설 아이콘 리소스 ID값. (R.drawable.xxx)
      * @param officeHour 시설 운영 시간. 형식: "Open 00:00 | Close 23:59"
      * @param location 주소
      * @param callNumber 시설 전화번호
@@ -33,6 +34,7 @@ class BFTBottomSheetDialog : ConstraintLayout {
      */
     fun setDialogInfo(
         title: String = "",
+        @DrawableRes iconRes: Int = R.drawable.ic_chargerlist_thumbnail,
         officeHour: String = "",
         location: String = "",
         callNumber: String = "",
@@ -43,6 +45,7 @@ class BFTBottomSheetDialog : ConstraintLayout {
     ) {
         with(binding) {
             tvChargerinfoTitle.text = title
+            ivChargerinfoProfile.setImageResource(iconRes)
             tvChargerinfoOfficeHours.text = officeHour
             tvChargerinfoLocation.text = location
             tvChargerinfoCall.text = callNumber

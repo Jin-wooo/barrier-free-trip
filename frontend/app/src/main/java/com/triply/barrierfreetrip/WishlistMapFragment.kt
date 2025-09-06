@@ -137,6 +137,12 @@ class WishlistMapFragment : BaseFragment<FragmentWishlistMapBinding>(R.layout.fr
             else -> {
                 binding.dialogMapInfo.setDialogInfo(
                     title = itemTitle,
+                    iconRes = when (pageTitle) {
+                        resources.getString(R.string.title_charge) -> R.drawable.ic_chargerlist_thumbnail
+                        resources.getString(R.string.all_stay) -> R.drawable.ic_stay_thumbnail
+                        resources.getString(R.string.home_tour) -> R.drawable.ic_tour_thumbnail
+                        else -> R.drawable.ic_restaunrant_thumbnail
+                    },
                     officeHour = "Open $itemOfficeOpenHour | Close $itemOfficeCloseHour",
                     location = itemAddr,
                     callNumber = itemTel,
