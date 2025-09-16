@@ -99,9 +99,11 @@ class SquareViewHolder(
     }
 
     fun bind(item: InfoSquareItemDto, emptyImgRes: Int = R.drawable.ic_restaurantlist_thumbnail_placeholder) {
-        binding.squareItem = item
         binding.tbSquareLike.visibility = if (isLikeVisible) View.VISIBLE else View.GONE
+        binding.tbSquareLike.isChecked = item.like
         binding.tvSquareAddress.text = item.addr.take(14)
+        binding.tvSquarePlaceName.text = item.title
+        binding.tvSquareCallNumber.text = item.tel
 
         val thumbnail = item.firstimg.ifBlank { emptyImgRes }
         Glide.with(binding.root.context)

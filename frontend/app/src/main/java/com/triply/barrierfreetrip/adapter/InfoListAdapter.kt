@@ -122,7 +122,9 @@ class ListViewHolder(
 //    }
 
     fun bind(item: InfoListItemDto) {
-        binding.listItem = item
+        binding.tbListLike.isChecked = item.like
+        binding.tvListPlaceName.text = item.title
+        binding.tvListCallNumber.text = item.tel
         binding.tbListLike.isChecked = item.like
 //        binding.btnChargerlistMap.visibility = if (isShowMapVisible) View.VISIBLE else View.GONE
         binding.tbListLike.visibility = if (isLikeVisible) View.VISIBLE else View.GONE
