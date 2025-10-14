@@ -100,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 //        splashScreen.setKeepOnScreenCondition {true}
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
-        binding.btnLoginKakao.setOnClickListener {
+        binding.btnLoginKakaotalk.setOnClickListener {
             clickTime = System.currentTimeMillis()
             val elapsedTime = clickTime - lastClickTime
             lastClickTime = clickTime

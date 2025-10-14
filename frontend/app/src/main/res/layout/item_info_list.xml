@@ -3,13 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="listItem"
-            type="com.triply.barrierfreetrip.data.InfoListDto.InfoListItemDto" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -33,7 +26,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:text="@{listItem.title}"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -78,7 +70,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="6dp"
-            android:text="@{listItem.tel}"
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@+id/iv_list_call"
             app:layout_constraintTop_toBottomOf="@+id/iv_list_location"
@@ -90,26 +81,25 @@
             android:layout_height="20dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/selector_toggle_heart"
-            android:checked="@{listItem.like ? true : false}"
             android:textOff=""
             android:textOn=""
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_chargerlist_map"
-            style="@style/ButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/shape_sub_pink"
-            android:minWidth="56dp"
-            android:minHeight="24dp"
-            android:text="@string/chargerlist_see_map"
-            android:textColor="@color/main_pink"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+<!--        <androidx.appcompat.widget.AppCompatButton-->
+<!--            android:id="@+id/btn_chargerlist_map"-->
+<!--            style="@style/ButtonStyle"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:background="@drawable/shape_sub_pink"-->
+<!--            android:minWidth="56dp"-->
+<!--            android:minHeight="24dp"-->
+<!--            android:text="@string/chargerlist_see_map"-->
+<!--            android:textColor="@color/main_pink"-->
+<!--            android:textSize="10sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

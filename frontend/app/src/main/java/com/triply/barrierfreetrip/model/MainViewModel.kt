@@ -89,6 +89,10 @@ class MainViewModel() : ViewModel() {
     val fcltList: LiveData<List<InfoListDto.InfoListItemDto>>
         get() = _fcltList
 
+    fun resetFacilityList() {
+        nearbyFcltList.value = emptyList()
+    }
+
     fun getNearbyStayList(userX: Double, userY: Double) {
         viewModelScope.launch {
             try {
@@ -224,11 +228,27 @@ class MainViewModel() : ViewModel() {
     fun getFcltDetail(contentId: String) {
         viewModelScope.launch {
             try {
+                var latitude: Double = 0.0
+                var longitude: Double = 0.0
+
                 val response = bftRetrofit.getTourFcltDetail(contentId)
 
                 if (response.isSuccessful) {
+
+                    if (!(response.body()?.respDocument as? TourFacilityDetail)?.addr1.isNullOrEmpty()) {
+                        val locationCoordinate = withContext(Dispatchers.IO) {
+                            kakaoRetrofit.getLocationCoordinate(address = (response.body()!!.respDocument as TourFacilityDetail).addr1)
+                                .body()?.documents?.getOrElse(0) { null }
+                        }
+                        longitude = locationCoordinate?.longitude?.toDouble() ?: 0.0
+                        latitude = locationCoordinate?.latitude?.toDouble() ?: 0.0
+                    }
+
                     _locationDetail.value = if (response.body()?.respDocument is TourFacilityDetail) {
-                        (response.body()?.respDocument as? TourFacilityDetail) ?: TourFacilityDetail()
+                        (response.body()?.respDocument as? TourFacilityDetail).apply {
+                            this?.latitude = latitude
+                            this?.longitude = longitude
+                        } ?: TourFacilityDetail()
                     } else TourFacilityDetail()
                 } else {
                     when (response.code()) {
@@ -362,7 +382,7 @@ class MainViewModel() : ViewModel() {
                     if (!(response.body()?.respDocument as? ChargerDetail)?.addr.isNullOrEmpty()) {
                         val locationCoordinate = withContext(Dispatchers.IO) {
                             kakaoRetrofit.getLocationCoordinate(address = (response.body()!!.respDocument as ChargerDetail).addr)
-                                .body()?.documents?.get(0)
+                                .body()?.documents?.getOrElse(0) { null }
                         }
                         longitude = locationCoordinate?.longitude?.toDouble() ?: 0.0
                         latitude = locationCoordinate?.latitude?.toDouble() ?: 0.0

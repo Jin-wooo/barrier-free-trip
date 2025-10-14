@@ -5,11 +5,11 @@ import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.triply.barrierfreetrip.HomeFragment.Companion.CONTENT_TYPE
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
+import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TYPE
 import com.triply.barrierfreetrip.adapter.BFTSpinnerAdapter
 import com.triply.barrierfreetrip.adapter.InfoSquareAdapter
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
@@ -24,7 +24,7 @@ import com.triply.barrierfreetrip.util.CONTENT_TYPE_STAY
 import com.triply.barrierfreetrip.util.CONTENT_TYPE_TOUR
 
 class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment_staylist) {
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by viewModels()
     private var type: String? = null
     private val loadingProgressBar by lazy { BFTLoadingProgressBar(requireContext()) }
 
@@ -32,22 +32,26 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
     private val sidoCodes = arrayListOf(Region(code = "-1", name = "시도 선택"))
     private val sidoNames = arrayListOf("시도 선택")
     private var sidoPosition = 0
+    private var prevSidoPosition = 0
 
     // sigungu data
     private val sigunguCodes = arrayListOf(Region(code = "-1", name = "구군 선택"))
     private val sigunguNames = arrayListOf("구군 선택")
     private var sigunguPosition = 0
+    private var prevSigunguPosition = 0
 
     // facility data
     private val fcltList = ArrayList<InfoSquareItemDto>()
 
     // scroll position
     private var scrollState: Parcelable? = null
+
+    private var isBigAreaSpinnerTouched = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         type = arguments?.getString(CONTENT_TYPE)
-
     }
 
     override fun initInViewCreated() {
@@ -73,6 +77,8 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
             }
         }
         viewModel.sigunguCodes.observe(viewLifecycleOwner) { sigunguList ->
+            prevSigunguPosition = 0
+            sigunguPosition = 0
             with(sigunguCodes) {
                 clear()
                 add(Region(code = "-1", name = "구군 선택"))
@@ -87,6 +93,10 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
 
         binding.tvRequireSelection.visibility = View.VISIBLE
 
+        binding.spnBigArea.setOnTouchListener { _, _ ->
+            isBigAreaSpinnerTouched = true
+            false
+        }
         binding.spnBigArea.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -101,16 +111,24 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
                 }
                 binding.tvRequireSelection.visibility = View.VISIBLE
                 binding.spnSmallArea.isEnabled = true
+                prevSidoPosition = sidoPosition
                 sidoPosition = position
+                if (isBigAreaSpinnerTouched) {
+                    (binding.rvList.adapter as InfoSquareAdapter).setDataList(emptyList())
+                }
 
-                fcltList.clear()
-                (binding.rvList.adapter as InfoSquareAdapter).setDataList(emptyList())
-
-                viewModel.getSigunguCode(sidoCodes[position].code)
+                if (prevSidoPosition != sidoPosition) {
+                    viewModel.getSigunguCode(sidoCodes[position].code)
+                    binding.spnSmallArea.setSelection(0)
+                }
+                isBigAreaSpinnerTouched = false
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                isBigAreaSpinnerTouched = false
+            }
         }
+
         binding.spnSmallArea.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -120,23 +138,26 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
             ) {
                 if (position2 == 0) return
                 binding.tvRequireSelection.visibility = View.GONE
+                prevSigunguPosition = sigunguPosition
                 sigunguPosition = position2
 
-                viewModel.getTourFcltList(type ?: "", sidoCodes[sidoPosition].code, sigunguCodes[sigunguPosition].code)
+                if (prevSigunguPosition != sigunguPosition) {
+                    viewModel.getTourFcltList(type ?: "", sidoCodes[sidoPosition].code, sigunguCodes[sigunguPosition].code)
+                }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
         with(binding.rvList) {
             adapter = InfoSquareAdapter().apply {
+                setContentType(contentTypeId = type ?: CONTENT_TYPE_TOUR)
                 setOnItemClickListener(object : OnItemClickListener {
                     override fun onItemClick(position: Int) {
                         val item = fcltList[position]
                         val bundle = Bundle()
                         bundle.putString(CONTENT_ID, item.contentId)
-                        bundle.putString(CONTENT_TYPE, CONTENT_TYPE_STAY)
+                        bundle.putString(CONTENT_TYPE, type)
                         navController.navigate(
                             resId = R.id.stayInfoFragment,
                             args = bundle
@@ -179,23 +200,20 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        viewModel.getTourFcltList(type ?: "", sidoCodes[sidoPosition].code, sigunguCodes[sigunguPosition].code)
-    }
-
     override fun onPause() {
         super.onPause()
+        isBigAreaSpinnerTouched = false
         scrollState = binding.rvList.layoutManager?.onSaveInstanceState()
     }
 
     private fun initTitle() {
-        binding.tvTitle.text = when {
-            type.equals(CONTENT_TYPE_STAY) -> "숙박"
-            type.equals(CONTENT_TYPE_TOUR) -> "관광지"
-            else -> "음식점"
-        }
+        binding.tvTitle.text = resources.getString(
+            when {
+                type.equals(CONTENT_TYPE_STAY) -> R.string.all_stay
+                type.equals(CONTENT_TYPE_TOUR) -> R.string.home_tour
+                else -> R.string.home_restaurant
+            }
+        )
     }
 
     private fun initSpinner() {
@@ -212,5 +230,3 @@ class StaylistFragment : BaseFragment<FragmentStaylistBinding>(R.layout.fragment
         private const val TAG = "StayListFragment"
     }
 }
-
-

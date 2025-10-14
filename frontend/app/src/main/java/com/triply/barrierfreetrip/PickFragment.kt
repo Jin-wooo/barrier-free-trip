@@ -30,7 +30,7 @@ class PickFragment: BaseFragment<FragmentPickBinding>(R.layout.fragment_pick) {
         })
         val listTabName = arrayListOf<String>(
             getString(R.string.all_stay),
-            getString(R.string.home_destination),
+            getString(R.string.home_tour),
             getString(R.string.home_restaurant),
             getString(R.string.all_care),
             getString(R.string.home_charge),

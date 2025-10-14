@@ -5,7 +5,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
-import com.triply.barrierfreetrip.StayInfoFragment.Companion.CONTENT_TITLE
+import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TITLE
 import com.triply.barrierfreetrip.adapter.ReviewAdapter
 import com.triply.barrierfreetrip.adapter.decoration.ReviewViewHolderDecoration
 import com.triply.barrierfreetrip.databinding.FragmentReviewBinding

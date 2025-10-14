@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var apikeyStoreModule: ApikeyStoreModule
     private val hasPermissionForCoarseLocation by lazy { ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED }
     private val hasPermissionForFineLocation by lazy { ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED }
-    lateinit var accessToken : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,11 +34,13 @@ class MainActivity : AppCompatActivity() {
         // FragmentContainerView를 사용하여 Nav
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
-        binding.bnvMain.setupWithNavController(navHostFragment.navController)
-
-        binding.bnvMain.setOnItemSelectedListener { item ->
-            navHostFragment.navController.navigate(item.itemId)
-            true
+        binding.bnvMain.apply {
+            setupWithNavController(navHostFragment.navController)
+            itemIconTintList = null
+            setOnItemSelectedListener { item ->
+                navHostFragment.navController.navigate(item.itemId)
+                true
+            }
         }
 
         navHostFragment.navController.addOnDestinationChangedListener(object : NavController.OnDestinationChangedListener {
@@ -51,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                 val isBottomNavigationViewVisible = destination.id in listOf(
                     R.id.homeFragment,
                     R.id.searchFragment,
-                    R.id.mapFragment,
+//                    R.id.mapFragment,
                     R.id.wishListFragment,
                     R.id.myPageFragment,
                     R.id.staylistFragment,
@@ -109,12 +110,25 @@ class MainActivity : AppCompatActivity() {
 
                 requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_FINE_LOCATION)
             }
+            REQUEST_FINE_LOCATION -> {
+                if (hasPermissionForFineLocation) {
+                    val navHostFragment = (supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment)
+                    val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                    if (currentFragment is HomeFragment) {
+                        currentFragment.startLocationUpdates()
+                    }
+                }
+            }
             else -> {}
         }
     }
 
     companion object {
-        const val CONTENT_ID = "contentId"
+        const val PAGE_TITLE = "page_title"
+        const val CONTENT_TITLE = "content_title"
+        const val CONTENT_ID = "content_id"
+        const val CONTENT_TYPE = "type"
+        const val USER_NAME = "user_name"
         private const val REQUEST_FINE_LOCATION = 0
         private const val REQUEST_COARSE_LOCATION = 1
     }

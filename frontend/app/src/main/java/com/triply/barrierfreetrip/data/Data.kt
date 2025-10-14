@@ -67,7 +67,10 @@ data class TourFacilityDetail(
     val sigunguCode: Any = "",
     val tel: String = "",
     val title: String = "",
-) : RespDocument()
+) : RespDocument() {
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
+}
 
 data class ErrorDto(
     @SerializedName("emptyResponse")
