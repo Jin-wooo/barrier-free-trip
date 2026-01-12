@@ -26,7 +26,6 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:textSize="16sp"
-            app:itemIconTint="@drawable/selector_nav"
             app:itemTextColor="@drawable/selector_nav"
             app:labelVisibilityMode="labeled"
             app:layout_constraintBottom_toBottomOf="parent"

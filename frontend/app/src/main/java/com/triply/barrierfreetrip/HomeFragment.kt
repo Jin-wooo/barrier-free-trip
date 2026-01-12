@@ -18,6 +18,8 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_ID
+import com.triply.barrierfreetrip.MainActivity.Companion.CONTENT_TYPE
+import com.triply.barrierfreetrip.MainActivity.Companion.PAGE_TITLE
 import com.triply.barrierfreetrip.adapter.HomeInfoAdapter
 import com.triply.barrierfreetrip.adapter.HomeMenuViewHolder
 import com.triply.barrierfreetrip.adapter.OnItemClickListener
@@ -41,26 +43,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var currentLocation: Location? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
+        startLocationUpdates()
+    }
 
-        val hasPermissionForCoarseLocation = ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        val hasPermissionForFineLocation = ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-
-        if (hasPermissionForCoarseLocation && hasPermissionForFineLocation) {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000L).build()
-            fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-
-            fusedLocationClient?.lastLocation?.addOnSuccessListener { location: Location? ->
-                if (location == null) return@addOnSuccessListener
-
-                currentLocation = location
-                // 내 주변 숙박시설 API 호출
-                viewModel.getNearbyStayList(currentLocation?.longitude ?: 126.9778222, currentLocation?.latitude ?: 37.5664056)
-                viewModel.getNearbyChargerList(currentLocation?.longitude ?: 126.9778222, currentLocation?.latitude ?: 37.5664056)
-            }
-        }
+    override fun onStop() {
+        super.onStop()
+        stopLocationUpdates()
     }
 
     override fun initInViewCreated() {
@@ -142,8 +132,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     onInfoListClickListener = object : OnItemClickListener {
                         override fun onItemClick(position: Int) {
                             val item = (adapter as HomeInfoAdapter).infoList.getOrNull(position) as HomeInfoAdapter.HomeInfoDTO.InfoList? ?: return
-
+                            println("item: $item")
                             bundle.putString(CONTENT_ID, item.id.toString())
+                            bundle.putString(PAGE_TITLE, resources.getString(R.string.title_charge))
                             navController.navigate(
                                 resId = R.id.wishListMapFragment,
                                 args = bundle
@@ -169,8 +160,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         viewModel.nearbyFcltList.observe(viewLifecycleOwner) { fcltList ->
             homeInfoList.clear()
             homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Menu)
-            homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Title(title = "내 주변 숙박시설"))
-            homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Title(title = "내 주변 전동휠체어 충전기"))
+            homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Title(title = resources.getString(R.string.all_stay_nearby)))
+            homeInfoList.add(HomeInfoAdapter.HomeInfoDTO.Title(title = resources.getString(R.string.all_charge_nearby)))
 
             if (fcltList == null) {
                 (binding.rvHome.adapter as HomeInfoAdapter).setDataList(homeInfoList)
@@ -225,13 +216,37 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val locationCallback : LocationCallback = object : LocationCallback() {
         override fun onLocationResult(p0: LocationResult) {
             super.onLocationResult(p0)
+            val previousLocation = currentLocation
             currentLocation = p0.lastLocation
-            fusedLocationClient?.removeLocationUpdates(this)
+
+            if (previousLocation != null) {
+                val difference = currentLocation?.distanceTo(previousLocation) ?: 0f
+
+                if (difference < 0.0001F) return
+            }
+            // 내 주변시설 API 호출
+            viewModel.resetFacilityList()
+            viewModel.getNearbyStayList(currentLocation?.longitude ?: 126.9778222, currentLocation?.latitude ?: 37.5664056)
+            viewModel.getNearbyChargerList(currentLocation?.longitude ?: 126.9778222, currentLocation?.latitude ?: 37.5664056)
         }
+    }
+
+    fun startLocationUpdates() {
+        val hasPermissionForCoarseLocation = ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val hasPermissionForFineLocation = ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermissionForCoarseLocation && hasPermissionForFineLocation) {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000L).build()
+            fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+        }
+    }
+
+    fun stopLocationUpdates() {
+        fusedLocationClient?.removeLocationUpdates(locationCallback)
     }
 
     companion object {
         private const val TAG = "HomeFragment"
-        const val CONTENT_TYPE = "type"
     }
 }

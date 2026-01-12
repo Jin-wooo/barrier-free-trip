@@ -17,12 +17,14 @@
     <string name="all_login">로그인</string>
     <string name="all_require_selection">시도, 구군을 선택해주세요.</string>
 
+    <string name="title_charge">전동휠체어 급속충전기</string>
+
     <string name="all_temp_short">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="all_temp_medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
     <string name="all_temp_long">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderitin voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
 
     <!-- strings for homeFragment -->
-    <string name="home_destination">관광지</string>
+    <string name="home_tour">관광지</string>
     <string name="home_restaurant">음식점</string>
     <string name="home_charge">충전기</string>
     <string name="home_rental">렌탈</string>

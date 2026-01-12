@@ -47,8 +47,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_chargerinfo_profile"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:padding="14dp"
                 android:background="@drawable/shape_round_corner_18_sub_pink"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
@@ -57,11 +58,24 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_chargerinfo_detail_container"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_chargerinfo_office_hours_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="4dp"
+                android:src="@drawable/ic_office_hours"
+                android:tint="@color/main_pink"
+                app:layout_constraintStart_toEndOf="@id/iv_chargerinfo_profile"
+                app:layout_constraintTop_toTopOf="@id/iv_chargerinfo_profile" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_chargerinfo_location_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/ic_nav_location_unselected"
+                android:tint="@color/bright_gray"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_chargerinfo_profile"
@@ -188,7 +202,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/ll_chargerinfo_aircharger_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"

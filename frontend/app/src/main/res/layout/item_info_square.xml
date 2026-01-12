@@ -3,13 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="squareItem"
-            type="com.triply.barrierfreetrip.data.InfoSquareListDto.InfoSquareItemDto" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +25,6 @@
             android:layout_marginEnd="6dp"
             android:background="@drawable/selector_toggle_heart"
             android:button="@null"
-            android:checked="@{squareItem.like ? true : false}"
             android:textOff=""
             android:textOn=""
             app:layout_constraintEnd_toEndOf="@+id/iv_place_image"
@@ -68,7 +60,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@{squareItem.title}"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -83,7 +74,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@{squareItem.tel}"
             android:textColor="@color/subtitle_gray"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"

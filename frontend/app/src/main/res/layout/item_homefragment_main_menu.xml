@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:drawableTop="@drawable/ic_home_destination"
-            android:text="@string/home_destination"
+            android:text="@string/home_tour"
             app:layout_constraintEnd_toStartOf="@+id/btn_home_restaurant"
             app:layout_constraintStart_toEndOf="@+id/btn_home_stay"
             app:layout_constraintTop_toBottomOf="@+id/logo_home" />
