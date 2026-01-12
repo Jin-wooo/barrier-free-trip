@@ -189,6 +189,7 @@ class WishlistFragment() : BaseFragment<FragmentStaylistBinding>(R.layout.fragme
 
                 binding.tvRequireSelection.visibility = View.GONE
                 sigunguPosition = position
+
                 getFcltListData(
                     sidoNames.getOrElse(sidoPosition) { "" },
                     sigunguNames.getOrElse(sigunguPosition) { "" }

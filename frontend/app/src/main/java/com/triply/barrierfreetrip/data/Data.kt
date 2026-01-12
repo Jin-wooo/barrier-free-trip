@@ -148,7 +148,14 @@ data class InfoListDto(
         val like: Boolean,
         val tel: String,
         val title: String
-    )
+    ) : PickStatusModel() {
+        override val uniqueId: String = "list-$id"
+        override fun getItemAddress(): String = addr
+        override fun getItemTitle(): String = title
+        override fun getItemTelephone(): String = tel
+        override fun getContentsId(): String = id.toString()
+        override fun getLikes(): Boolean = like
+    }
 }
 
 data class InfoSquareListDto(
@@ -162,8 +169,8 @@ data class InfoSquareListDto(
         val like: Boolean,
         val rating: String,
         val tel: String,
-        val title: String
-    ) {
+        val title: String,
+    ) : PickStatusModel() {
         object SquareBind {
             @JvmStatic
             @BindingAdapter("setImage")
@@ -173,7 +180,25 @@ data class InfoSquareListDto(
                     .into(view)
             }
         }
+
+        // RecyclerView에 채워넣을 아이템을
+        override val uniqueId: String = "square-$contentId"
+        override fun getItemAddress(): String = addr
+        override fun getItemTitle(): String = title
+        override fun getItemTelephone(): String = tel
+        override fun getContentsId(): String = contentId
+        override fun getLikes(): Boolean = like
     }
+}
+
+sealed class PickStatusModel {
+    abstract val uniqueId: String
+
+    abstract fun getItemAddress(): String
+    abstract fun getItemTitle(): String
+    abstract fun getItemTelephone(): String
+    abstract fun getContentsId(): String
+    abstract fun getLikes(): Boolean
 }
 
 data class RegionListDto(
@@ -209,6 +234,17 @@ data class ConvenienceInfoDTO(
     val subject: String,
     val content: String
 )
+
+//data class LikeDTO(
+//    val contentId: ,
+//    val contentTypeId: ,
+//    val title: ,
+//    val addr: ,
+//    val rating: ,
+//    val firstim: g
+//    val tel: ,
+//    val like: ,
+//)
 
 data class LocationCoordinateDTO(
     val meta: Meta?,

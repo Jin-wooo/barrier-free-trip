@@ -57,7 +57,7 @@ object EncryptionModule {
     }
 
     fun decryptText(encryptedText: String, keyAlias: String, ivBase64: String): String {
-        val secretKey = (keyStore.getEntry(keyAlias, null) as KeyStore.SecretKeyEntry).secretKey
+        val secretKey = (keyStore.getEntry(keyAlias, null) as? KeyStore.SecretKeyEntry)?.secretKey ?: return ""
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         val iv = Base64.decode(ivBase64, Base64.NO_WRAP)
 
